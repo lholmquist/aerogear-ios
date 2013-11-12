@@ -15,32 +15,23 @@
  * limitations under the License.
  */
 
-#ifndef _AEROGEAR_
-#define _AEROGEAR_
+#import <Foundation/Foundation.h>
 
-// base
-#import "AGConfig.h"
-
-// Pipeline
-#import "AGPipe.h"
-#import "AGPipeline.h"
-#import "AGPipeConfig.h"
-#import "AGNSMutableArray+Paging.h"
-
-// DataManager
-#import "AGStore.h"
-#import "AGDataManager.h"
-#import "AGStoreConfig.h"
-
-// Security
-#import "AGAuthenticationModule.h"
-#import "AGAuthenticator.h"
-#import "AGAuthConfig.h"
 #import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
-#import "AGPassPhraseCryptoConfig.h"
-#import "AGKeyManager.h"
-#import "AGEncryptionService.h"
 
-#endif /* _AEROGEAR_ */
+/**
+ * Configuration object for an AGPassPhraseKeyServices provider.
+ */
+@interface AGPassPhraseCryptoConfig : NSObject <AGCryptoConfig>
 
+/**
+ * Applies the salt to the configuration.
+ */
+@property (nonatomic, strong) NSData *salt;
+
+/**
+ * Applies the passphrase to the configuration.
+ */
+@property (nonatomic, copy) NSString *passphrase;
+
+@end

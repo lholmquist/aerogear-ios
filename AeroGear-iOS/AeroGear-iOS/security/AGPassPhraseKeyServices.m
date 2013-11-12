@@ -15,32 +15,27 @@
  * limitations under the License.
  */
 
-#ifndef _AEROGEAR_
-#define _AEROGEAR_
+#import "AGPassPhraseKeyServices.h"
 
-// base
-#import "AGConfig.h"
+#import <AGPBKDF2.h>
+#import <AGCryptoBox.h>
 
-// Pipeline
-#import "AGPipe.h"
-#import "AGPipeline.h"
-#import "AGPipeConfig.h"
-#import "AGNSMutableArray+Paging.h"
+@implementation AGPassPhraseKeyServices
 
-// DataManager
-#import "AGStore.h"
-#import "AGDataManager.h"
-#import "AGStoreConfig.h"
+- (id)initWithConfig:(AGPassPhraseCryptoConfig *)config {
+    self = [super init];
+    
+    if (self) {
+        AGPBKDF2 *keyGenerator = [[AGPBKDF2 alloc] init];
+        
+        // derive key
+        NSData *key = [keyGenerator deriveKey:config.passphrase salt:config.salt];
+        
+        // initialize cryptobox
+        _cryptoBox = [[AGCryptoBox alloc] initWithKey:key];
+    }
+    
+    return self;
+}
 
-// Security
-#import "AGAuthenticationModule.h"
-#import "AGAuthenticator.h"
-#import "AGAuthConfig.h"
-#import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
-#import "AGPassPhraseCryptoConfig.h"
-#import "AGKeyManager.h"
-#import "AGEncryptionService.h"
-
-#endif /* _AEROGEAR_ */
-
+@end

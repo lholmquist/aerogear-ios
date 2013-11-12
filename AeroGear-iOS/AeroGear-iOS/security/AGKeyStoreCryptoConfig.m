@@ -15,32 +15,29 @@
  * limitations under the License.
  */
 
-#ifndef _AEROGEAR_
-#define _AEROGEAR_
+#import "AGKeyStoreCryptoConfig.h"
 
-// base
-#import "AGConfig.h"
+@implementation AGKeyStoreCryptoConfig
 
-// Pipeline
-#import "AGPipe.h"
-#import "AGPipeline.h"
-#import "AGPipeConfig.h"
-#import "AGNSMutableArray+Paging.h"
+@synthesize name = _name;
+@synthesize type = _type;
 
-// DataManager
-#import "AGStore.h"
-#import "AGDataManager.h"
-#import "AGStoreConfig.h"
+@synthesize alias = _alias;
+@synthesize password = _password;
 
-// Security
-#import "AGAuthenticationModule.h"
-#import "AGAuthenticator.h"
-#import "AGAuthConfig.h"
-#import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
-#import "AGPassPhraseCryptoConfig.h"
-#import "AGKeyManager.h"
-#import "AGEncryptionService.h"
+- (id)init {
+    self = [super init];
+    if (self) {
+        _type = @"AGKeyStoreCryptoConfig";
+         #if TARGET_IPHONE_SIMULATOR
+            _alias = @"alias";
+         #else
+            _alias = [[NSBundle mainBundle] bundleIdentifier];
+         #endif
+        _name = _alias;
+    }
+    
+    return self;
+}
 
-#endif /* _AEROGEAR_ */
-
+@end

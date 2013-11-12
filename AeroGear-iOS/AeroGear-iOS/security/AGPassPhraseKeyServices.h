@@ -15,32 +15,21 @@
  * limitations under the License.
  */
 
-#ifndef _AEROGEAR_
-#define _AEROGEAR_
-
-// base
-#import "AGConfig.h"
-
-// Pipeline
-#import "AGPipe.h"
-#import "AGPipeline.h"
-#import "AGPipeConfig.h"
-#import "AGNSMutableArray+Paging.h"
-
-// DataManager
-#import "AGStore.h"
-#import "AGDataManager.h"
-#import "AGStoreConfig.h"
-
-// Security
-#import "AGAuthenticationModule.h"
-#import "AGAuthenticator.h"
-#import "AGAuthConfig.h"
-#import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
+#import "AGBaseEncryptionService.h"
 #import "AGPassPhraseCryptoConfig.h"
-#import "AGKeyManager.h"
-#import "AGEncryptionService.h"
 
-#endif /* _AEROGEAR_ */
+/**
+ An AGEncryptionService that generates crypto params randomly by using AGPBKDF2
+ */
+@interface AGPassPhraseKeyServices : AGBaseEncryptionService
 
+/**
+ * Initialize the provider with the given config
+ *
+ * @param config An AGPassPhraseCryptoConfig configuration object.
+ *
+ * @return the newly created AGPassPhraseKeyServices object.
+ */
+- (id)initWithConfig:(AGPassPhraseCryptoConfig *)config;
+
+@end

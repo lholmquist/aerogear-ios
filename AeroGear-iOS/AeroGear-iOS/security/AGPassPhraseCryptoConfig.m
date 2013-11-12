@@ -15,32 +15,28 @@
  * limitations under the License.
  */
 
-#ifndef _AEROGEAR_
-#define _AEROGEAR_
-
-// base
-#import "AGConfig.h"
-
-// Pipeline
-#import "AGPipe.h"
-#import "AGPipeline.h"
-#import "AGPipeConfig.h"
-#import "AGNSMutableArray+Paging.h"
-
-// DataManager
-#import "AGStore.h"
-#import "AGDataManager.h"
-#import "AGStoreConfig.h"
-
-// Security
-#import "AGAuthenticationModule.h"
-#import "AGAuthenticator.h"
-#import "AGAuthConfig.h"
-#import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
 #import "AGPassPhraseCryptoConfig.h"
-#import "AGKeyManager.h"
-#import "AGEncryptionService.h"
 
-#endif /* _AEROGEAR_ */
+@implementation AGPassPhraseCryptoConfig
 
+@synthesize name = _name;
+@synthesize type = _type;
+
+@synthesize passphrase = _passphrase;
+@synthesize salt = _salt;
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _type = @"AGPassPhraseCryptoConfig";
+        #if TARGET_IPHONE_SIMULATOR
+            _name = @"name";
+        #else
+            _name = [[NSBundle mainBundle] bundleIdentifier];
+        #endif
+    }
+    
+    return self;
+}
+
+@end

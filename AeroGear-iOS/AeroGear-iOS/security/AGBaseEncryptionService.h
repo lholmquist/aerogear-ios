@@ -15,32 +15,21 @@
  * limitations under the License.
  */
 
-#ifndef _AEROGEAR_
-#define _AEROGEAR_
+#import <Foundation/Foundation.h>
 
-// base
-#import "AGConfig.h"
-
-// Pipeline
-#import "AGPipe.h"
-#import "AGPipeline.h"
-#import "AGPipeConfig.h"
-#import "AGNSMutableArray+Paging.h"
-
-// DataManager
-#import "AGStore.h"
-#import "AGDataManager.h"
-#import "AGStoreConfig.h"
-
-// Security
-#import "AGAuthenticationModule.h"
-#import "AGAuthenticator.h"
-#import "AGAuthConfig.h"
-#import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
-#import "AGPassPhraseCryptoConfig.h"
-#import "AGKeyManager.h"
 #import "AGEncryptionService.h"
 
-#endif /* _AEROGEAR_ */
+@class AGCryptoBox;
 
+/**
+  Base clase for any given AGEncryptionService implementation. See AGPasswordKeyServices
+  and AGPassPhraseKeyServices class documentation for concrete implementations.
+ */
+@interface AGBaseEncryptionService : NSObject <AGEncryptionService> {
+
+@protected
+    AGCryptoBox *_cryptoBox;
+    NSData *_applicationIV;
+}
+
+@end
