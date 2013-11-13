@@ -15,27 +15,23 @@
  * limitations under the License.
  */
 
-#import "AGPassPhraseKeyServices.h"
+#import <Foundation/Foundation.h>
 
-#import <AGPBKDF2.h>
-#import <AGCryptoBox.h>
+#import "AGCryptoConfig.h"
 
-@implementation AGPassPhraseKeyServices
+/**
+ * Configuration object for an AGPassphraseKeyServices provider.
+ */
+@interface AGPassphraseCryptoConfig : NSObject <AGCryptoConfig>
 
-- (id)initWithConfig:(AGPassPhraseCryptoConfig *)config {
-    self = [super init];
-    
-    if (self) {
-        AGPBKDF2 *keyGenerator = [[AGPBKDF2 alloc] init];
-        
-        // derive key
-        NSData *key = [keyGenerator deriveKey:config.passphrase salt:config.salt];
-        
-        // initialize cryptobox
-        _cryptoBox = [[AGCryptoBox alloc] initWithKey:key];
-    }
-    
-    return self;
-}
+/**
+ * Applies the salt to the configuration.
+ */
+@property (nonatomic, strong) NSData *salt;
+
+/**
+ * Applies the passphrase to the configuration.
+ */
+@property (nonatomic, copy) NSString *passphrase;
 
 @end

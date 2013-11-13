@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-#import "AGPassPhraseCryptoConfig.h"
+#import "AGPassphraseCryptoConfig.h"
 
-@implementation AGPassPhraseCryptoConfig
+@implementation AGPassphraseCryptoConfig
 
 @synthesize name = _name;
 @synthesize type = _type;
@@ -28,7 +28,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        _type = @"AGPassPhraseCryptoConfig";
+        _type = @"AGPassphraseCryptoConfig";
         #if TARGET_IPHONE_SIMULATOR
             _name = @"name";
         #else

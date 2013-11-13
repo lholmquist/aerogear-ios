@@ -28,6 +28,9 @@
 - (id)initWithConfig:(AGKeyStoreCryptoConfig *)config {
     self = [super init];
 
+    // TODO
+    // once https://issues.jboss.org/browse/AGIOS-103
+    // is in place, it will be refactored to use it
     if (self) {
         // setup key tags used to access keychain
         _passKeyTag = [config.alias stringByAppendingString:@".password"];

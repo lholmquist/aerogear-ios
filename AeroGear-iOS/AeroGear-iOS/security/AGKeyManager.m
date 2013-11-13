@@ -18,7 +18,7 @@
 #import "AGKeyManager.h"
 
 #import "AGPasswordKeyServices.h"
-#import "AGPassPhraseKeyServices.h"
+#import "AGPassphraseKeyServices.h"
 
 @implementation AGKeyManager {
     NSMutableDictionary *_keyServices;
@@ -41,8 +41,8 @@
     
     if ([config isKindOfClass:[AGKeyStoreCryptoConfig class]]) {
         keyService = [[AGPasswordKeyServices alloc] initWithConfig:config];
-    } else if ([config isKindOfClass:[AGPassPhraseCryptoConfig class]]) {
-        keyService = [[AGPassPhraseKeyServices alloc] initWithConfig:config];
+    } else if ([config isKindOfClass:[AGPassphraseCryptoConfig class]]) {
+        keyService = [[AGPassphraseKeyServices alloc] initWithConfig:config];
     } else { // unsupported type
         return nil;
     }

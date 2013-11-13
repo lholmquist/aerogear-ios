@@ -16,25 +16,25 @@
  */
 
 #import <Kiwi/Kiwi.h>
-#import "AGPassPhraseKeyServices.h"
-#import "AGPassPhraseCryptoConfig.h"
+#import "AGPassphraseKeyServices.h"
+#import "AGPassphraseCryptoConfig.h"
 
 static NSString *const MESSAGE = @"0123456789abcdef1234";
 static NSString *const SALT = @"e5ecbaaf33bd751a1ac728d45e6";
 
-SPEC_BEGIN(AGPassPhraseKeyServicesSpec)
+SPEC_BEGIN(AGPassphraseKeyServicesSpec)
 
-describe(@"AGPassPhraseKeyServices", ^{
+describe(@"AGPassphraseKeyServices", ^{
     context(@"when newly created", ^{
         
-        __block AGPassPhraseKeyServices *service = nil;
+        __block AGPassphraseKeyServices *service = nil;
         
         beforeAll(^{
-            AGPassPhraseCryptoConfig *config = [[AGPassPhraseCryptoConfig alloc] init];
+            AGPassphraseCryptoConfig *config = [[AGPassphraseCryptoConfig alloc] init];
             [config setSalt:[SALT dataUsingEncoding:NSUTF8StringEncoding]];
             [config setPassphrase:@"passphrase"];
             
-            service = [[AGPassPhraseKeyServices alloc] initWithConfig:config];
+            service = [[AGPassphraseKeyServices alloc] initWithConfig:config];
         });
         
         it(@"should not be nil", ^{

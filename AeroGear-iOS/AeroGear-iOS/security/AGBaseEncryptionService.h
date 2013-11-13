@@ -23,7 +23,7 @@
 
 /**
   Base clase for any given AGEncryptionService implementation. See AGPasswordKeyServices
-  and AGPassPhraseKeyServices class documentation for concrete implementations.
+  and AGPassphraseKeyServices class documentation for concrete implementations.
  */
 @interface AGBaseEncryptionService : NSObject <AGEncryptionService> {
 

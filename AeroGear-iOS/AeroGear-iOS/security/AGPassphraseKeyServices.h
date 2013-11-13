@@ -16,20 +16,20 @@
  */
 
 #import "AGBaseEncryptionService.h"
-#import "AGPassPhraseCryptoConfig.h"
+#import "AGPassphraseCryptoConfig.h"
 
 /**
  An AGEncryptionService that generates crypto params randomly by using AGPBKDF2
  */
-@interface AGPassPhraseKeyServices : AGBaseEncryptionService
+@interface AGPassphraseKeyServices : AGBaseEncryptionService
 
 /**
  * Initialize the provider with the given config
  *
- * @param config An AGPassPhraseCryptoConfig configuration object.
+ * @param config An AGPassphraseCryptoConfig configuration object.
  *
- * @return the newly created AGPassPhraseKeyServices object.
+ * @return the newly created AGPassphraseKeyServices object.
  */
-- (id)initWithConfig:(AGPassPhraseCryptoConfig *)config;
+- (id)initWithConfig:(AGPassphraseCryptoConfig *)config;
 
 @end
