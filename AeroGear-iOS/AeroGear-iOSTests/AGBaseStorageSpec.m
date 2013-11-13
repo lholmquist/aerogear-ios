@@ -15,23 +15,28 @@
  * limitations under the License.
  */
 
+#import <Kiwi/Kiwi.h>
 #import "AGBaseStorage.h"
 
-// error domain for stores
-NSString * const AGStoreErrorDomain = @"AGStoreErrorDomain";
+SPEC_BEGIN(AGBaseStorageSpec)
 
-@implementation AGBaseStorage
+describe(@"AGBaseStorage", ^{
 
-+ (NSURL *)storeURLWithName:(NSString *)filename {
-    if (!filename)
-        return nil;
+    context(@"testing static utility methods", ^{
 
-    // access 'Application Support' directory
-    NSURL *supportURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory
-                                                               inDomain:NSUserDomainMask appropriateForURL:nil
-                                                                 create:YES error:nil];
-    // append the filename
-    return [supportURL URLByAppendingPathComponent:filename];
-}
+        it(@"should retrieve the url for the given filename", ^{
+            NSURL *path = [AGBaseStorage storeURLWithName:@"filename"];
 
-@end
+            [path shouldNotBeNil];
+            [[path.lastPathComponent should] equal:@"filename"];
+        });
+        
+        it(@"should fail if the filename is nil", ^{
+            NSURL *path = [AGBaseStorage storeURLWithName:nil];
+            
+            [path shouldBeNil];
+        });
+    });
+});
+
+SPEC_END
