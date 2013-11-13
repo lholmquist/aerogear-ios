@@ -16,11 +16,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "AGBaseStorage.h"
 #import "AGStore.h"
 #import "AGStoreConfiguration.h"
-
-#import "AGMemoryStorage.h"
-
 /**
  An AGStore implementation that uses a [Property List](http://tinyurl.com/ccbo327) for storage. It can either use a PLIST or JSON serialization output format depending on type name passed when constructing the Store. If the type is 'JSON' the store will use NSJSONSerialization  as its backend otherwise it will fell to use NSPropertyListSerialization.
 
@@ -53,6 +51,6 @@
     
 The ```read```, ```reset``` or ```remove``` methods found in AGStore behave the same, as on the default ("in memory") store. 
 */
-@interface AGPropertyListStorage : AGMemoryStorage
+@interface AGPropertyListStorage : AGBaseStorage <AGStore>
 
 @end

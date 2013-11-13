@@ -16,6 +16,8 @@
  */
 
 #import "AGPropertyListStorage.h"
+#import "AGMemoryStorage.h"
+#import "AGStoreConfiguration.h"
 
 /**
  * Provides a common interface around NSPropertyListSerialization and NSJSONSerialization
@@ -33,7 +35,7 @@
  *
  * @return An NSData object containing plist encoded in the respective serialization format.
  */
--(NSData *) encode:(id)plist error:(NSError **)error;
+- (NSData *)encode:(id)plist error:(NSError **)error;
 
 /**
  * Creates and returns a property list from the specified data.
@@ -44,7 +46,7 @@
  * @return A property list object corresponding to the representation in data. If data is 
  *         not in a supported format, returns nil.
  */
--(id)       decode:(NSData *)data error:(NSError **)error;
+- (id)decode:(NSData *)data error:(NSError **)error;
 
 /**
  * Returns a Boolean value that indicates whether a given property list is valid for a given serialization format.
@@ -53,7 +55,7 @@
  *
  * @return YES if plist is a valid property list in format format, otherwise NO.
  */
--(BOOL) isValid:(id)plist;
+- (BOOL)isValid:(id)plist;
 
 @end
 
@@ -65,12 +67,12 @@
 
 @implementation AGPListEncoder
 
--(NSData *) encode:(id)plist error:(NSError **)error {
+- (NSData *)encode:(id)plist error:(NSError **)error {
     return [NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListXMLFormat_v1_0
                                                              options:0 error:error];
 }
 
--(id) decode:(NSData *)data error:(NSError **)error {
+- (id)decode:(NSData *)data error:(NSError **)error {
     NSPropertyListFormat format = NSPropertyListXMLFormat_v1_0;
     
     return [NSPropertyListSerialization propertyListWithData:data
@@ -78,7 +80,7 @@
                                                       format:&format error:error];
 }
 
--(BOOL) isValid:(id)plist {
+- (BOOL)isValid:(id)plist {
     return [NSPropertyListSerialization propertyList:plist isValidForFormat:NSPropertyListXMLFormat_v1_0];
 }
 
@@ -92,13 +94,13 @@
 
 @implementation AGJsonEncoder
 
--(NSData *) encode:(id)plist error:(NSError **)error {
+- (NSData *)encode:(id)plist error:(NSError **)error {
     return [NSJSONSerialization dataWithJSONObject:plist
                                     options:NSJSONWritingPrettyPrinted
                                       error:error];
 }
 
--(id) decode:(NSData *)data error:(NSError **)error {
+- (id)decode:(NSData *)data error:(NSError **)error {
     id arr = [NSJSONSerialization JSONObjectWithData:data
                                     options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves
                                       error:error];
@@ -111,16 +113,18 @@
 
 }
 
--(BOOL) isValid:(id)plist {
+- (BOOL)isValid:(id)plist {
     return [NSJSONSerialization isValidJSONObject:plist];
 }
 
 @end
 
 @implementation AGPropertyListStorage {
-    NSURL* _file;
+    NSURL *_file;
     
     id<AGEncoder> _encoder;
+    
+    AGMemoryStorage *_memStorage;    
 }
 
 @synthesize type = _type;
@@ -129,26 +133,26 @@
 // ======== 'factory' and 'init' section ========
 // ==============================================
 
-+(id) storeWithConfig:(id<AGStoreConfig>) storeConfig {
++ (id)storeWithConfig:(id<AGStoreConfig>) storeConfig {
     return [[self alloc] initWithConfig:storeConfig];
 }
 
--(id) initWithConfig:(id<AGStoreConfig>) storeConfig {
+- (id)initWithConfig:(id<AGStoreConfig>) storeConfig {
     self = [super init];
     if (self) {
         // base inits:
         
-        AGStoreConfiguration* config = (AGStoreConfiguration*) storeConfig;
-        _recordId = config.recordId;
-        _type = config.type;
+        _type = storeConfig.type;
         
         if ([_type isEqualToString:@"JSON"])
             _encoder = [[AGJsonEncoder alloc] init];
         else  // if not specified use PLIST encoder
             _encoder = [[AGPListEncoder alloc] init];
 
+        _memStorage = [[AGMemoryStorage alloc] initWithConfig:storeConfig];
+        
         // extract file path
-        _file = [self storeURLWithName:config.name];
+        _file = [AGBaseStorage storeURLWithName:storeConfig.name];
         
         // if plist file exists initialize store from it
         if ([[NSFileManager defaultManager] fileExistsAtPath:[_file path]]) {
@@ -158,15 +162,17 @@
             NSError *error;
             
             // decode structure
-            _array = [_encoder decode:data error:&error];
-            
-            if (error) {  // if there was an error during convert log it
+            NSMutableDictionary *list = [_encoder decode:data error:&error];
+           
+            if (!error) {
+                [list enumerateKeysAndObjectsUsingBlock:^(id key, id encryptedData, BOOL *stop) {
+                    [_memStorage save:encryptedData forKey:key];
+                }];
+                
+            } else { // log the error
                 NSLog(@"%@ %@: %@", [self class], NSStringFromSelector(_cmd), error);
             }
         }
-        
-        if (!_array) // always create an empty store
-            _array = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -176,32 +182,49 @@
 // ======== public API (AGStore) ========
 // =====================================================
 
--(BOOL) save:(id)data error:(NSError**)error {
+- (BOOL)save:(id)data error:(NSError **)error {
     // fail eager if not valid object
     if (![_encoder isValid:data]) {
         if (error)
-            *error = [self constructError:@"save" msg:@"not a valid format for the type specified"];
-        
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"not a valid format for the type specified", NSLocalizedDescriptionKey, nil]];
         return NO;
     }
     
-    return [super save:data error:error] && [self updateStore:error];
+    return [_memStorage save:data error:error] && [self updateStore:error];
 }
 
--(BOOL) reset:(NSError**)error {
-    return [super reset:error] && [self updateStore:error];
+- (NSArray *)readAll {
+    return [_memStorage readAll];
 }
 
--(BOOL) remove:(id)record error:(NSError**)error {
-    return [super remove:record error:error] && [self updateStore:error];
+- (id)read:(id)recordId {
+    return [_memStorage read:recordId];
+}
+
+- (NSArray *)filter:(NSPredicate *)predicate {
+    return [_memStorage filter:predicate];
+}
+
+- (BOOL)reset:(NSError **)error {
+    return [_memStorage reset:error] && [self updateStore:error];
+}
+
+- (BOOL)isEmpty {
+    return [_memStorage isEmpty];
+}
+
+- (BOOL)remove:(id)record error:(NSError **)error {
+    return [_memStorage remove:record error:error] && [self updateStore:error];
 }
 
 // =====================================================
 // =========== private utility methods  ================
 // =====================================================
 
--(BOOL) updateStore:(NSError **)error {
-    NSData *plist = [_encoder encode:_array error:error];
+- (BOOL)updateStore:(NSError **)error {
+    NSData *plist = [_encoder encode:[_memStorage dump] error:error];
     
     if (!plist)
         return NO;
@@ -210,22 +233,15 @@
     // error object to inform client
     if (![plist writeToURL:_file atomically:YES]) {
         if (error)
-            *error = [self constructError:@"save" msg:@"an error occurred during save!"];
-
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"an error occurred during save!",
+                                               NSLocalizedDescriptionKey, nil]];
         return NO;
     }
     
     // if we reach here, file was saved successfully
     return YES;
-}
-
--(NSURL*) storeURLWithName:(NSString*) name {
-    // access 'Application Support' directory
-    NSURL *supportURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory
-                                                               inDomain:NSUserDomainMask appropriateForURL:nil
-                                                                 create:YES error:nil];
-    // the filename is based on this store name
-    return [supportURL URLByAppendingPathComponent:name];
 }
 
 @end

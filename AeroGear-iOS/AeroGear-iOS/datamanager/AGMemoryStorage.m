@@ -16,8 +16,12 @@
  */
 
 #import "AGMemoryStorage.h"
+#import "AGStoreConfiguration.h"
 
-@implementation AGMemoryStorage
+@implementation AGMemoryStorage {
+    NSMutableDictionary *_data;
+    NSString *_recordId;
+}
 
 @synthesize type = _type;
 
@@ -34,10 +38,9 @@
     if (self) {
         // base inits:
         _type = @"MEMORY";
-        _array = [NSMutableArray array];
-
-        AGStoreConfiguration *config = (AGStoreConfiguration*) storeConfig;
-        _recordId = config.recordId;
+      
+        _data = [[NSMutableDictionary alloc] init];
+        _recordId = storeConfig.recordId;
     }
     
     return self;
@@ -47,153 +50,121 @@
 // ======== public API (AGStore) ========
 // =====================================================
 
--(NSArray*) readAll {
-    // TODO: delegate to filter???
-    return _array;
+- (NSArray *)readAll {
+    return [_data allValues] ;
 }
 
--(id) read:(id)recordId {
-    id retVal;
-    
-    for (id record in _array) {
-        // check the 'id':
-        if ([[record objectForKey:_recordId] isEqual:recordId]) {
-            // replace/update it:
-            retVal = record;
-            break;
-        }
-    }
-    
-    return retVal;
+- (id)read:(id)recordId {
+    return [_data objectForKey:recordId];
 }
 
--(NSArray*) filter:(NSPredicate*)predicate {
-    return [_array filteredArrayUsingPredicate:predicate];
+- (NSArray *)filter:(NSPredicate *)predicate {
+    return [[_data allValues] filteredArrayUsingPredicate:predicate];
 }
 
--(BOOL) save:(id)data error:(NSError**)error {
-    // a 'collection' of objects:
+- (BOOL)save:(id)data error:(NSError **)error {
+    // convinience to add objects inside an array
     if ([data isKindOfClass:[NSArray class]]) {
-
         // fail fast if the array contains non-dictionary objects
         for (id record in data) {
             if (![record isKindOfClass:[NSDictionary class]]) {
-                
-                if (error) {
-                    *error = [self constructError:@"save" msg:@"array contains non-dictionary objects!"];
-                }
-
+                if (error)
+                    *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                                 code:0
+                                             userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"array contains non-dictionary objects!", NSLocalizedDescriptionKey, nil]];
                 // do nothing
                 return NO;
             }
         }
-
-        for (id record in data) {
+        
+        // traverse and save each
+        for (id record in data)
             [self saveOne:record];
-        }
-       
+        
     } else if([data isKindOfClass:[NSDictionary class]]) {
-        // single obj:
+        // single obj
         [self saveOne:data];
 
     } else { // not a dictionary, fail back
-        if (error) {
-            *error = [self constructError:@"save" msg:@"dictionary objects are supported only"];
-        }
-        
-        // do nothing
-        return NO;
+        if (error)
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"dictionary objects are supported only", NSLocalizedDescriptionKey, nil]];
+        return  NO;
     }
-
-    return YES;
-}
-
-//private save for one item:
--(void) saveOne:(NSDictionary*)data {
-    // does the record already exist ?
-    BOOL objFound = NO;
-    
-    for (id record in _array) {
-        // check the 'id':
-        if ([[record objectForKey:_recordId] isEqual:[data objectForKey:_recordId]]) {
-            // replace/update it:
-            NSUInteger index = [_array indexOfObject:record];
-            [_array removeObjectAtIndex:index];
-            [_array addObject:data];
-            //
-            objFound = YES;
-            break;
-        }
-    }
-
-    if (!objFound) {
-        // if the object hasnt' set a recordId property
-        if ([data objectForKey:_recordId] == nil) {
-            //generate a UIID to be used as this object recordId
-            CFUUIDRef uuid = CFUUIDCreate(NULL);
-            NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(NULL, uuid);
-            CFRelease(uuid);
-            
-            [data setValue:uuidStr forKey:_recordId];
-        }
-        
-        // add it to our list
-        [_array addObject:data];
-    }
-}
-
--(BOOL) reset:(NSError**)error {
-    [_array removeAllObjects];
     
     return YES;
 }
 
--(BOOL) isEmpty {
-    return (_array.count ==0);
+- (void)save:(id)value forKey:(NSString*)key {
+    [_data setObject:value forKey:key];
 }
 
--(BOOL) remove:(id)record error:(NSError**)error {
-    // check if null is provided and throw error
+- (BOOL)reset:(NSError **)error {
+    [_data removeAllObjects];
+    
+    return YES;
+}
+
+- (BOOL)isEmpty {
+    return [_data count] == 0;    
+}
+
+- (BOOL)remove:(id)record error:(NSError **)error {
     if (record == nil || [record isKindOfClass:[NSNull class]]) {
-        
-        if (error) {
-            *error = [self constructError:@"remove" msg:@"object was nil"];
-        }
-        
+        if (error)
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"object was nil", NSLocalizedDescriptionKey, nil]];
         // do nothing
         return NO;
     }
     
-    id objectKey = [record objectForKey:_recordId];
-    // we need to check if the map representation contains the "recordID" and its value is actually set:
-    if (objectKey == nil || [objectKey isKindOfClass:[NSNull class]]) {
-        
-        if (error) {
-            *error = [self constructError:@"remove" msg:@"recordId not set"];
-        }
-        
+    id key = [record objectForKey:_recordId];
+
+    if (!key || [key isKindOfClass:[NSNull class]]) {
+        if (error)
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"recordId not set", NSLocalizedDescriptionKey, nil]];
         // do nothing
         return NO;
     }
 
-    // does the record already exist ?
-    BOOL objFound = NO;
-    
-    for (id item in _array) {
-        // check the 'id':
-        if ([[item objectForKey:_recordId] isEqual:objectKey]) {
-            // replace/update it:
-            objFound = YES;
-            NSUInteger index = [_array indexOfObject:item];
-            [_array removeObjectAtIndex:index];
-            break;
-        }
+    // if the object exists
+    if ([_data objectForKey:key]) {
+        // remove it
+        [_data removeObjectForKey:key];
+        
+        return YES;
     }
     
-    return objFound;
+    return NO;
 }
 
--(NSString *) description {
+- (NSDictionary *)dump {
+    return _data;
+}
+
+- (NSString *)getOrSetIdForData:(NSMutableDictionary *)data {
+    id recordId = [data objectForKey:_recordId];
+    
+    // if the object hasn't set a recordId property
+    if (!recordId) {
+        //generate a UUID to be used instead
+        CFUUIDRef uuid = CFUUIDCreate(NULL);
+        NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(NULL, uuid);
+        CFRelease(uuid);
+        
+        recordId = uuidStr;
+        // set the generated ID for the newly object
+        [data setValue:recordId forKey:_recordId];
+    }
+    
+    return recordId;
+}
+
+- (NSString *)description {
     return [NSString stringWithFormat: @"%@ [type=%@]", self.class, _type];
 }
 
@@ -201,15 +172,10 @@
 // =========== private utility methods  ================
 // =====================================================
 
--(NSError *) constructError:(NSString*) domain
-                       msg:(NSString*) msg {
+- (void)saveOne:(NSMutableDictionary *)data {
+    id recordId = [self getOrSetIdForData:data];
     
-    NSError* error = [NSError errorWithDomain:[NSString stringWithFormat:@"org.aerogear.stores.%@", domain]
-                                         code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:msg,
-                                               NSLocalizedDescriptionKey, nil]];
-    
-    return error;
+    [_data setObject:data forKey:recordId];
 }
 
 @end

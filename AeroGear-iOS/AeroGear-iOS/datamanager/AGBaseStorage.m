@@ -17,6 +17,18 @@
 
 #import "AGBaseStorage.h"
 
+// error domain for stores
+NSString * const AGStoreErrorDomain = @"AGStoreErrorDomain";
+
 @implementation AGBaseStorage
+
++ (NSURL *)storeURLWithName:(NSString *)filename {
+    // access 'Application Support' directory
+    NSURL *supportURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory
+                                                               inDomain:NSUserDomainMask appropriateForURL:nil
+                                                                 create:YES error:nil];
+    // append the filename
+    return [supportURL URLByAppendingPathComponent:filename];
+}
 
 @end

@@ -16,6 +16,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "AGStoreConfig.h"
+
+/**
+ * error domain for stores.
+ */
+extern NSString * const AGStoreErrorDomain;
 
 /**
  * AGStore represents an abstraction layer for a storage system.
@@ -26,6 +32,26 @@
  * Returns the type of the underlying 'store implementation'
  */
 @property (nonatomic, readonly) NSString* type;
+
+/**
+ * class method to initialize a new store based on the given configuration object.
+ *
+ * @param config A block object which passes in an implementation of the AGStoreConfig protocol.
+ * the object is used to configure the AGStore object.
+ *
+ * @return the newly created AGStore object.
+ */
++ (id)storeWithConfig:(id<AGStoreConfig>)storeConfig;
+
+/**
+ * instance method to initialize a new store based on the given configuration object.
+ *
+ * @param config A block object which passes in an implementation of the AGStoreConfig protocol.
+ * the object is used to configure the AGStore object.
+ *
+ * @return the newly created AGStore object.
+ */
+- (id)initWithConfig:(id<AGStoreConfig>)storeConfig;
 
 /**
  * Reads all the data from the underlying storage system.

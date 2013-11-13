@@ -16,6 +16,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "AGBaseStorage.h"
 #import "AGStore.h"
 #import "AGStoreConfiguration.h"
 
@@ -23,19 +24,32 @@
  An internal AGStore implementation that uses "in-memory" storage.
  
  *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned automatically when an DataStore with default configuration is constructed or with the _type_ config option set to _"MEMORY"_. See AGDataManager and AGStore class documentation for more information.
-
+ 
  */
-@interface AGMemoryStorage : NSObject <AGStore> {
+@interface AGMemoryStorage : AGBaseStorage <AGStore>
 
-@protected
-    NSMutableArray* _array;
-    NSString* _recordId;
-}
+/**
+ * internal utility method to set an object directly on the store
+ *
+ * @param value The object to be persisted.
+ * @param key The key under this object will bound to.
+ *
+ */
+- (void)save:(id)value forKey:(NSString *)key;
 
-+(id) storeWithConfig:(id<AGStoreConfig>) storeConfig;
--(id) initWithConfig:(id<AGStoreConfig>) storeConfig;
+/**
+ * internal utility method to dump the contents of this memory storage
+ *
+ * @return a dump of the contents of this memory storage.
+ */
+- (NSDictionary *)dump;
 
--(NSError *) constructError:(NSString*) domain
-                        msg:(NSString*) msg;
+/**
+ * internal utility method to get and set(if missing) an ID to an object. In
+ * the case the ID is missing a generated UUID will be used.
+ *
+ * @return an NString with the ID of the object.
+ */
+- (NSString *)getOrSetIdForData:(NSMutableDictionary *)data;
 
 @end

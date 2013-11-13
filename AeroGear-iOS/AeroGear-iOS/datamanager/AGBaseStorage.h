@@ -19,4 +19,14 @@
 
 @interface AGBaseStorage : NSObject
 
+/**
+ * utility method to get an NSURL pointing to the file system 
+ * for the given filename.
+ *
+ * @param filename The filename.
+ *
+ * @return an NSURL pointing to the file.
+ */
++ (NSURL *)storeURLWithName:(NSString *) filename;
+
 @end
