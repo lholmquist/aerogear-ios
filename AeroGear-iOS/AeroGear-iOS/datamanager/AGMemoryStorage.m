@@ -18,10 +18,7 @@
 #import "AGMemoryStorage.h"
 #import "AGStoreConfiguration.h"
 
-@implementation AGMemoryStorage {
-    NSMutableDictionary *_data;
-    NSString *_recordId;
-}
+@implementation AGMemoryStorage
 
 @synthesize type = _type;
 
@@ -96,10 +93,6 @@
     return YES;
 }
 
-- (void)save:(id)value forKey:(NSString*)key {
-    [_data setObject:value forKey:key];
-}
-
 - (BOOL)reset:(NSError **)error {
     [_data removeAllObjects];
     
@@ -142,28 +135,6 @@
     return NO;
 }
 
-- (NSDictionary *)dump {
-    return _data;
-}
-
-- (NSString *)getOrSetIdForData:(NSMutableDictionary *)data {
-    id recordId = [data objectForKey:_recordId];
-    
-    // if the object hasn't set a recordId property
-    if (!recordId) {
-        //generate a UUID to be used instead
-        CFUUIDRef uuid = CFUUIDCreate(NULL);
-        NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(NULL, uuid);
-        CFRelease(uuid);
-        
-        recordId = uuidStr;
-        // set the generated ID for the newly object
-        [data setValue:recordId forKey:_recordId];
-    }
-    
-    return recordId;
-}
-
 - (NSString *)description {
     return [NSString stringWithFormat: @"%@ [type=%@]", self.class, _type];
 }
@@ -173,7 +144,7 @@
 // =====================================================
 
 - (void)saveOne:(NSMutableDictionary *)data {
-    id recordId = [self getOrSetIdForData:data];
+    id recordId = [AGBaseStorage getOrSetIdForData:data withIdentifier:_recordId];
     
     [_data setObject:data forKey:recordId];
 }

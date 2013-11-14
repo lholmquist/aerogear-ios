@@ -34,26 +34,6 @@ extern NSString * const AGStoreErrorDomain;
 @property (nonatomic, readonly) NSString* type;
 
 /**
- * class method to initialize a new store based on the given configuration object.
- *
- * @param config A block object which passes in an implementation of the AGStoreConfig protocol.
- * the object is used to configure the AGStore object.
- *
- * @return the newly created AGStore object.
- */
-+ (id)storeWithConfig:(id<AGStoreConfig>)storeConfig;
-
-/**
- * instance method to initialize a new store based on the given configuration object.
- *
- * @param config A block object which passes in an implementation of the AGStoreConfig protocol.
- * the object is used to configure the AGStore object.
- *
- * @return the newly created AGStore object.
- */
-- (id)initWithConfig:(id<AGStoreConfig>)storeConfig;
-
-/**
  * Reads all the data from the underlying storage system.
  *
  * @return A collection (NSArray), containing all stored objects.

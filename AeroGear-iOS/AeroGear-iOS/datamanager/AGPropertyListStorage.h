@@ -53,4 +53,7 @@ The ```read```, ```reset``` or ```remove``` methods found in AGStore behave the 
 */
 @interface AGPropertyListStorage : AGBaseStorage <AGStore>
 
++ (id)storeWithConfig:(id<AGStoreConfig>)storeConfig;
+- (id)initWithConfig:(id<AGStoreConfig>)storeConfig;
+
 @end

@@ -160,14 +160,14 @@
             NSData *data = [NSData dataWithContentsOfURL:_file];
 
             NSError *error;
-            
+
             // decode structure
-            NSMutableDictionary *list = [_encoder decode:data error:&error];
+            NSArray *list = [_encoder decode:data error:&error];
            
             if (!error) {
-                [list enumerateKeysAndObjectsUsingBlock:^(id key, id encryptedData, BOOL *stop) {
-                    [_memStorage save:encryptedData forKey:key];
-                }];
+                for (NSMutableDictionary *object in list) {
+                    [_memStorage save:object error:nil];
+                }
                 
             } else { // log the error
                 NSLog(@"%@ %@: %@", [self class], NSStringFromSelector(_cmd), error);
@@ -224,7 +224,7 @@
 // =====================================================
 
 - (BOOL)updateStore:(NSError **)error {
-    NSData *plist = [_encoder encode:[_memStorage dump] error:error];
+    NSData *plist = [_encoder encode:[_memStorage readAll] error:error];
     
     if (!plist)
         return NO;

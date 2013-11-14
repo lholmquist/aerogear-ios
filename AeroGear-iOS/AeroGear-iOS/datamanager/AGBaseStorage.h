@@ -29,4 +29,12 @@
  */
 + (NSURL *)storeURLWithName:(NSString *) filename;
 
+/**
+ * utility method to get and set(if missing) an ID to an object. In
+ * the case the ID is missing a generated UUID will be used.
+ *
+ * @return an NString with the ID of the object.
+ */
++ (NSString *)getOrSetIdForData:(NSMutableDictionary *)data withIdentifier:(NSString *)identifier;
+
 @end

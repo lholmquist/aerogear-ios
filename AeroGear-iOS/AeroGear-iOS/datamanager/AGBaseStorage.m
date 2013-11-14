@@ -34,4 +34,22 @@ NSString * const AGStoreErrorDomain = @"AGStoreErrorDomain";
     return [supportURL URLByAppendingPathComponent:filename];
 }
 
++ (NSString *)getOrSetIdForData:(NSMutableDictionary *)data withIdentifier:(NSString *)identifier {
+    id recordId = [data objectForKey:identifier];
+    
+    // if the object hasn't set a recordId property
+    if (!recordId) {
+        //generate a UUID to be used instead
+        CFUUIDRef uuid = CFUUIDCreate(NULL);
+        NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(NULL, uuid);
+        CFRelease(uuid);
+        
+        recordId = uuidStr;
+        // set the generated ID for the newly object
+        [data setValue:recordId forKey:identifier];
+    }
+    
+    return recordId;
+}
+
 @end
