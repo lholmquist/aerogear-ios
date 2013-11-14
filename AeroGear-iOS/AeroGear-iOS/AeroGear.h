@@ -37,7 +37,7 @@
 #import "AGAuthenticator.h"
 #import "AGAuthConfig.h"
 #import "AGCryptoConfig.h"
-#import "AGKeyStoreCryptoConfig"
+#import "AGKeyStoreCryptoConfig.h"
 #import "AGPassphraseCryptoConfig.h"
 #import "AGKeyManager.h"
 #import "AGEncryptionService.h"
