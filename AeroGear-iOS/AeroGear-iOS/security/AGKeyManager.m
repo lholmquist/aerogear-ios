@@ -47,7 +47,8 @@
         return nil;
     }
     
-    [_keyServices setObject:keyService forKey:config.name];
+    if (keyService)
+        [_keyServices setObject:keyService forKey:config.name];
     
     return keyService;
 }
