@@ -58,6 +58,11 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
         id object =  [NSPropertyListSerialization propertyListWithData:decryptedData
                                                                options:NSPropertyListMutableContainersAndLeaves
                                                                 format:&format error:nil];
+        
+        // fail fast if unable to deserialize caused by a mangled byte stream.
+        if (!object)
+            return nil;
+        
         [list addObject:object];
     }
     
