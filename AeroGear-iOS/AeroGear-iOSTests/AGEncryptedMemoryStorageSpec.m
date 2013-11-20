@@ -17,8 +17,13 @@
 
 #import <Kiwi/Kiwi.h>
 #import "AGEncryptedMemoryStorage.h"
-#import "AGPasswordKeyServices.h"
+#import "AGPassphraseKeyServices.h"
 #import "AGStoreConfiguration.h"
+
+static NSString *const kSalt = @"e5ecbaaf33bd751a1ac728d45e6";
+static NSString *const kSaltFail = @"bweywsaf3bbdf5121nc72he412ex";
+static NSString *const kPassphrase = @"PASSPHRASE";
+static NSString *const kPassphraseFail = @"FAIL_PASSPHRASE";
 
 SPEC_BEGIN(AGEncryptedMemoryStorageSpec)
 
@@ -31,15 +36,14 @@ describe(@"AGEncryptedMemoryStorage", ^{
         __block id<AGEncryptionService> encService = nil;
         
         beforeAll(^{
-            AGKeyStoreCryptoConfig *config = [[AGKeyStoreCryptoConfig alloc] init];
-            [config setAlias:@"alias"];
-            [config setPassword:@"passphrase"];
+            AGPassphraseCryptoConfig *cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
+            [cryptoConfig setSalt:[kSalt dataUsingEncoding:NSUTF8StringEncoding]];
+            [cryptoConfig setPassphrase:kPassphrase];
 
-            encService = [[AGPasswordKeyServices alloc] initWithConfig:config];
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
         });
         
         beforeEach(^{
-            
             AGStoreConfiguration* config = [[AGStoreConfiguration alloc] init];
             [config setRecordId:@"id"];
             [config setEncryptionService:encService];

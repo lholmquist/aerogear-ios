@@ -17,8 +17,13 @@
 
 #import <Kiwi/Kiwi.h>
 #import "AGEncryptedPropertyListStorage.h"
-#import "AGPasswordKeyServices.h"
+#import "AGPassphraseKeyServices.h"
 #import "AGStoreConfiguration.h"
+
+static NSString *const kSalt = @"e5ecbaaf33bd751a1ac728d45e6";
+static NSString *const kSaltFail = @"bweywsaf3bbdf5121nc72he412ex";
+static NSString *const kPassphrase = @"PASSPHRASE";
+static NSString *const kPassphraseFail = @"FAIL_PASSPHRASE";
 
 SPEC_BEGIN(AGEncryptedPropertyListStorageSpec)
 
@@ -32,11 +37,11 @@ describe(@"AGEncryptedPropertyListStorage", ^{
         __block id<AGEncryptionService> encService = nil;
         
         beforeAll(^{
-            AGKeyStoreCryptoConfig *config = [[AGKeyStoreCryptoConfig alloc] init];
-            [config setAlias:@"alias"];
-            [config setPassword:@"passphrase"];
-            
-            encService = [[AGPasswordKeyServices alloc] initWithConfig:config];
+            AGPassphraseCryptoConfig *cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
+            [cryptoConfig setSalt:[kSalt dataUsingEncoding:NSUTF8StringEncoding]];
+            [cryptoConfig setPassphrase:kPassphrase];
+
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
         });
         
         beforeEach(^{
@@ -460,6 +465,131 @@ describe(@"AGEncryptedPropertyListStorage", ^{
                 [[user[@"department"][@"name"] should] equal:@"Software"];
                 [[theValue([user[@"salary"] intValue]) should] beBetween:theValue(1500) and:theValue(2000)];
             }
+        });
+    });
+        
+    context(@"should fail to reload with corrupted crypto params", ^{
+        
+        __block AGStoreConfiguration *config = nil;
+        __block AGEncryptedPropertyListStorage *plistStore = nil;
+        
+        // the crypto configuration to use
+        __block AGPassphraseCryptoConfig *cryptoConfig;
+        
+        // the encryption service to use
+        __block id<AGEncryptionService> encService = nil;
+        
+        beforeEach(^{
+            cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
+            [cryptoConfig setSalt:[kSalt dataUsingEncoding:NSUTF8StringEncoding]];
+            [cryptoConfig setPassphrase:kPassphrase];
+            
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            
+            config = [[AGStoreConfiguration alloc] init];
+            [config setName:@"pliststore-enc"];
+            [config setRecordId:@"id"];
+            [config setEncryptionService:encService];
+            
+            plistStore = [AGEncryptedPropertyListStorage storeWithConfig:config];
+        });
+        
+        afterEach(^{
+            // remove all elements from the store
+            // so next test starts fresh
+            [plistStore reset:nil];
+        });
+        
+        it(@"should fail with corrupted crypto salt on (read)", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"0",@"id", nil];
+            
+            // store it
+            BOOL success = [plistStore save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // fail salt
+            [cryptoConfig setSalt:[kSaltFail dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            // re-init service
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            [config setEncryptionService:encService];
+            
+            // reload store
+            plistStore = [AGEncryptedPropertyListStorage storeWithConfig:config];
+            
+            // try to read it
+            NSMutableDictionary* object = [plistStore read:@"0"];
+            // should fail
+            [object shouldBeNil];
+        });
+            
+        it(@"should fail with corrupted crypto salt on (readAll)", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"0",@"id", nil];
+            
+            // store it
+            BOOL success = [plistStore save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // fail salt
+            [cryptoConfig setSalt:[kSaltFail dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            // re-init service
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            [config setEncryptionService:encService];
+            
+            // reload store
+            plistStore = [AGEncryptedPropertyListStorage storeWithConfig:config];
+            
+            // try to read it
+            NSArray *objects = [plistStore readAll];
+            // should fail
+            [objects shouldBeNil];
+        });
+        
+        it(@"should fail with corrupted crypto passphrase with (read)", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"0",@"id", nil];
+            
+            // store it
+            BOOL success = [plistStore save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // fail passphrase
+            [cryptoConfig setPassphrase:kPassphraseFail];
+            
+            // re-init service
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            [config setEncryptionService:encService];
+            
+            // reload store
+            plistStore = [AGEncryptedPropertyListStorage storeWithConfig:config];
+            
+            // try to read it
+            NSMutableDictionary* object = [plistStore read:@"0"];
+            // should fail
+            [object shouldBeNil];
+        });
+        
+        it(@"should fail with corrupted crypto passphrase with (readAll)", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"0",@"id", nil];
+            
+            // store it
+            BOOL success = [plistStore save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // fail passphrase
+            [cryptoConfig setPassphrase:kPassphraseFail];
+            
+            // re-init service
+            encService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            [config setEncryptionService:encService];
+            
+            // reload store
+            plistStore = [AGEncryptedPropertyListStorage storeWithConfig:config];
+
+            // try to read it
+            NSArray *objects = [plistStore readAll];
+            // should fail
+            [objects shouldBeNil];
         });
     });
 });
