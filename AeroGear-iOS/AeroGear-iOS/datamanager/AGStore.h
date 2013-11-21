@@ -64,7 +64,7 @@ extern NSString * const AGStoreErrorDomain;
  *
  * @param data A mutable dictionary representing key/value, dictionary must be mutable as 
  * id is optional and can be added after being saved. Data can also be a collection (e.g. NSArray) of 
- * mutable dictionary. This parameter is the object is being persisted.
+ * mutable dictionary. This parameter is the object being persisted.
  * @param error An error object containing details of why the save failed. 
  *
  * @return YES if the operation succeeds, otherwise NO.
