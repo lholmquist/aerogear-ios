@@ -33,24 +33,24 @@
  
      // set up crypto params configuration object
      AGPassphraseCryptoConfig *config = [[AGPassphraseCryptoConfig alloc] init];  // [2]
-     [config setSalt:salt];  // 3
-     [config setPassphrase:self.password.text];   // 4
+     [config setSalt:salt];  // [3]
+     [config setPassphrase:self.password.text];   // [4]
  
      // initialize the encryption service passing the config
      id<AGEncryptionService> encService = [[AGKeyManager manager] keyService:config];  // [5]
  
      // access Store Manager
-     AGDataManager *manager = [AGDataManager manager];  // 6
+     AGDataManager *manager = [AGDataManager manager];  // [6]
  
      // create store
      store = [manager store:^(id<AGStoreConfig> config) {
          [config setName:@"CredentialsStorage"];
-         [config setType:@"ENCRYPTED_PLIST"];  // 7
-         [config setEncryptionService:encService];  // 8
+         [config setType:@"ENCRYPTED_PLIST"];  // [7]
+         [config setEncryptionService:encService];  // [8]
      }];
  
      // ok time to attempt reading..
-     NSArray *data = [store readAll]) { // 9
+     NSArray *data = [store readAll]) { // [9]
  
      if (data)
         // decryption succeeded!
