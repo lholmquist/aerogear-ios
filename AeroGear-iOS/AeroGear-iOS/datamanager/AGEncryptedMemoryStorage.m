@@ -17,12 +17,12 @@
 
 #import "AGEncryptedMemoryStorage.h"
 #import "AGEncryptionService.h"
-
-static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
+#import "AGEncoder.h"
 
 @implementation AGEncryptedMemoryStorage {
 
     id<AGEncryptionService> _encryptionService;
+    id<AGEncoder> _encoder;
 }
 
 @synthesize type = _type;
@@ -44,6 +44,7 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
         _data = [[NSMutableDictionary alloc] init];
         _recordId = storeConfig.recordId;
         _encryptionService = storeConfig.encryptionService;
+        _encoder = [[AGPListEncoder alloc] initWithFormat:NSPropertyListBinaryFormat_v1_0];
     }
     
     return self;
@@ -55,9 +56,7 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
     for (NSData *encryptedData in [_data allValues]) {
         NSData *decryptedData = [_encryptionService decrypt:encryptedData];
 
-        id object =  [NSPropertyListSerialization propertyListWithData:decryptedData
-                                                               options:NSPropertyListMutableContainersAndLeaves
-                                                                format:&format error:nil];
+        id object = [_encoder decode:decryptedData error:nil];
         
         // fail fast if unable to deserialize caused by a mangled byte stream.
         if (!object)
@@ -77,9 +76,7 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
     if (encryptedData) {
         NSData *decryptedData = [_encryptionService decrypt:encryptedData];
         
-        retval =  [NSPropertyListSerialization propertyListWithData:decryptedData
-                                                            options:NSPropertyListMutableContainersAndLeaves
-                                                             format:&format error:nil];
+        retval = [_encoder decode:decryptedData error:nil];
     }
     
     return retval;
@@ -91,7 +88,7 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
 
 - (BOOL)save:(id)data error:(NSError **)error {
     // fail fast if invalid data
-    if (![NSPropertyListSerialization propertyList:data isValidForFormat:NSPropertyListBinaryFormat_v1_0]) {
+    if (![_encoder isValid:data]) {
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
@@ -125,9 +122,7 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
 }
 
 - (NSData *)dump {
-    return [NSPropertyListSerialization dataWithPropertyList:_data
-                                                      format:NSPropertyListBinaryFormat_v1_0
-                                                     options:0 error:nil];
+    return [_encoder encode:_data error:nil];
 }
 
 // =====================================================
@@ -138,9 +133,7 @@ static NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
     NSString *recordId = [AGBaseStorage getOrSetIdForData:data withIdentifier:_recordId];
     
     // convert to plist
-    NSData *plist = [NSPropertyListSerialization dataWithPropertyList:data
-                                               format:NSPropertyListBinaryFormat_v1_0
-                                              options:0 error:nil];
+    NSData *plist = [_encoder encode:data error:nil];
     
     // encrypt it
     NSData *encryptedData = [_encryptionService encrypt:plist];

@@ -19,12 +19,14 @@
 #import "AGEncryptedMemoryStorage.h"
 #import "AGEncryptionService.h"
 #import "AGStoreConfiguration.h"
+#import "AGEncoder.h"
 
 @implementation AGEncryptedPropertyListStorage {
     NSURL *_file;
     
     AGEncryptedMemoryStorage *_encStorage;
     id<AGEncryptionService> _encryptionService;
+    id<AGEncoder> _encoder;
 }
 
 @synthesize type = _type;
@@ -56,10 +58,8 @@
             NSError *error;
             
             // decode structure
-            NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
-            NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:data
-                                                                            options:NSPropertyListMutableContainersAndLeaves
-                                                                             format:&format error:&error];
+            _encoder = [[AGPListEncoder alloc] initWithFormat:NSPropertyListBinaryFormat_v1_0];
+            NSDictionary *plist = [_encoder decode:data error:&error];
             if (!error) {
                 [plist enumerateKeysAndObjectsUsingBlock:^(id key, id encryptedData, BOOL *stop) {
                     [_encStorage save:encryptedData forKey:key];

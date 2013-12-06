@@ -16,10 +16,12 @@
  */
 
 #import "AGSQLiteStatementBuilder.h"
+#import "AGEncoder.h"
 
 @implementation AGSQLiteStatementBuilder
 NSString *_storeName = nil;
 NSString *_primaryKey = nil;
+id<AGEncoder> _encoder;
 
 + (AGSQLiteStatementBuilder *)sharedInstance {
     static AGSQLiteStatementBuilder *__sharedInstance = nil;
@@ -36,6 +38,7 @@ NSString *_primaryKey = nil;
     if (self) {
         _storeName = storeName;
         _primaryKey = key;
+        _encoder = [[AGPListEncoder alloc] init];
     }
     return self;
 }
@@ -61,12 +64,9 @@ NSString *_primaryKey = nil;
                 primaryKeyValue = value[col];
             }
         }
-        NSData* json = [NSJSONSerialization dataWithJSONObject:value
-                                                       options:NO
-                                                         error:nil];
-        NSString *jsonString = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
+        NSString *serializedString = [[NSString alloc] initWithData:[_encoder encode:value error:nil] encoding:NSUTF8StringEncoding];
         
-        statement =[NSString stringWithFormat:@"insert into %@ values (%@,'%@')", _storeName, primaryKeyValue, jsonString];
+        statement =[NSString stringWithFormat:@"insert into %@ values (%@,'%@')", _storeName, primaryKeyValue, serializedString];
     }
     return statement;
 }
@@ -86,12 +86,9 @@ NSString *_primaryKey = nil;
             return nil;
         }
         
-        NSData* json = [NSJSONSerialization dataWithJSONObject:value
-                                                       options:NO
-                                                         error:nil];
-        NSString *jsonString = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
+        NSString *serializedString = [[NSString alloc] initWithData:[_encoder encode:value error:nil] encoding:NSUTF8StringEncoding];        
         
-        statement = [NSString stringWithFormat:@"update %@ set value =  '%@' where id = %@", _storeName, jsonString, primaryKeyValue];
+        statement = [NSString stringWithFormat:@"update %@ set value =  '%@' where id = %@", _storeName, serializedString, primaryKeyValue];
     }
     return statement;
 }

@@ -319,34 +319,63 @@ describe(@"AGSQLiteStorage", ^{
             [[objects should] containObjects:user2, nil];
             [[objects should] containObjects:user3, nil];
         });
-
-        it(@"should update when id already exist", ^{
+        it(@"should be able to do bunch of read, save, reset operations", ^{
             NSMutableDictionary* user1 = [NSMutableDictionary
-                                          dictionaryWithObjectsAndKeys:@"Sebi", @"name", nil];
-
+                                          dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"33",@"age", nil];
+            NSMutableDictionary* user2 = [NSMutableDictionary
+                                          dictionaryWithObjectsAndKeys:@"abstractj",@"name",@"22",@"age", nil];
+            NSMutableDictionary* user3 = [NSMutableDictionary
+                                          dictionaryWithObjectsAndKeys:@"qmx",@"name",@"25",@"age", nil];
+            
+            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            
+            NSArray* objects;
+            
             BOOL success;
-
-            success = [sqliteStorage save:user1 error:nil];
+            
+            // store it
+            success = [sqliteStorage save:users error:nil];
             [[theValue(success) should] equal:theValue(YES)];
             
-            user1[@"name"] = @"Sebastien";
-            success = [sqliteStorage save:user1 error:nil];
-            [[theValue(success) should] equal:theValue(YES)];
-
             // reload store
             sqliteStorage = [AGSQLiteStorage storeWithConfig:config];
-
+            
             // read it
-            NSMutableDictionary *object = [sqliteStorage read:@"1"];
-            [[[object objectForKey:@"name"] should] equal:@"Sebastien"];
-
-            // remove the above user:
-            success = [sqliteStorage remove:user1 error:nil];
-            [[theValue(success) should] equal:theValue(YES)];
-
+            objects = [sqliteStorage readAll];
+            [[objects should] haveCountOf:(NSUInteger)3];
+            
+            [sqliteStorage reset:nil];
+            
             // read from the empty store...
+            objects = [sqliteStorage readAll];
+            [[objects should] haveCountOf:(NSUInteger)0];
+            
+            // store it again...
+            success = [sqliteStorage save:users error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // reload store
+            sqliteStorage = [AGSQLiteStorage storeWithConfig:config];
+            
+            // read it again ...
+            objects = [sqliteStorage readAll];
+            [[objects should] haveCountOf:(NSUInteger)3];
+            [[objects should] containObjects:user1, nil];
+            [[objects should] containObjects:user2, nil];
+            [[objects should] containObjects:user3, nil];
+        });
+        
+        it(@"should fails if not Plist serialization compatible", ^{
+            NSMutableDictionary* user1 = [@{@"name":@"toto", @"age":[NSNull null]} mutableCopy];
+            
+            BOOL success;
+            success = [sqliteStorage save:user1 error:nil];
+            [[theValue(success) should] equal:theValue(NO)];
+            
+            // read all
             NSArray* objects = [sqliteStorage readAll];
             [[objects should] haveCountOf:(NSUInteger)0];
+            
         });
         
         it(@"should not read a remove object", ^{

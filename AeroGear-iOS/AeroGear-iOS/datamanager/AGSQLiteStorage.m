@@ -17,11 +17,13 @@
 
 #import "AGSQLiteStorage.h"
 #import "AGSQLiteStatementBuilder.h"
+#import "AGEncoder.h"
 
 @implementation AGSQLiteStorage {
     NSString* _databaseName;
     NSString* _path;
     AGSQLiteStatementBuilder* _statementBuilder;
+    id<AGEncoder> _encoder;
 }
 
 @synthesize type = _type;
@@ -52,6 +54,8 @@
         NSLog(@"Database in %@",[_path stringByAppendingPathComponent:_databaseName]);
         
         _statementBuilder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:_databaseName andPrimaryKeyName:_recordId];
+        
+        _encoder = [[AGPListEncoder alloc] init];
     }
     
     return self;
@@ -110,7 +114,7 @@
 
 -(BOOL) save:(id)data error:(NSError**)error {
     BOOL statusCode = YES;
-    if ([NSJSONSerialization isValidJSONObject:data]) {
+    if ([_encoder isValid:data]) {
         // a 'collection' of objects:
         if ([data isKindOfClass:[NSArray class]]) {
             // fail fast if the array contains non-dictionary objects
@@ -288,10 +292,7 @@
 -(id) deserialiseValue:(id) record {
     NSString* jsonString = record[@"value"];
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    id jsonObject = [NSJSONSerialization JSONObjectWithData:jsonData
-                                                    options:NSJSONReadingAllowFragments
-                                                      error:nil];
-    return jsonObject;
+    return [_encoder decode:jsonData error:nil];
 }
 
 @end

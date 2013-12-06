@@ -109,7 +109,8 @@ describe(@"AGSQLiteStatementBuilder", ^{
         it(@"with string dictionary should return SQL insert statement with JSON value", ^{
             statement = [builder buildInsertStatementWithValue:data];
             [statement shouldNotBeNil];
-            [[statement should] equal:@"insert into myTable values (1,'{\"name\":\"David\",\"id\":\"1\",\"salary\":\"1000\",\"city\":\"New York\"}')"];
+
+            [[statement should] equal:@"insert into myTable values (1,'<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>city</key>\n\t<string>New York</string>\n\t<key>id</key>\n\t<string>1</string>\n\t<key>name</key>\n\t<string>David</string>\n\t<key>salary</key>\n\t<string>1000</string>\n</dict>\n</plist>\n')"];
         });
         
     });
@@ -137,7 +138,7 @@ describe(@"AGSQLiteStatementBuilder", ^{
         it(@"with string dictionary should return SQL update statement with JSON value", ^{
             statement = [builder buildUpdateStatementWithValue:data];
             [statement shouldNotBeNil];
-            [[statement should] equal:@"update myTable set value =  '{\"name\":\"David\",\"id\":\"1\",\"salary\":\"1000\",\"city\":\"New York\"}' where id = 1"];
+            [[statement should] equal:@"update myTable set value =  '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>city</key>\n\t<string>New York</string>\n\t<key>id</key>\n\t<string>1</string>\n\t<key>name</key>\n\t<string>David</string>\n\t<key>salary</key>\n\t<string>1000</string>\n</dict>\n</plist>\n' where id = 1"];
         });
         
     });
