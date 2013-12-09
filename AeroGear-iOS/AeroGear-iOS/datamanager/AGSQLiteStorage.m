@@ -82,9 +82,9 @@
     NSMutableArray* deserializedResults = [[NSMutableArray alloc] init];
 
     for (id record in results) {
-        id jsonObject = [self deserialiseValue:record];
-        if (jsonObject && [jsonObject isKindOfClass:[NSDictionary class]]) {
-             [deserializedResults addObject:jsonObject];
+        id object = [self deserialiseValue:record];
+        if (object && [object isKindOfClass:[NSDictionary class]]) {
+             [deserializedResults addObject:object];
         }
     }
 
@@ -97,9 +97,9 @@
     if ([results count] == 0) {
         return nil;
     } else {
-        id jsonObject = [self deserialiseValue:results[0]];
-        if (jsonObject != nil && [jsonObject isKindOfClass:[NSDictionary class]]) {
-            return (NSDictionary *)jsonObject;
+        id object = [self deserialiseValue:results[0]];
+        if (object != nil && [object isKindOfClass:[NSDictionary class]]) {
+            return (NSDictionary *)object;
         }
     }
     return nil;
@@ -290,9 +290,9 @@
 }
 
 -(id) deserialiseValue:(id) record {
-    NSString* jsonString = record[@"value"];
-    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    return [_encoder decode:jsonData error:nil];
+    NSString* valueString = record[@"value"];
+    NSData *valueData = [valueString dataUsingEncoding:NSUTF8StringEncoding];
+    return [_encoder decode:valueData error:nil];
 }
 
 @end
