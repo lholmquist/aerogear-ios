@@ -159,6 +159,40 @@ describe(@"AGSQLiteStorage", ^{
             // read it
             NSMutableDictionary* object = [sqliteStorage read:@"1"];
             [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            
+            [sqliteStorage save:object error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            // read it
+            NSArray* objects = [sqliteStorage readAll];
+            [[objects should] haveCountOf:1];
+        });
+        
+        it(@"should read an object with customId", ^{
+            config = [[AGStoreConfiguration alloc] init];
+            [config setName:@"Users"];
+            [config setRecordId:@"myCustomId"];
+            
+            sqliteStorage = [AGSQLiteStorage storeWithConfig:config];
+            [sqliteStorage reset:nil];
+
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias", @"name", nil];
+            
+            // store it
+            BOOL success = [sqliteStorage save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // reload store
+            sqliteStorage = [AGSQLiteStorage storeWithConfig:config];
+            
+            // read it
+            NSMutableDictionary* object = [sqliteStorage read:@"1"];
+            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            
+            [sqliteStorage save:object error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            // read it
+            NSArray* objects = [sqliteStorage readAll];
+            [[objects should] haveCountOf:1];
         });
 
         it(@"should read an object _after_ storing it (using readAll)", ^{
@@ -261,9 +295,6 @@ describe(@"AGSQLiteStorage", ^{
             // read it
             objects = [sqliteStorage readAll];
             [[objects should] haveCountOf:(NSUInteger)3];
-            [[objects should] containObjects:user1, nil];
-            [[objects should] containObjects:user2, nil];
-            [[objects should] containObjects:user3, nil];
 
             success = [sqliteStorage reset:nil];
             [[theValue(success) should] equal:theValue(YES)];
@@ -315,9 +346,7 @@ describe(@"AGSQLiteStorage", ^{
             // read it again ...
             objects = [sqliteStorage readAll];
             [[objects should] haveCountOf:(NSUInteger)3];
-            [[objects should] containObjects:user1, nil];
-            [[objects should] containObjects:user2, nil];
-            [[objects should] containObjects:user3, nil];
+
         });
         it(@"should be able to do bunch of read, save, reset operations", ^{
             NSMutableDictionary* user1 = [NSMutableDictionary
@@ -360,9 +389,27 @@ describe(@"AGSQLiteStorage", ^{
             // read it again ...
             objects = [sqliteStorage readAll];
             [[objects should] haveCountOf:(NSUInteger)3];
-            [[objects should] containObjects:user1, nil];
-            [[objects should] containObjects:user2, nil];
-            [[objects should] containObjects:user3, nil];
+        });
+        
+        it(@"should retrieve only one element when we save an object without id, read all and update it", ^{
+            NSMutableDictionary* user1 = [NSMutableDictionary
+                                          dictionaryWithObjectsAndKeys:@"Christos", @"name", nil];
+            
+            BOOL success;
+            
+            success = [sqliteStorage save:user1 error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+            
+            // read all
+            NSArray *object = [sqliteStorage readAll];
+            [[[object[0] objectForKey:@"name"] should] equal:@"Christos"];
+            
+            // update newly created element
+            success = [sqliteStorage save:object[0] error:nil];
+            
+            // read all the store and count
+            NSArray* objects = [sqliteStorage readAll];
+            [[objects should] haveCountOf:(NSUInteger)1];
         });
         
         it(@"should fails if not Plist serialization compatible", ^{

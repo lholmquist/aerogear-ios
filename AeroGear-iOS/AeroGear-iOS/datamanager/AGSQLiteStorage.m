@@ -78,31 +78,17 @@
 
 -(NSArray*) readAll {
     NSString* query = [_statementBuilder buildSelectStatementWithPrimaryKeyValue:nil];
-    NSArray* results = [self readWithQuery:query];
-    NSMutableArray* deserializedResults = [[NSMutableArray alloc] init];
-
-    for (id record in results) {
-        id object = [self deserialiseValue:record];
-        if (object && [object isKindOfClass:[NSDictionary class]]) {
-             [deserializedResults addObject:object];
-        }
-    }
-
-    return deserializedResults;
+    return [self readWithQuery:query allItems:YES];
 }
 
 -(id) read:(id)recordId {
     NSString* query = [_statementBuilder buildSelectStatementWithPrimaryKeyValue:recordId];
-    NSArray* results = [self readWithQuery:query];
+    NSArray* results = [self readWithQuery:query allItems:NO];
     if ([results count] == 0) {
         return nil;
     } else {
-        id object = [self deserialiseValue:results[0]];
-        if (object != nil && [object isKindOfClass:[NSDictionary class]]) {
-            return (NSDictionary *)object;
-        }
+        return results;
     }
-    return nil;
 }
 
 
@@ -127,32 +113,17 @@
                 }
             }
             
-            if ([data count] != 0) {
-                statusCode = [self createTableWith: data[0]];
-            } else {
-                if (error) {
-                    *error = [self constructError:@"save" msg:@"create table failed"];
-                }
-            }
+            statusCode = [self createTableWith: data[0] error:error];
+
             for (id record in data) {
-                statusCode = [self saveOne:record];
-                if (!statusCode && error) {
-                    *error = [self constructError:@"save" msg:@"insert into table failed"];
-                }
+                statusCode = [self saveOne:record error:error];
             }
             
         } else if([data isKindOfClass:[NSDictionary class]]) {
             // single obj:
-            statusCode = [self createTableWith: data];
+            statusCode = [self createTableWith: data error:error];
             if (statusCode) {
-                statusCode = [self saveOne:data];
-                if (!statusCode && error) {
-                    *error = [self constructError:@"save" msg:@"insert into table failed"];
-                }
-            } else {
-                if (error) {
-                    *error = [self constructError:@"save" msg:@"create table failed"];
-                }
+                statusCode = [self saveOne:data error:error];
             }
             
         } else { // not a dictionary, fail back
@@ -173,7 +144,7 @@
 }
 
 // private save for one item:
--(BOOL) saveOne:(NSDictionary*)value {
+-(BOOL) saveOne:(NSDictionary*)value error:(NSError**)error {
     BOOL statusCode = YES;
     NSString *insertStatement = nil;
     insertStatement = [_statementBuilder buildInsertStatementWithValue:value];
@@ -182,6 +153,9 @@
     if (!statusCode) { //insert fails => update
         NSString* updateStatement = [_statementBuilder buildUpdateStatementWithValue:value];
         statusCode = [_database executeUpdate:updateStatement];
+        if (!statusCode && error) {
+            *error = [self constructError:@"save" msg:@"insert into table failed"];
+        }
     } else { // for insert update id
         int lastId = [_database lastInsertRowId];
         [value setValue:[NSString stringWithFormat:@"%d", lastId] forKey:_recordId];
@@ -191,7 +165,7 @@
 }
 
 // create if not exist
--(BOOL) createTableWith:(NSDictionary*)value {
+-(BOOL) createTableWith:(NSDictionary*)value error:(NSError**)error {
     BOOL statusCode = YES;
     NSString *createStatement = [_statementBuilder buildCreateStatementWithValue:value];
     [_database open];
@@ -199,6 +173,9 @@
         [_database executeUpdate:createStatement];
     } else {
         statusCode = NO;
+        if (error) {
+            *error = [self constructError:@"save" msg:@"create table failed"];
+        }
     }
     [_database close];
     return statusCode;
@@ -276,18 +253,37 @@
     
 }
 
--(NSArray*) readWithQuery:(NSString*) query {
+-(NSArray*) readWithQuery:(NSString*) query allItems:(BOOL) all {
     [_database open];
-    
-    NSMutableArray *results = [NSMutableArray array];
-    FMResultSet *myResults = [_database executeQuery:query];
-    while ([myResults next]) {
-        [results addObject:[myResults resultDictionary]];
+    FMResultSet *dbResults = [_database executeQuery:query];
+    NSDictionary* record;
+    id results;
+    if (all == NO) {
+        NSMutableDictionary* val;
+        if([dbResults next]) {
+            record = [dbResults resultDictionary];
+            val = [self deserialiseValue:record];
+            if (val) {
+                val[_recordId] = record[_recordId];
+            }
+        }
+        results = val;
+    } else { //read all
+        NSMutableArray *arrayResults = [NSMutableArray array];
+        while ([dbResults next]) {
+            record = [dbResults resultDictionary];
+            id val = [self deserialiseValue:record];
+            if (val) {
+                val[_recordId] = record[_recordId];
+                [arrayResults addObject:val];
+            }
+        }
+        results = arrayResults;
     }
-    
     [_database close];
     return results;
 }
+
 
 -(id) deserialiseValue:(id) record {
     NSString* valueString = record[@"value"];
