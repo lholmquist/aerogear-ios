@@ -76,13 +76,13 @@ describe(@"AGSQLiteStatementBuilder", ^{
         it(@"with id", ^{
             statement = [builder buildSelectStatementWithPrimaryKeyValue:@"1"];
             [statement shouldNotBeNil];
-            [[statement should] equal:@"select value from myTable where id=1"];
+            [[statement should] equal:@"select oid, value from myTable where id=1"];
         });
         
         it(@"without id", ^{
             statement = [builder buildSelectStatementWithPrimaryKeyValue:nil];
             [statement shouldNotBeNil];
-            [[statement should] equal:@"select value from myTable"];
+            [[statement should] equal:@"select oid, value from myTable"];
         });
         
     });

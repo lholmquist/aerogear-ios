@@ -46,9 +46,9 @@ id<AGEncoder> _encoder;
 -(NSString *) buildSelectStatementWithPrimaryKeyValue:(NSString*)value {
     NSString *statement = nil;
     if (_primaryKey && value) {
-        statement =[ NSString stringWithFormat:@"select value from %@ where %@=%@", _storeName, _primaryKey, value];
+        statement =[ NSString stringWithFormat:@"select oid, value from %@ where %@=%@", _storeName, _primaryKey, value];
     } else {
-        statement = [NSString stringWithFormat:@"select value from %@", _storeName];
+        statement = [NSString stringWithFormat:@"select oid, value from %@", _storeName];
     }
     return statement;
 }
