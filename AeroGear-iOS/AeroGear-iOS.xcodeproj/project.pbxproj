@@ -24,7 +24,10 @@
 		489F47B817DDFF110072DE0F /* AGSQLiteStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 489F47B717DDFF110072DE0F /* AGSQLiteStorageSpec.m */; };
 		489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */; };
 		48B5C59118521C7000FF7108 /* AGEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 48B5C59018521C7000FF7108 /* AGEncoder.m */; };
-		48BB0ED917E1E737002DB531 /* AGSQLiteStatementSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BB0ED817E1E737002DB531 /* AGSQLiteStatementSpec.m */; };
+		48F02574185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F02573185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m */; };
+		48F025771857441B000B3ADA /* AGEncryptedSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F025761857441B000B3ADA /* AGEncryptedSQLiteStorage.m */; };
+		48F0257A18574ECB000B3ADA /* AGBaseSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F0257918574ECB000B3ADA /* AGBaseSQLiteStorage.m */; };
+		48F0257C1857B4C3000B3ADA /* AGSQLiteStatementSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F0257B1857B4C3000B3ADA /* AGSQLiteStatementSpec.m */; };
 		571DBACB1610715800A0A3A6 /* AGMemoryStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBACA1610715800A0A3A6 /* AGMemoryStorage.m */; };
 		571DBACF161071BF00A0A3A6 /* AGBaseStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBACE161071BF00A0A3A6 /* AGBaseStorage.m */; };
 		571DBAD51610C3D700A0A3A6 /* AGMemoryStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBAD41610C3D700A0A3A6 /* AGMemoryStorageSpec.m */; };
@@ -140,7 +143,12 @@
 		489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGSQLiteStorage.m; path = datamanager/AGSQLiteStorage.m; sourceTree = "<group>"; };
 		48B5C58F18521C7000FF7108 /* AGEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGEncoder.h; path = datamanager/AGEncoder.h; sourceTree = "<group>"; };
 		48B5C59018521C7000FF7108 /* AGEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGEncoder.m; path = datamanager/AGEncoder.m; sourceTree = "<group>"; };
-		48BB0ED817E1E737002DB531 /* AGSQLiteStatementSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSQLiteStatementSpec.m; sourceTree = "<group>"; };
+		48F02573185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGEncryptedSQLiteStorageSpec.m; sourceTree = "<group>"; };
+		48F025751857441B000B3ADA /* AGEncryptedSQLiteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGEncryptedSQLiteStorage.h; path = datamanager/AGEncryptedSQLiteStorage.h; sourceTree = "<group>"; };
+		48F025761857441B000B3ADA /* AGEncryptedSQLiteStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGEncryptedSQLiteStorage.m; path = datamanager/AGEncryptedSQLiteStorage.m; sourceTree = "<group>"; };
+		48F0257818574ECB000B3ADA /* AGBaseSQLiteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGBaseSQLiteStorage.h; path = datamanager/AGBaseSQLiteStorage.h; sourceTree = "<group>"; };
+		48F0257918574ECB000B3ADA /* AGBaseSQLiteStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGBaseSQLiteStorage.m; path = datamanager/AGBaseSQLiteStorage.m; sourceTree = "<group>"; };
+		48F0257B1857B4C3000B3ADA /* AGSQLiteStatementSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSQLiteStatementSpec.m; sourceTree = "<group>"; };
 		571DBAC91610715800A0A3A6 /* AGMemoryStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGMemoryStorage.h; path = datamanager/AGMemoryStorage.h; sourceTree = "<group>"; };
 		571DBACA1610715800A0A3A6 /* AGMemoryStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGMemoryStorage.m; path = datamanager/AGMemoryStorage.m; sourceTree = "<group>"; };
 		571DBACD161071BF00A0A3A6 /* AGBaseStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGBaseStorage.h; path = datamanager/AGBaseStorage.h; sourceTree = "<group>"; };
@@ -319,8 +327,9 @@
 				3A3FA7B7F632A59A9D4C53F1 /* AGPageWebLinkingExtractorSpec.m */,
 				3A3FA81DD1CD6812526D0D6A /* AGPaginationSpec.m */,
 				3A3FABBA99D20FF6EDAEB888 /* AGPropertyListStorageSpec.m */,
+				48F0257B1857B4C3000B3ADA /* AGSQLiteStatementSpec.m */,
 				489F47B717DDFF110072DE0F /* AGSQLiteStorageSpec.m */,
-				48BB0ED817E1E737002DB531 /* AGSQLiteStatementSpec.m */,
+				48F02573185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m */,
 				3A3FAD425C7D92793D443079 /* AGRestAuthenticationSpec.m */,
 				6F7C9A1A17CFBB6900058365 /* AGBaseAdapterSpec.m */,
 				6FE3D13F1834E44200C3A09A /* AGKeyManagerSpec.m */,
@@ -448,13 +457,17 @@
 				6FE55674169DE7C800E6188E /* AGPropertyListStorage.m */,
 				6F393F061834100B00FFB44D /* AGEncryptedPropertyListStorage.h */,
 				6F393F071834100B00FFB44D /* AGEncryptedPropertyListStorage.m */,
-				489F47B917DDFFF40072DE0F /* AGSQLiteStorage.h */,
-				489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */,
 				571DBACD161071BF00A0A3A6 /* AGBaseStorage.h */,
 				571DBACE161071BF00A0A3A6 /* AGBaseStorage.m */,
 				57277DF51641317100C50DC5 /* AGStoreConfig.h */,
 				57277DFD164131FA00C50DC5 /* AGStoreConfiguration.h */,
 				57277DFE164131FA00C50DC5 /* AGStoreConfiguration.m */,
+				48F0257818574ECB000B3ADA /* AGBaseSQLiteStorage.h */,
+				48F0257918574ECB000B3ADA /* AGBaseSQLiteStorage.m */,
+				489F47B917DDFFF40072DE0F /* AGSQLiteStorage.h */,
+				489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */,
+				48F025751857441B000B3ADA /* AGEncryptedSQLiteStorage.h */,
+				48F025761857441B000B3ADA /* AGEncryptedSQLiteStorage.m */,
 				489BC19C17E0B7820008DAEF /* AGSQLiteStatementBuilder.h */,
 				489BC19D17E0B7820008DAEF /* AGSQLiteStatementBuilder.m */,
 				48B5C58F18521C7000FF7108 /* AGEncoder.h */,
@@ -666,10 +679,12 @@
 				6F393F091834100B00FFB44D /* AGEncryptedPropertyListStorage.m in Sources */,
 				6FE3D1381834E3F100C3A09A /* AGBaseEncryptionService.m in Sources */,
 				6FE3D13C1834E3F100C3A09A /* AGPassphraseKeyServices.m in Sources */,
+				48F0257A18574ECB000B3ADA /* AGBaseSQLiteStorage.m in Sources */,
 				6FC8F192172FC84F00905C2F /* AGPageBaseExtractor.m in Sources */,
 				6F7B5EED17325A7D00ED4F83 /* AGPageConfiguration.m in Sources */,
 				489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */,
 				489BC19E17E0B7820008DAEF /* AGSQLiteStatementBuilder.m in Sources */,
+				48F025771857441B000B3ADA /* AGEncryptedSQLiteStorage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,12 +696,14 @@
 				573CBDAD15E546B70071E7A6 /* AGRestAdapterSpec.m in Sources */,
 				571DBAD51610C3D700A0A3A6 /* AGMemoryStorageSpec.m in Sources */,
 				A0A37AD316AE905F00979868 /* AGPipeConfigSpec.m in Sources */,
+				48F0257C1857B4C3000B3ADA /* AGSQLiteStatementSpec.m in Sources */,
 				6F7B5EF017326E0A00ED4F83 /* AGPageConfigSpec.m in Sources */,
 				6FFF85381760EE060044B5DE /* AGHTTPMockHelper.m in Sources */,
 				3A3FA4389A8490B5D7049667 /* AGAuthenticatorSpec.m in Sources */,
 				3A3FAD31FC7EE80261D43F28 /* AGDataManagerSpec.m in Sources */,
 				3A3FAC066A74B0FBA243D661 /* AGHttpClientSpec.m in Sources */,
 				6FE3D1431834E44200C3A09A /* AGKeyManagerSpec.m in Sources */,
+				48F02574185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m in Sources */,
 				3A3FA0F7DE3FD6E3C9B77946 /* AGPageBaseExtractorSpec.m in Sources */,
 				3A3FA6DEFAAE4B15941A6D48 /* AGPageBodyExtractorSpec.m in Sources */,
 				3A3FA2A2DD7A17FFCE0B9510 /* AGPageHeaderExtractorSpec.m in Sources */,
@@ -697,7 +714,6 @@
 				6F7C9A1B17CFBB6900058365 /* AGBaseAdapterSpec.m in Sources */,
 				489F47B817DDFF110072DE0F /* AGSQLiteStorageSpec.m in Sources */,
 				6FE3D1471834E4C300C3A09A /* AGBaseStorageSpec.m in Sources */,
-				48BB0ED917E1E737002DB531 /* AGSQLiteStatementSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

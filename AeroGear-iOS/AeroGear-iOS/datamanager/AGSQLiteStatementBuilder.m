@@ -16,7 +16,6 @@
  */
 
 #import "AGSQLiteStatementBuilder.h"
-#import "AGEncoder.h"
 
 @implementation AGSQLiteStatementBuilder
 NSString *_storeName = nil;
@@ -33,12 +32,12 @@ id<AGEncoder> _encoder;
     return __sharedInstance;
 }
 
--(id)initWithStoreName:(NSString *)storeName andPrimaryKeyName:(NSString *)key {
+-(id)initWithStoreName:(NSString *)storeName encoder:(id<AGEncoder>)encoder andPrimaryKeyName:(NSString *)key {
     self = [super init];
     if (self) {
         _storeName = storeName;
         _primaryKey = key;
-        _encoder = [[AGPListEncoder alloc] init];
+        _encoder = encoder;
     }
     return self;
 }

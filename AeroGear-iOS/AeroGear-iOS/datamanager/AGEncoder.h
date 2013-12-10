@@ -16,7 +16,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
+#import "AGEncryptionService.h"
 
 /**
  * Provides a common interface around NSPropertyListSerialization and NSJSONSerialization
@@ -70,4 +70,11 @@
  An encoder backed by a NSJSONSerialization
  */
 @interface AGJsonEncoder : NSObject <AGEncoder>
+@end
+
+/**
+ Encode in PList with binary format and encrypt data.
+ */
+@interface AGEncryptedPListEncoder : NSObject <AGEncoder>
+- (id) initWithEncryptionService:(id<AGEncryptionService>)encryptionService;
 @end

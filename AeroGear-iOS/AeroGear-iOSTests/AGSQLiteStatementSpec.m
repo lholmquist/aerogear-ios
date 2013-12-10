@@ -17,6 +17,7 @@
 
 #import <Kiwi/Kiwi.h>
 #import "AGSQLiteStatementBuilder.h"
+#import "AGEncoder.h"
 
 SPEC_BEGIN(AGSQLiteStatementSpec)
 
@@ -26,9 +27,11 @@ describe(@"AGSQLiteStatementBuilder", ^{
         __block AGSQLiteStatementBuilder *builder = nil;
         __block NSString *createStatement = nil;
         __block NSDictionary *data = nil;
+        __block id<AGEncoder> encoder = nil;
         
         beforeEach(^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" andPrimaryKeyName:@"id"];
+            encoder = [[AGPListEncoder alloc] init];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" encoder:encoder andPrimaryKeyName:@"id"];
             data = @{@"id" : @"1",
                      @"name" : @"David",
                      @"city" : @"New York",
@@ -63,9 +66,11 @@ describe(@"AGSQLiteStatementBuilder", ^{
         __block AGSQLiteStatementBuilder *builder = nil;
         __block NSString *statement = nil;
         __block NSDictionary *data = nil;
-        
+        __block id<AGEncoder> encoder = nil;
+
         beforeEach(^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" andPrimaryKeyName:@"id"];
+            encoder = [[AGPListEncoder alloc] init];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" encoder:encoder andPrimaryKeyName:@"id"];
             data = @{@"id" : @"1",
                      @"name" : @"David",
                      @"city" : @"New York",
@@ -91,9 +96,11 @@ describe(@"AGSQLiteStatementBuilder", ^{
         __block AGSQLiteStatementBuilder *builder = nil;
         __block NSString *statement = nil;
         __block NSDictionary *data = nil;
-        
+        __block id<AGEncoder> encoder = nil;
+
         beforeEach(^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" andPrimaryKeyName:@"id"];
+            encoder = [[AGPListEncoder alloc] init];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" encoder:encoder andPrimaryKeyName:@"id"];
             data = @{@"id" : @"1",
                      @"name" : @"David",
                      @"city" : @"New York",
@@ -120,9 +127,11 @@ describe(@"AGSQLiteStatementBuilder", ^{
         __block AGSQLiteStatementBuilder *builder = nil;
         __block NSString *statement = nil;
         __block NSDictionary *data = nil;
-        
+        __block id<AGEncoder> encoder = nil;
+
         beforeEach(^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" andPrimaryKeyName:@"id"];
+            encoder = [[AGPListEncoder alloc] init];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" encoder:encoder andPrimaryKeyName:@"id"];
             data = @{@"id" : @"1",
                      @"name" : @"David",
                      @"city" : @"New York",
@@ -147,9 +156,11 @@ describe(@"AGSQLiteStatementBuilder", ^{
         
         __block AGSQLiteStatementBuilder *builder = nil;
         __block NSString *statement = nil;
-        
+        __block id<AGEncoder> encoder = nil;
+
         beforeEach(^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:nil andPrimaryKeyName:nil];
+            encoder = [[AGPListEncoder alloc] init];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:nil encoder:encoder andPrimaryKeyName:nil];
         });
         
         it(@"should be nil with empty data", ^{
@@ -158,7 +169,7 @@ describe(@"AGSQLiteStatementBuilder", ^{
         });
         
         it(@"should have valid SQL syntax", ^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" andPrimaryKeyName:nil];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" encoder:encoder andPrimaryKeyName:nil];
             statement = [builder buildDropStatement];
             [statement shouldNotBeNil];
             [[statement should] equal:@"drop table myTable;"];
@@ -170,13 +181,15 @@ describe(@"AGSQLiteStatementBuilder", ^{
         
         __block AGSQLiteStatementBuilder *builder = nil;
         __block NSString *statement = nil;
-        
+        __block id<AGEncoder> encoder = nil;
+
         beforeEach(^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" andPrimaryKeyName:@"id"];
+            encoder = [[AGPListEncoder alloc] init];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:@"myTable" encoder:encoder andPrimaryKeyName:@"id"];
         });
         
         it(@"should be nil with empty data", ^{
-            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:nil andPrimaryKeyName:@"id"];
+            builder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:nil encoder:encoder andPrimaryKeyName:@"id"];
             statement = [builder buildDeleteStatementForId:@"1"];
             [statement shouldBeNil];
         });

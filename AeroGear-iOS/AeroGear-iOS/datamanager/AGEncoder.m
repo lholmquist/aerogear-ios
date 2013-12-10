@@ -16,7 +16,7 @@
  */
 
 #import "AGEncoder.h"
-
+#import "AGEncryptionService.h"
 
 @implementation AGPListEncoder {
     NSPropertyListFormat _format;
@@ -48,6 +48,45 @@
     return [NSPropertyListSerialization propertyList:plist isValidForFormat:NSPropertyListXMLFormat_v1_0];
 }
 
+@end
+
+@implementation AGEncryptedPListEncoder {
+    id<AGEncryptionService> _encryptionService;
+   
+}
+
+- (id) initWithEncryptionService:(id<AGEncryptionService>)encryptionService {
+    if (self = [super init]) {
+        _encryptionService = encryptionService;
+    }
+    return self;
+}
+- (NSData *)encode:(id)plist error:(NSError **)error {
+    // convert to plist
+    NSData *encodedData = [NSPropertyListSerialization dataWithPropertyList:plist
+                                                                     format:NSPropertyListBinaryFormat_v1_0
+                                                                    options:0 error:error];
+    
+    // encrypt it
+    NSData *encryptedData = [_encryptionService encrypt:encodedData];
+    return encryptedData;
+}
+
+- (id)decode:(NSData *)data error:(NSError **)error {
+    NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
+    
+    NSData *decryptedData = [_encryptionService decrypt:data];
+    
+    id plainData =  [NSPropertyListSerialization propertyListWithData:decryptedData
+                                                              options:NSPropertyListMutableContainersAndLeaves
+                                                               format:&format error:error];
+    
+    return plainData;
+}
+
+- (BOOL)isValid:(id)plist {
+    return [NSPropertyListSerialization propertyList:plist isValidForFormat:NSPropertyListBinaryFormat_v1_0];
+}
 @end
 
 

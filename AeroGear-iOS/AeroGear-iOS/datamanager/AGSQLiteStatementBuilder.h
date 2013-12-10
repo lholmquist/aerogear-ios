@@ -16,10 +16,11 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "AGEncoder.h"
 
 @interface AGSQLiteStatementBuilder : NSObject
 
--(id)initWithStoreName:(NSString *)storeName andPrimaryKeyName:(NSString *)key;
+-(id)initWithStoreName:(NSString *)storeName encoder:(id<AGEncoder>)encoder andPrimaryKeyName:(NSString *)key;
 -(NSString *) buildSelectStatementWithPrimaryKeyValue:(NSString*)value;
 -(NSString *) buildInsertStatementWithValue:(NSDictionary *)value;
 -(NSString *) buildUpdateStatementWithValue:(NSDictionary *)value;

@@ -17,7 +17,6 @@
 
 #import <Foundation/Foundation.h>
 #import "AGBaseSQLiteStorage.h"
-#import "AGStoreConfiguration.h"
 
-@interface AGSQLiteStorage : AGBaseSQLiteStorage
+@interface AGEncryptedSQLiteStorage : AGBaseSQLiteStorage 
 @end
