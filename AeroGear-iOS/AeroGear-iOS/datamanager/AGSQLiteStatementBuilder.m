@@ -63,9 +63,10 @@ id<AGEncoder> _encoder;
                 primaryKeyValue = value[col];
             }
         }
-        NSString *serializedString = [[NSString alloc] initWithData:[_encoder encode:value error:nil] encoding:NSUTF8StringEncoding];
+        NSData *temp = [_encoder encode:value error:nil];
+        NSString *serializedString = [NSString stringWithUTF8String:[temp bytes]];//[[NSString alloc] initWithData:[_encoder encode:value error:nil] encoding:NSUTF8StringEncoding];
         
-        statement =[NSString stringWithFormat:@"insert into %@ values (%@,'%@')", _storeName, primaryKeyValue, serializedString];
+        statement =[NSString stringWithFormat:@"insert into %@ values (%@,'%@')", _storeName, primaryKeyValue, [_encoder encode:value error:nil]];
     }
     return statement;
 }
@@ -110,8 +111,12 @@ id<AGEncoder> _encoder;
         if (!primaryKeyFound) {
            [statement appendFormat:@"%@ integer primary key asc, ", _primaryKey];
         }
-        [statement appendFormat:@"value text, "];
-        
+        NSString* type = @"text, ";
+        if ([_encoder isKindOfClass:[AGEncryptedPListEncoder class]]) {
+            type = @"blob, ";
+        }
+        [statement appendFormat:@"value "];
+        [statement appendFormat:type];
         [statement deleteCharactersInRange:NSMakeRange([statement length]- 2, 2)];
         [statement appendFormat:@");"];
     }
