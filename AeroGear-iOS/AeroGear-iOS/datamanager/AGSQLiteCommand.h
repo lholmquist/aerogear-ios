@@ -20,7 +20,7 @@
 @class FMDatabase;
 @protocol AGEncoder;
 
-@interface AGSQLStatement : NSObject {
+@interface AGSQLiteCommand : NSObject {
 @protected
     FMDatabase*_database;
     NSString* _tableName;
@@ -28,6 +28,9 @@
     id<AGEncoder> _encoder;
 }
 - (id)initWithDatabase:(FMDatabase *)database name:(NSString*)name recordId:(NSString*)recordId encoder:(id<AGEncoder>) encoder;
+- (BOOL)createTableWith:(NSDictionary*)value error:(NSError**)error;
 - (BOOL)save:(NSMutableDictionary *)value;
--(NSArray *)read:(NSString*) recordId;
+- (NSArray *)read:(NSString*) recordId;
+- (BOOL)reset:(NSError**)error;
+- (BOOL)remove:(id)record error:(NSError**)error;
 @end

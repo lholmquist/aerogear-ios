@@ -19,8 +19,9 @@
 #import "AGStore.h"
 #import "AGStoreConfiguration.h"
 #import "FMDatabase.h"
-#import "AGSQLiteStatementBuilder.h"
 #import "AGEncoder.h"
+
+@class AGSQLiteCommand;
 
 /**
  An AGStore implementation that uses a SQLite for storage. The storage is a key value store. The content is serialized in JSON output.
@@ -60,9 +61,9 @@
     NSString* _recordId;
     NSString* _databaseName;
     NSString* _path;
-    AGSQLiteStatementBuilder* _statementBuilder;
     id<AGEncoder> _encoder;
     NSString* _type;
+    AGSQLiteCommand * _command;
 }
 
 +(id) storeWithConfig:(id<AGStoreConfig>) storeConfig;

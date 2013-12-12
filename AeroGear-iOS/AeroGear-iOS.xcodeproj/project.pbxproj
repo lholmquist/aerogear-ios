@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		08D43362329A46488E585071 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65D1DA06FAB24A18AB6A5963 /* libPods.a */; };
 		1D0A1358119648AFB949959A /* libPods-AeroGear-iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E065C8DDD305422BBB3237D5 /* libPods-AeroGear-iOSTests.a */; };
-		38EABBC3FB972C63512AECF8 /* AGSQLStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB4E1CDEBB96E0544263F /* AGSQLStatement.m */; };
+		38EABBC3FB972C63512AECF8 /* AGSQLiteCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB4E1CDEBB96E0544263F /* AGSQLiteCommand.m */; };
 		3A3FA0F7DE3FD6E3C9B77946 /* AGPageBaseExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */; };
 		3A3FA1B99E5E1EBF301778DA /* AGPageWebLinkingExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA7B7F632A59A9D4C53F1 /* AGPageWebLinkingExtractorSpec.m */; };
 		3A3FA2A2DD7A17FFCE0B9510 /* AGPageHeaderExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA907DCCCFBA82B64DE9D /* AGPageHeaderExtractorSpec.m */; };
@@ -20,7 +20,6 @@
 		3A3FAC6A723867E94FB16341 /* AGPaginationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA81DD1CD6812526D0D6A /* AGPaginationSpec.m */; };
 		3A3FAD31FC7EE80261D43F28 /* AGDataManagerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FAFA30EC799853C34BF60 /* AGDataManagerSpec.m */; };
 		3A3FAF2C1A2BCEACF5DFC256 /* AGPropertyListStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FABBA99D20FF6EDAEB888 /* AGPropertyListStorageSpec.m */; };
-		489BC19E17E0B7820008DAEF /* AGSQLiteStatementBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 489BC19D17E0B7820008DAEF /* AGSQLiteStatementBuilder.m */; };
 		489BC1A017E0C1F80008DAEF /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 489BC19F17E0C1F80008DAEF /* libsqlite3.0.dylib */; };
 		489F47B817DDFF110072DE0F /* AGSQLiteStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 489F47B717DDFF110072DE0F /* AGSQLiteStorageSpec.m */; };
 		489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */; };
@@ -28,7 +27,6 @@
 		48F02574185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F02573185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m */; };
 		48F025771857441B000B3ADA /* AGEncryptedSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F025761857441B000B3ADA /* AGEncryptedSQLiteStorage.m */; };
 		48F0257A18574ECB000B3ADA /* AGBaseSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F0257918574ECB000B3ADA /* AGBaseSQLiteStorage.m */; };
-		48F0257C1857B4C3000B3ADA /* AGSQLiteStatementSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 48F0257B1857B4C3000B3ADA /* AGSQLiteStatementSpec.m */; };
 		571DBACB1610715800A0A3A6 /* AGMemoryStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBACA1610715800A0A3A6 /* AGMemoryStorage.m */; };
 		571DBACF161071BF00A0A3A6 /* AGBaseStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBACE161071BF00A0A3A6 /* AGBaseStorage.m */; };
 		571DBAD51610C3D700A0A3A6 /* AGMemoryStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBAD41610C3D700A0A3A6 /* AGMemoryStorageSpec.m */; };
@@ -126,8 +124,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		38EAB06D53516B6D81E74C76 /* AGSQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGSQLStatement.h; path = datamanager/AGSQLStatement.h; sourceTree = "<group>"; };
-		38EAB4E1CDEBB96E0544263F /* AGSQLStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGSQLStatement.m; path = datamanager/AGSQLStatement.m; sourceTree = "<group>"; };
+		38EAB06D53516B6D81E74C76 /* AGSQLiteCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGSQLiteCommand.h; path = datamanager/AGSQLiteCommand.h; sourceTree = "<group>"; };
+		38EAB4E1CDEBB96E0544263F /* AGSQLiteCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGSQLiteCommand.m; path = datamanager/AGSQLiteCommand.m; sourceTree = "<group>"; };
 		3A3FA042B2FA52968D0AA580 /* AGAuthenticatorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGAuthenticatorSpec.m; sourceTree = "<group>"; };
 		3A3FA5F4C5D127CFCD4C15D9 /* AGPageBodyExtractorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPageBodyExtractorSpec.m; sourceTree = "<group>"; };
 		3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPageBaseExtractorSpec.m; sourceTree = "<group>"; };
@@ -138,8 +136,6 @@
 		3A3FABBA99D20FF6EDAEB888 /* AGPropertyListStorageSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPropertyListStorageSpec.m; sourceTree = "<group>"; };
 		3A3FAD425C7D92793D443079 /* AGRestAuthenticationSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGRestAuthenticationSpec.m; sourceTree = "<group>"; };
 		3A3FAFA30EC799853C34BF60 /* AGDataManagerSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGDataManagerSpec.m; sourceTree = "<group>"; };
-		489BC19C17E0B7820008DAEF /* AGSQLiteStatementBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGSQLiteStatementBuilder.h; path = datamanager/AGSQLiteStatementBuilder.h; sourceTree = "<group>"; };
-		489BC19D17E0B7820008DAEF /* AGSQLiteStatementBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGSQLiteStatementBuilder.m; path = datamanager/AGSQLiteStatementBuilder.m; sourceTree = "<group>"; };
 		489BC19F17E0C1F80008DAEF /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		489F47B717DDFF110072DE0F /* AGSQLiteStorageSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSQLiteStorageSpec.m; sourceTree = "<group>"; };
 		489F47B917DDFFF40072DE0F /* AGSQLiteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGSQLiteStorage.h; path = datamanager/AGSQLiteStorage.h; sourceTree = "<group>"; };
@@ -151,7 +147,6 @@
 		48F025761857441B000B3ADA /* AGEncryptedSQLiteStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGEncryptedSQLiteStorage.m; path = datamanager/AGEncryptedSQLiteStorage.m; sourceTree = "<group>"; };
 		48F0257818574ECB000B3ADA /* AGBaseSQLiteStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGBaseSQLiteStorage.h; path = datamanager/AGBaseSQLiteStorage.h; sourceTree = "<group>"; };
 		48F0257918574ECB000B3ADA /* AGBaseSQLiteStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGBaseSQLiteStorage.m; path = datamanager/AGBaseSQLiteStorage.m; sourceTree = "<group>"; };
-		48F0257B1857B4C3000B3ADA /* AGSQLiteStatementSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGSQLiteStatementSpec.m; sourceTree = "<group>"; };
 		571DBAC91610715800A0A3A6 /* AGMemoryStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGMemoryStorage.h; path = datamanager/AGMemoryStorage.h; sourceTree = "<group>"; };
 		571DBACA1610715800A0A3A6 /* AGMemoryStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGMemoryStorage.m; path = datamanager/AGMemoryStorage.m; sourceTree = "<group>"; };
 		571DBACD161071BF00A0A3A6 /* AGBaseStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGBaseStorage.h; path = datamanager/AGBaseStorage.h; sourceTree = "<group>"; };
@@ -330,7 +325,6 @@
 				3A3FA7B7F632A59A9D4C53F1 /* AGPageWebLinkingExtractorSpec.m */,
 				3A3FA81DD1CD6812526D0D6A /* AGPaginationSpec.m */,
 				3A3FABBA99D20FF6EDAEB888 /* AGPropertyListStorageSpec.m */,
-				48F0257B1857B4C3000B3ADA /* AGSQLiteStatementSpec.m */,
 				489F47B717DDFF110072DE0F /* AGSQLiteStorageSpec.m */,
 				48F02573185743A7000B3ADA /* AGEncryptedSQLiteStorageSpec.m */,
 				3A3FAD425C7D92793D443079 /* AGRestAuthenticationSpec.m */,
@@ -471,12 +465,10 @@
 				489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */,
 				48F025751857441B000B3ADA /* AGEncryptedSQLiteStorage.h */,
 				48F025761857441B000B3ADA /* AGEncryptedSQLiteStorage.m */,
-				489BC19C17E0B7820008DAEF /* AGSQLiteStatementBuilder.h */,
-				489BC19D17E0B7820008DAEF /* AGSQLiteStatementBuilder.m */,
 				48B5C58F18521C7000FF7108 /* AGEncoder.h */,
 				48B5C59018521C7000FF7108 /* AGEncoder.m */,
-				38EAB4E1CDEBB96E0544263F /* AGSQLStatement.m */,
-				38EAB06D53516B6D81E74C76 /* AGSQLStatement.h */,
+				38EAB4E1CDEBB96E0544263F /* AGSQLiteCommand.m */,
+				38EAB06D53516B6D81E74C76 /* AGSQLiteCommand.h */,
 			);
 			name = DataManager;
 			sourceTree = "<group>";
@@ -688,9 +680,8 @@
 				6FC8F192172FC84F00905C2F /* AGPageBaseExtractor.m in Sources */,
 				6F7B5EED17325A7D00ED4F83 /* AGPageConfiguration.m in Sources */,
 				489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */,
-				489BC19E17E0B7820008DAEF /* AGSQLiteStatementBuilder.m in Sources */,
 				48F025771857441B000B3ADA /* AGEncryptedSQLiteStorage.m in Sources */,
-				38EABBC3FB972C63512AECF8 /* AGSQLStatement.m in Sources */,
+				38EABBC3FB972C63512AECF8 /* AGSQLiteCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -702,7 +693,6 @@
 				573CBDAD15E546B70071E7A6 /* AGRestAdapterSpec.m in Sources */,
 				571DBAD51610C3D700A0A3A6 /* AGMemoryStorageSpec.m in Sources */,
 				A0A37AD316AE905F00979868 /* AGPipeConfigSpec.m in Sources */,
-				48F0257C1857B4C3000B3ADA /* AGSQLiteStatementSpec.m in Sources */,
 				6F7B5EF017326E0A00ED4F83 /* AGPageConfigSpec.m in Sources */,
 				6FFF85381760EE060044B5DE /* AGHTTPMockHelper.m in Sources */,
 				3A3FA4389A8490B5D7049667 /* AGAuthenticatorSpec.m in Sources */,

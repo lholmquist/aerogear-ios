@@ -16,8 +16,6 @@
  */
 
 #import "AGSQLiteStorage.h"
-#import "AGSQLiteStatementBuilder.h"
-#import "AGEncoder.h"
 
 @implementation AGSQLiteStorage
 
