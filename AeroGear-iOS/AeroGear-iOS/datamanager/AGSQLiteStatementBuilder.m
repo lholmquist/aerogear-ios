@@ -63,10 +63,9 @@ id<AGEncoder> _encoder;
                 primaryKeyValue = value[col];
             }
         }
-        NSData *temp = [_encoder encode:value error:nil];
-        NSString *serializedString = [NSString stringWithUTF8String:[temp bytes]];//[[NSString alloc] initWithData:[_encoder encode:value error:nil] encoding:NSUTF8StringEncoding];
-        
-        statement =[NSString stringWithFormat:@"insert into %@ values (%@,'%@')", _storeName, primaryKeyValue, [_encoder encode:value error:nil]];
+        //NSString *serializedString = [NSString stringWithFormat:@"%@", [_encoder encode:value error:nil]];
+        NSData *data = [_encoder encode:value error:nil];
+        statement =[NSString stringWithFormat:@"insert into %@ values (%@,'%@')", _storeName, primaryKeyValue, data];
     }
     return statement;
 }
@@ -86,7 +85,7 @@ id<AGEncoder> _encoder;
             return nil;
         }
         
-        NSString *serializedString = [[NSString alloc] initWithData:[_encoder encode:value error:nil] encoding:NSUTF8StringEncoding];        
+        NSString *serializedString = [NSString stringWithFormat:@"%@", [_encoder encode:value error:nil]];
         
         statement = [NSString stringWithFormat:@"update %@ set value =  '%@' where id = %@", _storeName, serializedString, primaryKeyValue];
     }

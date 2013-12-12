@@ -16,6 +16,7 @@
  */
 
 #import "AGEncryptedSQLiteStorage.h"
+#import "AGSQLStatement.h"
 
 @implementation AGEncryptedSQLiteStorage
 
@@ -58,13 +59,13 @@
 // =====================================================
 
 -(NSArray*) readAll {
-    NSString* query = [_statementBuilder buildSelectStatementWithPrimaryKeyValue:nil];
-    return [self readWithQuery:query allItems:YES];
+    AGSQLStatement * command = [[AGSQLStatement alloc] initWithDatabase:_database name:_databaseName recordId:_recordId encoder:_encoder];
+    return [command read:nil];
 }
 
 -(id) read:(id)recordId {
-    NSString* query = [_statementBuilder buildSelectStatementWithPrimaryKeyValue:recordId];
-    NSArray* results = [self readWithQuery:query allItems:NO];
+    AGSQLStatement * command = [[AGSQLStatement alloc] initWithDatabase:_database name:_databaseName recordId:_recordId encoder:_encoder];
+    NSArray* results = [command read:recordId];
     if ([results count] == 0) {
         return nil;
     } else {
@@ -127,21 +128,8 @@
 // private save for one item:
 -(BOOL) saveOne:(NSDictionary*)value error:(NSError**)error {
     BOOL statusCode = YES;
-    NSString *insertStatement = nil;
-    insertStatement = [_statementBuilder buildInsertStatementWithValue:value];
-    [_database open];
-    statusCode = [_database executeUpdate:insertStatement];
-    if (!statusCode) { //insert fails => update
-        NSString* updateStatement = [_statementBuilder buildUpdateStatementWithValue:value];
-        statusCode = [_database executeUpdate:updateStatement];
-        if (!statusCode && error) {
-            *error = [self constructError:@"save" msg:@"insert into table failed"];
-        }
-    } else { // for insert update id
-        int lastId = [_database lastInsertRowId];
-        [value setValue:[NSString stringWithFormat:@"%d", lastId] forKey:_recordId];
-    }
-    [_database close];
+    AGSQLStatement * saveCommand = [[AGSQLStatement alloc] initWithDatabase:_database name:_databaseName recordId:_recordId encoder:_encoder];
+    [saveCommand save:value];
     return statusCode;
 }
 
@@ -232,44 +220,6 @@
     }
     return documentsDirectory;
     
-}
-
--(NSArray*) readWithQuery:(NSString*) query allItems:(BOOL) all {
-    [_database open];
-    FMResultSet *dbResults = [_database executeQuery:query];
-    NSDictionary* record;
-    id results;
-    if (all == NO) {
-        NSMutableDictionary* val;
-        if([dbResults next]) {
-            record = [dbResults resultDictionary];
-            val = [self deserialiseValue:record];
-            if (val) {
-                val[_recordId] = record[_recordId];
-            }
-        }
-        results = val;
-    } else { //read all
-        NSMutableArray *arrayResults = [NSMutableArray array];
-        while ([dbResults next]) {
-            record = [dbResults resultDictionary];
-            id val = [self deserialiseValue:record];
-            if (val) {
-                val[_recordId] = record[_recordId];
-                [arrayResults addObject:val];
-            }
-        }
-        results = arrayResults;
-    }
-    [_database close];
-    return results;
-}
-
-
--(id) deserialiseValue:(id) record {
-    NSString* valueString = record[@"value"];
-    NSData *valueData = [valueString dataUsingEncoding:NSUTF8StringEncoding];
-    return [_encoder decode:valueData error:nil];
 }
 
 @end

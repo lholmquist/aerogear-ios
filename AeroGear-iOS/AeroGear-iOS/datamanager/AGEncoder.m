@@ -66,7 +66,7 @@
     NSData *encodedData = [NSPropertyListSerialization dataWithPropertyList:plist
                                                                      format:NSPropertyListBinaryFormat_v1_0
                                                                     options:0 error:error];
-    
+
     // encrypt it
     NSData *encryptedData = [_encryptionService encrypt:encodedData];
     return encryptedData;
@@ -78,7 +78,7 @@
     NSData *decryptedData = [_encryptionService decrypt:data];
     
     id plainData =  [NSPropertyListSerialization propertyListWithData:decryptedData
-                                                              options:NSPropertyListMutableContainersAndLeaves
+                                                              options:0
                                                                format:&format error:error];
     
     return plainData;

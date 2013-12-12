@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		08D43362329A46488E585071 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65D1DA06FAB24A18AB6A5963 /* libPods.a */; };
 		1D0A1358119648AFB949959A /* libPods-AeroGear-iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E065C8DDD305422BBB3237D5 /* libPods-AeroGear-iOSTests.a */; };
+		38EABBC3FB972C63512AECF8 /* AGSQLStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB4E1CDEBB96E0544263F /* AGSQLStatement.m */; };
 		3A3FA0F7DE3FD6E3C9B77946 /* AGPageBaseExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */; };
 		3A3FA1B99E5E1EBF301778DA /* AGPageWebLinkingExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA7B7F632A59A9D4C53F1 /* AGPageWebLinkingExtractorSpec.m */; };
 		3A3FA2A2DD7A17FFCE0B9510 /* AGPageHeaderExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA907DCCCFBA82B64DE9D /* AGPageHeaderExtractorSpec.m */; };
@@ -125,6 +126,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		38EAB06D53516B6D81E74C76 /* AGSQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGSQLStatement.h; path = datamanager/AGSQLStatement.h; sourceTree = "<group>"; };
+		38EAB4E1CDEBB96E0544263F /* AGSQLStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGSQLStatement.m; path = datamanager/AGSQLStatement.m; sourceTree = "<group>"; };
 		3A3FA042B2FA52968D0AA580 /* AGAuthenticatorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGAuthenticatorSpec.m; sourceTree = "<group>"; };
 		3A3FA5F4C5D127CFCD4C15D9 /* AGPageBodyExtractorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPageBodyExtractorSpec.m; sourceTree = "<group>"; };
 		3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPageBaseExtractorSpec.m; sourceTree = "<group>"; };
@@ -472,6 +475,8 @@
 				489BC19D17E0B7820008DAEF /* AGSQLiteStatementBuilder.m */,
 				48B5C58F18521C7000FF7108 /* AGEncoder.h */,
 				48B5C59018521C7000FF7108 /* AGEncoder.m */,
+				38EAB4E1CDEBB96E0544263F /* AGSQLStatement.m */,
+				38EAB06D53516B6D81E74C76 /* AGSQLStatement.h */,
 			);
 			name = DataManager;
 			sourceTree = "<group>";
@@ -685,6 +690,7 @@
 				489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */,
 				489BC19E17E0B7820008DAEF /* AGSQLiteStatementBuilder.m in Sources */,
 				48F025771857441B000B3ADA /* AGEncryptedSQLiteStorage.m in Sources */,
+				38EABBC3FB972C63512AECF8 /* AGSQLStatement.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -833,6 +839,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/** \"${PROJECT_DIR}/Pods\"/** \"${PROJECT_DIR}/Pods\"/**";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -855,6 +862,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/** \"${PROJECT_DIR}/Pods\"/** \"${PROJECT_DIR}/Pods\"/**";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;

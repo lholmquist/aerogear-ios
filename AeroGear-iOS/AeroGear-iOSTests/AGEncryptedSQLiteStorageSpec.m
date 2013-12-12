@@ -81,6 +81,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
             config = [[AGStoreConfiguration alloc] init];
             [config setName:@"Users"];
+            [config setRecordId:@"id"];
             [config setEncryptionService:encryptService];
 
             sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
@@ -89,9 +90,9 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             [sqliteStorage reset:nil];
         });
 
-//        it(@"should not be nil", ^{
-//            [sqliteStorage shouldNotBeNil];
-//        });
+        it(@"should not be nil", ^{
+            [sqliteStorage shouldNotBeNil];
+        });
 
         it(@"should save a single object ", ^{
             NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Corinne", @"name", nil];
@@ -171,6 +172,33 @@ describe(@"AGEncryptedSQLiteStorage", ^{
 
         });
 
+
+        it(@"should save an object without id and read it", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias", @"name", nil];
+
+            // store it
+            BOOL success = [sqliteStorage save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+
+
+            NSMutableDictionary* object = [sqliteStorage read:@"1"];
+            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+
+        });
+
+        it(@"should save an object with id and read it", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias", @"name", @"11", @"id", nil];
+
+            // store it
+            BOOL success = [sqliteStorage save:user error:nil];
+            [[theValue(success) should] equal:theValue(YES)];
+
+
+            NSMutableDictionary* object = [sqliteStorage read:@"11"];
+            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+
+        });
+
         it(@"should read an object _after_ storing it", ^{
             NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias", @"name", nil];
 
@@ -187,7 +215,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
 
             [sqliteStorage save:object error:nil];
             [[theValue(success) should] equal:theValue(YES)];
-            // read it
+            //read it
             NSArray* objects = [sqliteStorage readAll];
             [[objects should] haveCountOf:1];
         });
@@ -214,30 +242,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             NSMutableDictionary* object = [sqliteStorage read:@"1"];
             [[[object objectForKey:@"name"] should] equal:@"Matthias"];
 
-            [sqliteStorage save:object error:nil];
-            [[theValue(success) should] equal:theValue(YES)];
-            // read it
-            NSArray* objects = [sqliteStorage readAll];
-            [[objects should] haveCountOf:1];
         });
-
-        it(@"should read an object _after_ storing it (using readAll)", ^{
-            NSMutableDictionary* user1 = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Bruno", @"name", nil];
-
-            BOOL success = [sqliteStorage save:user1 error:nil];
-            [[theValue(success) should] equal:theValue(YES)];
-
-            // reload store
-            sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
-
-            // read it
-            NSArray* objects = [sqliteStorage readAll];
-
-            [[objects should] haveCountOf:1];
-
-            [[[[objects objectAtIndex:(NSUInteger)0] objectForKey:@"name"] should] equal:@"Bruno"];
-        });
-
 
         it(@"should read nothing out of an empty store", ^{
             // read it
@@ -373,48 +378,6 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             objects = [sqliteStorage readAll];
             [[objects should] haveCountOf:(NSUInteger)3];
 
-        });
-        it(@"should be able to do bunch of read, save, reset operations", ^{
-            NSMutableDictionary* user1 = [NSMutableDictionary
-                                          dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"33",@"age", nil];
-            NSMutableDictionary* user2 = [NSMutableDictionary
-                                          dictionaryWithObjectsAndKeys:@"abstractj",@"name",@"22",@"age", nil];
-            NSMutableDictionary* user3 = [NSMutableDictionary
-                                          dictionaryWithObjectsAndKeys:@"qmx",@"name",@"25",@"age", nil];
-
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
-
-            NSArray* objects;
-
-            BOOL success;
-
-            // store it
-            success = [sqliteStorage save:users error:nil];
-            [[theValue(success) should] equal:theValue(YES)];
-
-            // reload store
-            sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
-
-            // read it
-            objects = [sqliteStorage readAll];
-            [[objects should] haveCountOf:(NSUInteger)3];
-
-            [sqliteStorage reset:nil];
-
-            // read from the empty store...
-            objects = [sqliteStorage readAll];
-            [[objects should] haveCountOf:(NSUInteger)0];
-
-            // store it again...
-            success = [sqliteStorage save:users error:nil];
-            [[theValue(success) should] equal:theValue(YES)];
-
-            // reload store
-            sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
-
-            // read it again ...
-            objects = [sqliteStorage readAll];
-            [[objects should] haveCountOf:(NSUInteger)3];
         });
 
         it(@"should retrieve only one element when we save an object without id, read all and update it", ^{
