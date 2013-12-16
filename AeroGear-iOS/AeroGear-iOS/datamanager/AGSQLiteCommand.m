@@ -33,7 +33,8 @@
 }
 
 - (BOOL)save:(NSMutableDictionary *)value {
-    assert(value!=nil);
+    if (!value) {
+    }
     BOOL returnStatus = YES;
 
     if(value[_recordId] == nil || [[self read:value[_recordId]] count] == 0) {
