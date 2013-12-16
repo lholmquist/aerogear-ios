@@ -113,7 +113,7 @@
         [_database executeUpdate:dropStatement];
     } else {
         statusCode = NO;
-        if (!statusCode && error) {
+        if (error) {
             *error = [self constructError:@"reset" msg:@"drop table failed"];
         }
     }
