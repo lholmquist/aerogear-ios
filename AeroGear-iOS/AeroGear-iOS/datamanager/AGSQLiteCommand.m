@@ -34,13 +34,18 @@
 
 - (BOOL)save:(NSMutableDictionary *)value {
     if (!value) {
+        return NO;
     }
     BOOL returnStatus = YES;
 
     if(value[_recordId] == nil || [[self read:value[_recordId]] count] == 0) {
         [_database open];
         NSData* data = [_encoder encode:value error:nil];
-        returnStatus = [_database executeUpdate:@"insert into Users (oid, value) values (?, ?);", value[_recordId],data];
+        NSMutableString* builderString = [[NSMutableString alloc] init];
+        [builderString appendString:@"insert into "];
+        [builderString appendString:_tableName];
+        [builderString appendString:@" (oid, value) values (?, ?);"];
+        returnStatus = [_database executeUpdate:builderString, value[_recordId],data];
         int lastId = [_database lastInsertRowId];
         [value setValue:[NSString stringWithFormat:@"%d", lastId] forKey:_recordId];
         [_database close];
