@@ -77,12 +77,7 @@
 }
 
 -(id) read:(id)recordId {
-    NSArray* results = [_command read:recordId];
-    if ([results count] == 0) {
-        return nil;
-    } else {
-        return results;
-    }
+    return [_command read:recordId];
 }
 
 
