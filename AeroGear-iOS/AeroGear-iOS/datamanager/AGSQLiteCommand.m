@@ -57,7 +57,7 @@
     return returnStatus;
 }
 
--(NSArray *)read:(NSString*) recordId {
+-(id)read:(NSString*) recordId {
     [_database open];
     FMResultSet *dbResults;
     id result;
