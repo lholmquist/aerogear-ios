@@ -133,14 +133,14 @@
             [_database executeUpdate:deleteStatement];
         } else {
             statusCode = NO;
-            if (!statusCode && error) {
+            if (error) {
                 *error = [self constructError:@"remove" msg:@"drop table failed"];
             }
         }
         [_database close];
     } else {
         statusCode = NO;
-        if (!statusCode && error) {
+        if (error) {
             *error = [self constructError:@"remove" msg:@"remove a nil id not possible"];
         }
     }
