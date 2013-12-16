@@ -74,6 +74,32 @@ describe(@"AGSQLiteStorage", ^{
             [sqliteStorage shouldNotBeNil];
         });
 
+        it(@"should fail if table name is numeric", ^{
+            config = [[AGStoreConfiguration alloc] init];
+            [config setName:@"123"];
+
+            sqliteStorage = [AGSQLiteStorage storeWithConfig:config];
+
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"failing", @"name", nil];
+            NSError *error = [[NSError alloc] init];
+            BOOL success = [sqliteStorage save:user error:&error];
+            [[theValue(success) should] equal:theValue(NO)];
+            NSString* errorString =  [[[error userInfo] valueForKey:@"NSLocalizedDescription"] substringFromIndex:12];
+
+            [[errorString should] equal:@"syntax error"];
+        });
+
+        it(@"should fail with errounous save statement with string instead of numeric", ^{
+            NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Corinne", @"name", @"hello", @"id", nil];
+
+            NSError *error = [[NSError alloc] init];
+            BOOL success = [sqliteStorage save:user error:&error];
+            [[theValue(success) should] equal:theValue(NO)];
+            NSString* errorString =  [[[error userInfo] valueForKey:@"NSLocalizedDescription"] substringFromIndex:12];
+
+            [[[[error userInfo] valueForKey:@"NSLocalizedDescription"] should] equal:@"datatype mismatch"];
+        });
+
         it(@"should save a single object ", ^{
             NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Corinne", @"name", nil];
 

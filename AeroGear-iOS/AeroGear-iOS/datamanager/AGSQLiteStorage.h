@@ -68,6 +68,4 @@
 
 +(id) storeWithConfig:(id<AGStoreConfig>) storeConfig;
 -(id) initWithConfig:(id<AGStoreConfig>) storeConfig;
--(NSError *) constructError:(NSString*) domain
-                        msg:(NSString*) msg;
 @end

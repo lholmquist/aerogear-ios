@@ -35,10 +35,10 @@
     self = [super init];
     if (self) {
         _type = @"SQLITE";
-        
+
         AGStoreConfiguration* config = (AGStoreConfiguration*) storeConfig;
         _recordId = config.recordId;
-        
+
         // extract file path
         _path = [self getFilePath];
         _databaseName = config.name;
@@ -54,19 +54,6 @@
     
     return self;
 }
-
--(NSError *) constructError:(NSString*) domain
-                        msg:(NSString*) msg {
-    
-    NSError* error = [NSError errorWithDomain:[NSString stringWithFormat:@"org.aerogear.stores.%@", domain]
-                                         code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:msg,
-                                               NSLocalizedDescriptionKey, nil]];
-    
-    return error;
-}
-
-
 
 // =====================================================
 // ======== public API (AGStore)                ========
@@ -96,9 +83,11 @@
             for (id record in data) {
                 if (![record isKindOfClass:[NSDictionary class]]) {
                     if (error) {
-                        *error = [self constructError:@"save" msg:@"array contains non-dictionary objects!"];
-                        return NO;
+                        *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                                     code:0
+                                                 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"array contains non-dictionary objects!", NSLocalizedDescriptionKey, nil]];
                     }
+                    return NO;
                 }
             }
 
@@ -117,14 +106,18 @@
 
         } else { // not a dictionary, fail back
             if (error) {
-                *error = [self constructError:@"save" msg:@"dictionary objects are supported only"];
+                *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                             code:0
+                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"dictionary objects are supported only", NSLocalizedDescriptionKey, nil]];
             }
             return NO;
 
         }
     } else {
         if (error) {
-            *error = [self constructError:@"save" msg:@"supported values should be either NSString, NSNumber, NSArray, NSDictionary, or NSNull"];
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"supported values should be either NSString, NSNumber, NSArray, NSDictionary, or NSNull", NSLocalizedDescriptionKey, nil]];
         }
         return NO;
     }
@@ -134,7 +127,7 @@
 
 // private save for one item:
 -(BOOL) saveOne:(NSDictionary*)value error:(NSError**)error {
-    return [_command save:value];
+    return [_command save:value error:error];
 }
 
 -(BOOL) reset:(NSError**)error {

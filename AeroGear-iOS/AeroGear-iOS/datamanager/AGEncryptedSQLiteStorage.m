@@ -24,10 +24,6 @@
 // ======== 'factory' and 'init' section ========
 // ==============================================
 
-+(id) storeWithConfig:(id<AGStoreConfig>) storeConfig {
-    return [[self alloc] initWithConfig:storeConfig];
-}
-
 -(id) initWithConfig:(id<AGStoreConfig>) storeConfig {
     self = [super init];
     if (self) {

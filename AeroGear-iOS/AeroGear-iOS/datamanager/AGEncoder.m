@@ -52,41 +52,35 @@
 
 @implementation AGEncryptedPListEncoder {
     id<AGEncryptionService> _encryptionService;
-   
+
+    AGPListEncoder *_encoder;
 }
 
 - (id) initWithEncryptionService:(id<AGEncryptionService>)encryptionService {
     if (self = [super init]) {
         _encryptionService = encryptionService;
+        _encoder = [[AGPListEncoder alloc] initWithFormat:NSPropertyListBinaryFormat_v1_0];
     }
+
     return self;
 }
 - (NSData *)encode:(id)plist error:(NSError **)error {
     // convert to plist
-    NSData *encodedData = [NSPropertyListSerialization dataWithPropertyList:plist
-                                                                     format:NSPropertyListBinaryFormat_v1_0
-                                                                    options:0 error:error];
+    NSData *encodedData = [_encoder encode:plist error:error];
 
-    // encrypt it
-    NSData *encryptedData = [_encryptionService encrypt:encodedData];
-    return encryptedData;
+    return [_encryptionService encrypt:encodedData];
 }
 
 - (id)decode:(NSData *)data error:(NSError **)error {
-    NSPropertyListFormat format = NSPropertyListBinaryFormat_v1_0;
-    
     NSData *decryptedData = [_encryptionService decrypt:data];
-    
-    id plainData =  [NSPropertyListSerialization propertyListWithData:decryptedData
-                                                              options:0
-                                                               format:&format error:error];
-    
-    return plainData;
+
+    return [_encoder decode:decryptedData error:error];
 }
 
 - (BOOL)isValid:(id)plist {
-    return [NSPropertyListSerialization propertyList:plist isValidForFormat:NSPropertyListBinaryFormat_v1_0];
+    return [_encoder isValid:plist];
 }
+
 @end
 
 

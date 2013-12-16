@@ -18,6 +18,7 @@
 #import "AGSQLiteCommand.h"
 #import "FMDatabase.h"
 #import "AGEncoder.h"
+#import "AGStore.h"
 
 
 @implementation AGSQLiteCommand
@@ -32,7 +33,7 @@
     return self;
 }
 
-- (BOOL)save:(NSMutableDictionary *)value {
+- (BOOL)save:(NSMutableDictionary *)value error:(NSError **)error {
     if (!value) {
         return NO;
     }
@@ -45,7 +46,10 @@
         [builderString appendString:@"insert into "];
         [builderString appendString:_tableName];
         [builderString appendString:@" (oid, value) values (?, ?);"];
-        returnStatus = [_database executeUpdate:builderString, value[_recordId],data];
+        returnStatus = [_database executeUpdate:builderString, value[_recordId], data];
+        if (error) {
+            *error = [_database lastError];
+        }
         int lastId = [_database lastInsertRowId];
         [value setValue:[NSString stringWithFormat:@"%d", lastId] forKey:_recordId];
         [_database close];
@@ -57,6 +61,9 @@
         [builderString appendString:_tableName];
         [builderString appendString:@" set value = ? where id = ?"];
         returnStatus = [_database executeUpdate:builderString, value[_recordId], data];
+        if (error) {
+            *error = [_database lastError];
+        }
         [_database close];
      }
 
@@ -100,11 +107,16 @@
     NSString *createStatement = [self buildCreateStatementWithValue:value];
     [_database open];
     if (createStatement != nil) {
-        [_database executeUpdate:createStatement];
+        statusCode = [_database executeUpdate:createStatement];
+        if (error) {
+            *error = [_database lastError];
+        }
     } else {
         statusCode = NO;
         if (error) {
-            *error = [self constructError:@"save" msg:@"create table failed"];
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"create table failed", NSLocalizedDescriptionKey, nil]];
         }
     }
     [_database close];
@@ -120,7 +132,9 @@
     } else {
         statusCode = NO;
         if (error) {
-            *error = [self constructError:@"reset" msg:@"drop table failed"];
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"drop table failed", NSLocalizedDescriptionKey, nil]];
         }
     }
     [_database close];
@@ -140,14 +154,18 @@
         } else {
             statusCode = NO;
             if (error) {
-                *error = [self constructError:@"remove" msg:@"drop table failed"];
+                *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                             code:0
+                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"drop table failed", NSLocalizedDescriptionKey, nil]];
             }
         }
         [_database close];
     } else {
         statusCode = NO;
         if (error) {
-            *error = [self constructError:@"remove" msg:@"remove a nil id not possible"];
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"remove a nil id not possible", NSLocalizedDescriptionKey, nil]];
         }
     }
 
@@ -202,17 +220,6 @@
         statement = [NSMutableString stringWithFormat:@"drop table %@;", _tableName];
     }
     return statement;
-}
-
--(NSError *) constructError:(NSString*) domain
-                        msg:(NSString*) msg {
-
-    NSError* error = [NSError errorWithDomain:[NSString stringWithFormat:@"org.aerogear.stores.%@", domain]
-                                         code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:msg,
-                                                                                         NSLocalizedDescriptionKey, nil]];
-
-    return error;
 }
 
 @end
