@@ -134,7 +134,7 @@
         if (error) {
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"drop table failed", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"reset table failed", NSLocalizedDescriptionKey, nil]];
         }
     }
     [_database close];
@@ -156,7 +156,7 @@
             if (error) {
                 *error = [NSError errorWithDomain:AGStoreErrorDomain
                                              code:0
-                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"drop table failed", NSLocalizedDescriptionKey, nil]];
+                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"delete id failed", NSLocalizedDescriptionKey, nil]];
             }
         }
         [_database close];
