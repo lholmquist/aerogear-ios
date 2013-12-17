@@ -126,7 +126,7 @@
 }
 
 // private save for one item:
--(BOOL) saveOne:(NSDictionary*)value error:(NSError**)error {
+-(BOOL) saveOne:(NSMutableDictionary*)value error:(NSError**)error {
     return [_command save:value error:error];
 }
 
