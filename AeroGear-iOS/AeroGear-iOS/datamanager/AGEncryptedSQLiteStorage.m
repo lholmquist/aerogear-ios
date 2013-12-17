@@ -17,6 +17,7 @@
 
 #import "AGEncryptedSQLiteStorage.h"
 #import "AGSQLiteCommand.h"
+#import "AGBaseStorage.h"
 
 @implementation AGEncryptedSQLiteStorage
 
@@ -31,40 +32,12 @@
 
         AGStoreConfiguration* config = (AGStoreConfiguration*) storeConfig;
         _recordId = config.recordId;
-
-        // extract file path
-        _path = [self getFilePath];
         _databaseName = config.name;
-
-        // if file exists open DB, if file not exist create an empty one
-        _database = [FMDatabase databaseWithPath:[NSString stringWithFormat:@"%@.sqlite3", [_path stringByAppendingPathComponent:_databaseName]]];
-        NSLog(@"Database in %@",[_path stringByAppendingPathComponent:_databaseName]);
-
+        NSURL *file = [AGBaseStorage storeURLWithName:[_databaseName stringByAppendingString:@"%@.sqlite3"]];
+        _database = [FMDatabase databaseWithPath:[file path]];
         _encoder = [[AGEncryptedPListEncoder alloc] initWithEncryptionService:storeConfig.encryptionService];
-
         _command = [[AGSQLiteCommand alloc] initWithDatabase:_database name:_databaseName recordId:_recordId encoder:_encoder];
     }
-
     return self;
 }
-
-// =====================================================
-// =========== private utility methods  ================
-// =====================================================
--(NSString*) getFilePath {
-    // calculate path
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* documentsDirectory = [paths objectAtIndex:0];
-
-    // create the Documents directory if it doesn't exist
-    BOOL isDir;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:documentsDirectory isDirectory:&isDir]) {
-        NSError *error = nil;
-        [[NSFileManager defaultManager] createDirectoryAtPath:documentsDirectory
-                                  withIntermediateDirectories:YES attributes:nil error:&error];
-    }
-    return documentsDirectory;
-
-}
-
 @end
