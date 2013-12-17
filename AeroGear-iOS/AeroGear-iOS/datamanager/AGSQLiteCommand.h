@@ -17,13 +17,20 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AGSQLiteStatementBuilder : NSObject
+@class FMDatabase;
+@protocol AGEncoder;
 
--(id)initWithStoreName:(NSString *)storeName andPrimaryKeyName:(NSString *)key;
--(NSString *) buildSelectStatementWithPrimaryKeyValue:(NSString*)value;
--(NSString *) buildInsertStatementWithValue:(NSDictionary *)value;
--(NSString *) buildUpdateStatementWithValue:(NSDictionary *)value;
--(NSString *) buildCreateStatementWithValue:(NSDictionary *)value;
--(NSString *) buildDropStatement;
--(NSString *) buildDeleteStatementForId:(id)record;
+@interface AGSQLiteCommand : NSObject {
+@protected
+    FMDatabase*_database;
+    NSString* _tableName;
+    NSString* _recordId;
+    id<AGEncoder> _encoder;
+}
+- (id)initWithDatabase:(FMDatabase *)database name:(NSString*)name recordId:(NSString*)recordId encoder:(id<AGEncoder>) encoder;
+- (BOOL)createTableWith:(NSDictionary*)value error:(NSError**)error;
+- (BOOL)save:(NSMutableDictionary *)value error:(NSError **)error;
+- (id)read:(NSString*) recordId;
+- (BOOL)reset:(NSError**)error;
+- (BOOL)remove:(id)record error:(NSError**)error;
 @end

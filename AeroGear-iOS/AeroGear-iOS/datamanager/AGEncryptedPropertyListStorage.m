@@ -17,8 +17,6 @@
 
 #import "AGEncryptedPropertyListStorage.h"
 #import "AGEncryptedMemoryStorage.h"
-#import "AGEncryptionService.h"
-#import "AGStoreConfiguration.h"
 #import "AGEncoder.h"
 
 @implementation AGEncryptedPropertyListStorage {

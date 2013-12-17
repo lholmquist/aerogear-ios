@@ -20,8 +20,8 @@
 #import "AGPropertyListStorage.h"
 #import "AGEncryptedMemoryStorage.h"
 #import "AGEncryptedPropertyListStorage.h"
-#import "AGStoreConfiguration.h"
 #import "AGSQLiteStorage.h"
+#import "AGEncryptedSQLiteStorage.h"
 
 @implementation AGDataManager {
     NSMutableDictionary* _stores;
@@ -63,7 +63,9 @@
         store = [AGEncryptedPropertyListStorage storeWithConfig:storeConfig];
     } else if ([storeConfig.type isEqualToString:@"SQLITE"]) {
         store = [AGSQLiteStorage storeWithConfig:storeConfig];
-    } else { // unknown type
+    } else if ([storeConfig.type isEqualToString:@"ENCRYPTED_SQLITE"]) {
+        store = [AGEncryptedSQLiteStorage storeWithConfig:storeConfig];
+    } else{ // unknown type
         return nil;
     }
 

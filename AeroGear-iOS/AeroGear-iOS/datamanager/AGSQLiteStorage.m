@@ -16,17 +16,13 @@
  */
 
 #import "AGSQLiteStorage.h"
-#import "AGSQLiteStatementBuilder.h"
-#import "AGEncoder.h"
+#import "AGSQLiteCommand.h"
+#import "AGBaseStorage.h"
 
-@implementation AGSQLiteStorage {
-    NSString* _databaseName;
-    NSString* _path;
-    AGSQLiteStatementBuilder* _statementBuilder;
-    id<AGEncoder> _encoder;
-}
+@implementation AGSQLiteStorage
 
 @synthesize type = _type;
+
 
 // ==============================================
 // ======== 'factory' and 'init' section ========
@@ -39,37 +35,18 @@
 -(id) initWithConfig:(id<AGStoreConfig>) storeConfig {
     self = [super init];
     if (self) {
-        // base inits:
         _type = @"SQLITE";
-        
+
         AGStoreConfiguration* config = (AGStoreConfiguration*) storeConfig;
         _recordId = config.recordId;
-        
-        // extract file path
-        _path = [self getFilePath];
         _databaseName = config.name;
-
-        // if file exists open DB, if file not exist create an empty one
-        _database = [FMDatabase databaseWithPath:[NSString stringWithFormat:@"%@.sqlite3", [_path stringByAppendingPathComponent:_databaseName]]];
-        NSLog(@"Database in %@",[_path stringByAppendingPathComponent:_databaseName]);
-        
-        _statementBuilder = [[AGSQLiteStatementBuilder alloc] initWithStoreName:_databaseName andPrimaryKeyName:_recordId];
-        
+        NSURL *file = [AGBaseStorage storeURLWithName:[_databaseName stringByAppendingString:@"%@.sqlite3"]];
+        _database = [FMDatabase databaseWithPath:[file path]];
         _encoder = [[AGPListEncoder alloc] init];
+        _command = [[AGSQLiteCommand alloc] initWithDatabase:_database name:_databaseName recordId:_recordId encoder:_encoder];
     }
     
     return self;
-}
-
--(NSError *) constructError:(NSString*) domain
-                        msg:(NSString*) msg {
-    
-    NSError* error = [NSError errorWithDomain:[NSString stringWithFormat:@"org.aerogear.stores.%@", domain]
-                                         code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:msg,
-                                               NSLocalizedDescriptionKey, nil]];
-    
-    return error;
 }
 
 // =====================================================
@@ -77,18 +54,11 @@
 // =====================================================
 
 -(NSArray*) readAll {
-    NSString* query = [_statementBuilder buildSelectStatementWithPrimaryKeyValue:nil];
-    return [self readWithQuery:query allItems:YES];
+    return [_command read:nil];
 }
 
 -(id) read:(id)recordId {
-    NSString* query = [_statementBuilder buildSelectStatementWithPrimaryKeyValue:recordId];
-    NSArray* results = [self readWithQuery:query allItems:NO];
-    if ([results count] == 0) {
-        return nil;
-    } else {
-        return results;
-    }
+    return [_command read:recordId];
 }
 
 
@@ -107,95 +77,55 @@
             for (id record in data) {
                 if (![record isKindOfClass:[NSDictionary class]]) {
                     if (error) {
-                        *error = [self constructError:@"save" msg:@"array contains non-dictionary objects!"];
-                        return NO;
+                        *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                                     code:0
+                                                 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"array contains non-dictionary objects!", NSLocalizedDescriptionKey, nil]];
                     }
+                    return NO;
                 }
             }
-            
-            statusCode = [self createTableWith: data[0] error:error];
+
+            statusCode = [_command createTableWith: data[0] error:error];
 
             for (id record in data) {
                 statusCode = [self saveOne:record error:error];
             }
-            
+
         } else if([data isKindOfClass:[NSDictionary class]]) {
             // single obj:
-            statusCode = [self createTableWith: data error:error];
+            statusCode = [_command createTableWith: data error:error];
             if (statusCode) {
                 statusCode = [self saveOne:data error:error];
             }
-            
+
         } else { // not a dictionary, fail back
             if (error) {
-                *error = [self constructError:@"save" msg:@"dictionary objects are supported only"];
+                *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                             code:0
+                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"dictionary objects are supported only", NSLocalizedDescriptionKey, nil]];
             }
             return NO;
-            
+
         }
     } else {
         if (error) {
-            *error = [self constructError:@"save" msg:@"supported values should be either NSString, NSNumber, NSArray, NSDictionary, or NSNull"];
+            *error = [NSError errorWithDomain:AGStoreErrorDomain
+                                         code:0
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"supported values should be either NSString, NSNumber, NSArray, NSDictionary, or NSNull", NSLocalizedDescriptionKey, nil]];
         }
         return NO;
     }
-    
+
     return statusCode;
 }
 
 // private save for one item:
--(BOOL) saveOne:(NSDictionary*)value error:(NSError**)error {
-    BOOL statusCode = YES;
-    NSString *insertStatement = nil;
-    insertStatement = [_statementBuilder buildInsertStatementWithValue:value];
-    [_database open];
-    statusCode = [_database executeUpdate:insertStatement];
-    if (!statusCode) { //insert fails => update
-        NSString* updateStatement = [_statementBuilder buildUpdateStatementWithValue:value];
-        statusCode = [_database executeUpdate:updateStatement];
-        if (!statusCode && error) {
-            *error = [self constructError:@"save" msg:@"insert into table failed"];
-        }
-    } else { // for insert update id
-        int lastId = [_database lastInsertRowId];
-        [value setValue:[NSString stringWithFormat:@"%d", lastId] forKey:_recordId];
-    }
-    [_database close];
-    return statusCode;
+-(BOOL) saveOne:(NSMutableDictionary*)value error:(NSError**)error {
+    return [_command save:value error:error];
 }
-
-// create if not exist
--(BOOL) createTableWith:(NSDictionary*)value error:(NSError**)error {
-    BOOL statusCode = YES;
-    NSString *createStatement = [_statementBuilder buildCreateStatementWithValue:value];
-    [_database open];
-    if (createStatement != nil) {
-        [_database executeUpdate:createStatement];
-    } else {
-        statusCode = NO;
-        if (error) {
-            *error = [self constructError:@"save" msg:@"create table failed"];
-        }
-    }
-    [_database close];
-    return statusCode;
-}
-
 
 -(BOOL) reset:(NSError**)error {
-    BOOL statusCode = YES;
-    NSString *dropStatement = [_statementBuilder buildDropStatement];
-    [_database open];
-    if (dropStatement != nil) {
-         [_database executeUpdate:dropStatement];
-    } else {
-        statusCode = NO;
-        if (!statusCode && error) {
-            *error = [self constructError:@"reset" msg:@"drop table failed"];
-        }
-    }
-    [_database close];
-    return statusCode;
+    return [_command reset:error];
 }
 
 -(BOOL) isEmpty {
@@ -207,88 +137,7 @@
 }
 
 -(BOOL) remove:(id)record error:(NSError**)error {
-    BOOL statusCode = YES;
-    NSString *idString = nil;
-    BOOL isNull = [record isKindOfClass:[NSNull class]];
-    if (!isNull && record != nil && record[_recordId] != nil) {
-        idString = record[_recordId];
-        NSString *deleteStatement = [_statementBuilder buildDeleteStatementForId:idString];
-        [_database open];
-        if (deleteStatement != nil) {
-            [_database executeUpdate:deleteStatement];
-        } else {
-            statusCode = NO;
-            if (!statusCode && error) {
-                *error = [self constructError:@"remove" msg:@"drop table failed"];
-            }
-        }
-        [_database close];
-    } else {
-        statusCode = NO;
-        if (!statusCode && error) {
-            *error = [self constructError:@"remove" msg:@"remove a nil id not possible"];
-        }
-    }
-    
-    return statusCode;
-}
-
-
-// =====================================================
-// =========== private utility methods  ================
-// =====================================================
--(NSString*) getFilePath {
-    // calculate path
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString* documentsDirectory = [paths objectAtIndex:0];
-    
-    // create the Documents directory if it doesn't exist
-    BOOL isDir;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:documentsDirectory isDirectory:&isDir]) {
-        NSError *error = nil;
-        [[NSFileManager defaultManager] createDirectoryAtPath:documentsDirectory
-                                  withIntermediateDirectories:YES attributes:nil error:&error];
-    }
-    return documentsDirectory;
-    
-}
-
--(NSArray*) readWithQuery:(NSString*) query allItems:(BOOL) all {
-    [_database open];
-    FMResultSet *dbResults = [_database executeQuery:query];
-    NSDictionary* record;
-    id results;
-    if (all == NO) {
-        NSMutableDictionary* val;
-        if([dbResults next]) {
-            record = [dbResults resultDictionary];
-            val = [self deserialiseValue:record];
-            if (val) {
-                val[_recordId] = record[_recordId];
-            }
-        }
-        results = val;
-    } else { //read all
-        NSMutableArray *arrayResults = [NSMutableArray array];
-        while ([dbResults next]) {
-            record = [dbResults resultDictionary];
-            id val = [self deserialiseValue:record];
-            if (val) {
-                val[_recordId] = record[_recordId];
-                [arrayResults addObject:val];
-            }
-        }
-        results = arrayResults;
-    }
-    [_database close];
-    return results;
-}
-
-
--(id) deserialiseValue:(id) record {
-    NSString* valueString = record[@"value"];
-    NSData *valueData = [valueString dataUsingEncoding:NSUTF8StringEncoding];
-    return [_encoder decode:valueData error:nil];
+    return [_command remove:record error:error];
 }
 
 @end

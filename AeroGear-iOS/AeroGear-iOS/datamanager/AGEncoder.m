@@ -16,7 +16,7 @@
  */
 
 #import "AGEncoder.h"
-
+#import "AGEncryptionService.h"
 
 @implementation AGPListEncoder {
     NSPropertyListFormat _format;
@@ -40,12 +40,45 @@
 
 - (id)decode:(NSData *)data error:(NSError **)error {   
     return [NSPropertyListSerialization propertyListWithData:data
-                                                     options:NSPropertyListMutableContainersAndLeaves
+                                                     options:0
                                                       format:&_format error:error];
 }
 
 - (BOOL)isValid:(id)plist {
-    return [NSPropertyListSerialization propertyList:plist isValidForFormat:NSPropertyListXMLFormat_v1_0];
+    return [NSPropertyListSerialization propertyList:plist isValidForFormat:_format];
+}
+
+@end
+
+@implementation AGEncryptedPListEncoder {
+    id<AGEncryptionService> _encryptionService;
+
+    AGPListEncoder *_encoder;
+}
+
+- (id) initWithEncryptionService:(id<AGEncryptionService>)encryptionService {
+    if (self = [super init]) {
+        _encryptionService = encryptionService;
+        _encoder = [[AGPListEncoder alloc] initWithFormat:NSPropertyListBinaryFormat_v1_0];
+    }
+
+    return self;
+}
+- (NSData *)encode:(id)plist error:(NSError **)error {
+    // convert to plist
+    NSData *encodedData = [_encoder encode:plist error:error];
+
+    return [_encryptionService encrypt:encodedData];
+}
+
+- (id)decode:(NSData *)data error:(NSError **)error {
+    NSData *decryptedData = [_encryptionService decrypt:data];
+
+    return [_encoder decode:decryptedData error:error];
+}
+
+- (BOOL)isValid:(id)plist {
+    return [_encoder isValid:plist];
 }
 
 @end

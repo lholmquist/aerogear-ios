@@ -82,7 +82,27 @@ describe(@"AGDataManager", ^{
         });
         
     });
-    
+
+    context(@"when adding a new store of type ENCRYPTED_SQLITE", ^{
+
+        __block AGDataManager *manager = nil;
+
+        beforeEach(^{
+            manager = [AGDataManager manager];
+        });
+
+        it(@"should have a SQLITE type", ^{
+            id<AGStore> store = [manager store:^(id<AGStoreConfig> config) {
+                [config setName:@"tasks"];
+                [config setType:@"ENCRYPTED_SQLITE"];
+            }];
+
+            [(id)store shouldNotBeNil];
+
+            [[store.type should] equal:@"ENCRYPTED_SQLITE"];
+        });
+
+    });
 
     context(@"when adding and removing stores", ^{
 
