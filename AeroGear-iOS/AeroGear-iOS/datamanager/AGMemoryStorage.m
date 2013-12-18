@@ -60,7 +60,7 @@
 }
 
 - (BOOL)save:(id)data error:(NSError **)error {
-    // convinience to add objects inside an array
+    // convenience to add objects inside an array
     if ([data isKindOfClass:[NSArray class]]) {
         // fail fast if the array contains non-dictionary objects
         for (id record in data) {

@@ -152,7 +152,7 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
     return req;
 }
 
-// - construct a multipart request
+// construct a multi-part request
 - (NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method
                                                    path:(NSString *)path
                                              parameters:(NSDictionary *)parameters
@@ -251,7 +251,7 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
     [self enqueueHTTPRequestOperation:operation];
 }
 
-// determine if the paramaters contain file objects
+// determine if the parameters contain file objects
 -(BOOL)paramsContainFileURLs:(NSDictionary *)params {
     BOOL hasFiles = NO;
     

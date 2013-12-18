@@ -19,7 +19,13 @@
 #import "AGPipe.h"
 
 /**
-The library has built-in paging support, enabling the scrolling to either forward or backwards through a result set returned from the server. Paging metadata located in the server response (either in the headers by [webLinking](http://tools.ietf.org/html/rfc5988) or custom headers, or in the body) are used to identify the _next_ or the _previous_ result set. For example, in Twitter case, paging metadata are located in the body of the response, using _"next\_page"_ or _"previous\_page"_ to identify the next or previous result set respectively. The location of this metadata as well as naming, is fully configurable during the creation of the [Pipe](AGPipe), thus enabling greater flexibility in supporting several different paging strategies.
+The library has built-in paging support, enabling the scrolling to either forward or backwards through a result set
+returned from the server. Paging metadata located in the server response (either in the headers by
+[webLinking](http://tools.ietf.org/html/rfc5988) or custom headers, or in the body) are used to identify the _next_ or
+the _previous_ result set. For example, in Twitter case, paging metadata are located in the body of the response,
+using _"next\_page"_ or _"previous\_page"_ to identify the next or previous result set respectively. The location of
+this metadata as well as naming, is fully configurable during the creation of the [Pipe](AGPipe), thus enabling greater
+flexibility in supporting several different paging strategies.
 
 Below is an example that goes against the AeroGear Controller Server:
 
@@ -36,9 +42,18 @@ Below is an example that goes against the AeroGear Controller Server:
         }];
     }];
 
-Paging configuration parameters are encapsulated in the AGPageConfig object. Similar to the way we set Pipe configuration params by means of a block, paging configuration params are set using [AGPipeConfig setPageConfig:] method passing a block with the desired paging paramaters. Notice that in our example, we explicitely declare the name of the paging identifiers supported by the server, as well as the location of these identifiers in the response. If the metadataLocation is not specified, the library will assume the server is using Web Linking pagination strategy and will default to it. 
+Paging configuration parameters are encapsulated in the AGPageConfig object. Similar to the way we set Pipe
+configuration params by means of a block, paging configuration params are set using [AGPipeConfig setPageConfig:] method
+passing a block with the desired paging parameters. Notice that in our example, we explicitly declare the name of the
+paging identifiers supported by the server, as well as the location of these identifiers in the response. If the
+metadataLocation is not specified, the library will assume the server is using Web Linking pagination strategy and will
+default to it.
  
-For cases that a custom pagination strategy is followed in the server application , the library also allows the user to plug in a user-defined one, by the means of the [pageConfig setPageParameterExtractor] configuration setting. If set, the library will follow this strategy, overriding the build-in provided ones. In that case, the metadata location is not required and is ignored if set. The strategy should follow the protocol AGPageParameterExtractor, allowing the library to determine the 'next' and 'previous' parameters.
+For cases that a custom pagination strategy is followed in the server application , the library also allows the user to
+plug in a user-defined one, by the means of the [pageConfig setPageParameterExtractor] configuration setting. If set,
+the library will follow this strategy, overriding the build-in provided ones. In that case, the metadata location is not
+required and is ignored if set. The strategy should follow the protocol AGPageParameterExtractor, allowing the library
+to determine the 'next' and 'previous' parameters.
 
  ## Start Paging
 
@@ -86,9 +101,15 @@ To move backwards in the result set, you simple call ```previous``` on the _page
  - to extract the paging information params from the response and
  - filling those paging information params in the subsequent ```next``` and ```previous``` requests.
  
- Failing to provide correct identifiers, means that no paging params would be appended in the request. Caution: Without valid paging parameters the used service API may simply return the entire data. To ensure the results returned  do 'logical' represent a 'next' and 'previous' page, the user must ensure correct identifiers are set in the Page configuration.
+ Failing to provide correct identifiers, means that no paging params would be appended in the request. Caution: Without
+ valid paging parameters the used service API may simply return the entire data. To ensure the results returned  do
+ 'logical' represent a 'next' and 'previous' page, the user must ensure correct identifiers are set in the Page
+ configuration.
  
- Further, moving beyond last or first page is left on the behaviour of the specific server implementation, that is the library will not treat it differently. Some servers can throw an error (like Twitter or AeroGear Controller does) by respondng with an http error response, or simply return an empty list. The user is responsible to cater for exception cases like this.
+ Further, moving beyond last or first page is left on the behaviour of the specific server implementation, that is the
+ library will not treat it differently. Some servers can throw an error (like Twitter or AeroGear Controller does) by
+ responding with an http error response, or simply return an empty list. The user is responsible to cater for exception
+ cases like this.
 */
 @interface NSMutableArray (AGPaging)
 
@@ -104,7 +125,7 @@ To move backwards in the result set, you simple call ```previous``` on the _page
  * data of request.
  *
  * @param failure A block object to be executed when the request operation finishes unsuccessfully,
- * or that finishes successfully, but encountered an error while parsing the resonse data.
+ * or that finishes successfully, but encountered an error while parsing the response data.
  * This block has no return value and takes one argument: The `NSError` object describing
  * the network or parsing error that occurred.
  */
@@ -119,7 +140,7 @@ To move backwards in the result set, you simple call ```previous``` on the _page
  * data of request.
  *
  * @param failure A block object to be executed when the request operation finishes unsuccessfully,
- * or that finishes successfully, but encountered an error while parsing the resonse data.
+ * or that finishes successfully, but encountered an error while parsing the response data.
  * This block has no return value and takes one argument: The `NSError` object describing
  * the network or parsing error that occurred.
  */

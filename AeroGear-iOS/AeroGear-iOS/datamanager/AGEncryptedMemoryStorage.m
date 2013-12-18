@@ -98,7 +98,7 @@
         return NO;
     }
 
-    // convinience to add objects inside an array
+    // convenience to add objects inside an array
     if ([data isKindOfClass:[NSArray class]]) {
         for (id record in data)
             [self saveOne:record];

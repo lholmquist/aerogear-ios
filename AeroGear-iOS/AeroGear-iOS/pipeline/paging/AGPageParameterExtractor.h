@@ -24,7 +24,7 @@
 @protocol AGPageParameterExtractor<NSObject>
 
 /**
- * Parse a response and extract paging information
+ * Parse a response and extract paging information.
  *
  * @param response The response from the server
  * @param next     The 'next page' identifier

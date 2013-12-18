@@ -24,18 +24,21 @@
 @class AGSQLiteCommand;
 
 /**
- An AGStore implementation that uses a SQLite for storage. The storage is a key value store. The content is serialized in JSON output.
+ An AGStore implementation that uses a SQLite for storage. The storage is a key value store. The content is serialized
+ in JSON output.
  
  *NOTE:*
  You must adhere to the rules governing the serialization of data types for each respective field type.
  
- *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned automatically when an DataStore with the _type_ config option is set to _"SQLITE"_. See AGDataManager and AGStore class documentation for more information.
+ *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned
+ automatically when an DataStore with the _type_ config option is set to _"SQLITE"_. See AGDataManager and AGStore class
+ documentation for more information.
  
  ## Create a DataManager with a SQLite store backend
  
  Below is a small example on how to use SQLite:
  
-    // initalize SQLite store (if the file does not exist it will be created)
+    // initialize SQLite store (if the file does not exist it will be created)
     AGDataManager* manager = [AGDataManager manager];
     id<AGStore> store = [manager store:^(id<AGStoreConfig> config) {
       [config setName:@"secrets"]; // will be used as the filename for the sqlite database.
@@ -49,10 +52,11 @@
     NSError *error;
  
     if (![store save:otp error:&error])
-    NSLog(@"Save: An error occured during save! \n%@", error);
+    NSLog(@"Save: An error occurred during save! \n%@", error);
  
  
- The ```read```, ```reset``` or ```remove``` methods found in AGStore behave the same, as on the default ("in memory") store.
+ The ```read```, ```reset``` or ```remove``` methods found in AGStore behave the same, as on the default
+ ("in memory") store.
  
  */
 @interface AGSQLiteStorage : NSObject <AGStore> {

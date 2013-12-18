@@ -115,7 +115,7 @@
 - (BOOL)updateStore:(NSError **)error {
     NSData *plist = [_encStorage dump];
     
-    // since 'NSData:writeToFile' fails silently, constuct an
+    // since 'NSData:writeToFile' fails silently, construct an
     // error object to inform client
     if (![plist writeToURL:_file atomically:YES]) {
         if (error)

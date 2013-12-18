@@ -22,7 +22,9 @@
 /**
  An internal AGAuthenticator module implementation that uses REST as the auth transport.
 
- *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned automatically when an Authenticator with default configuration is constructed or with the _type_ config option set to _"REST"_. See AGAuthenticator and AGAuthenticationModule class documentation for more information.
+ *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned
+ automatically when an Authenticator with default configuration is constructed or with the _type_ config option set to
+ _"REST"_. See AGAuthenticator and AGAuthenticationModule class documentation for more information.
 
  */
 @interface AGRestAuthentication : NSObject <AGAuthenticationModuleAdapter>

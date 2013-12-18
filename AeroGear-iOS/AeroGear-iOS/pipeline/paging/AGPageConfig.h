@@ -37,14 +37,14 @@
  * The offset of the first element that should be included in the
  * returned collection (default: 0)
  *
- * If a paramater provider has been given, the offset value is ignored.
+ * If a parameter provider has been given, the offset value is ignored.
  */
 @property (copy, nonatomic) NSString* offset;
 
 /**
  * The maximum number of results the server should return (default: 10)
  *
- * If a paramater provider has been given, the limit value is ignored.
+ * If a parameter provider has been given, the limit value is ignored.
  */
 @property (strong, nonatomic) NSNumber* limit;
 

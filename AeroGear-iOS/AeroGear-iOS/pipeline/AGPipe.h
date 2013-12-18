@@ -18,14 +18,18 @@
 #import <Foundation/Foundation.h>
 
 /**
- AGPipe represents a server connection. An object of this class is responsible to communicate with the server in order to perform read/write operations.
+ AGPipe represents a server connection. An object of this class is responsible to communicate with the server in order
+ to perform read/write operations.
  
 
  ## Save data 
 
- To store newly created objects on a _remote_ server resource you use the ```save``` method. Currently the objects are _just_ simple map objects but in the future we are looking to support more advanced(complex) frameworks, like *Core Data*.
+ To store newly created objects on a _remote_ server resource you use the ```save``` method. Currently the objects are
+ _just_ simple map objects but in the future we are looking to support more advanced(complex) frameworks,
+ like *Core Data*.
 
-  In the example below, the ```save``` function stores the given NSDictionary on the server, in this case on a RESTful resource. As arguments it accepts simple blocks that are invoked on _success_ or in case of an _failure_.
+  In the example below, the ```save``` function stores the given NSDictionary on the server, in this case on a RESTful
+  resource. As arguments it accepts simple blocks that are invoked on _success_ or in case of an _failure_.
 
     // create a dictionary and set some key/value data on it:
     NSMutableDictionary* projectEntity = [NSMutableDictionary dictionary];
@@ -45,13 +49,14 @@
         
     } failure:^(NSError *error) {
         // when an error occurs... at least log it to the console..
-        NSLog(@"SAVE: An error occured! \n%@", error);
+        NSLog(@"SAVE: An error occurred! \n%@", error);
     }];
 
 
  ## Update data
 
- The ```save``` method is also responsible for updating an 'object'. However this happens **only** when there is an 'id' property/field available:
+ The ```save``` method is also responsible for updating an 'object'. However this happens **only** when there is an 'id'
+ property/field available:
 
     // change the title of the previous project 'object':
     [projectEntity setValue:@"Hello Update World!" forKey:@"title"];
@@ -62,12 +67,13 @@
         NSLog(@"UPDATE RESPONSE\n%@", [responseObject description]);
     } failure:^(NSError *error) {
         // when an error occurs... at least log it to the console..
-        NSLog(@"UPDATE: An error occured! \n%@", error);
+        NSLog(@"UPDATE: An error occurred! \n%@", error);
     }];
 
  ## Remove data
 
-The AGPipe also contains a ```remove``` method to delete the data on the server. It takes the map object which **must** have an 'id' property/field set, so that it knows which resource to delete:
+The AGPipe also contains a ```remove``` method to delete the data on the server. It takes the map object which **must**
+have an 'id' property/field set, so that it knows which resource to delete:
 
     // Now, just remove the project:
     [projects remove:projectEntity success:^(id responseObject) {
@@ -75,7 +81,7 @@ The AGPipe also contains a ```remove``` method to delete the data on the server.
         NSLog(@"DELETE RESPONSE\n%@", [responseObject description]);
     } failure:^(NSError *error) {
         // when an error occurs... at least log it to the console..
-        NSLog(@"DELETE: An error occured! \n%@", error);
+        NSLog(@"DELETE: An error occurred! \n%@", error);
     }];
 
 In this case, where we have a RESTful pipe, the API issues an HTTP DELETE request.
@@ -90,9 +96,10 @@ The ```read``` method allows to (currently) read _all_ data from the server, of 
     } failure:^(NSError *error) {
         // when an error occurs... at least log it to the console..
         NSLog(@"Read: An error occured! \n%@", error);
-    }];
+    }];                             r
 
-Since we are pointing to a RESTful endpoint, the API issues a HTTP GET request. The JSON output of the above NSLog() call looks like this:
+Since we are pointing to a RESTful endpoint, the API issues a HTTP GET request. The JSON output of the above NSLog()
+call looks like this:
 
     (
             {
@@ -115,7 +122,9 @@ Of course the _collection_ behind the responseObject can be stored to a variable
 
  ## Upload files
  
- The AGPipe also supports uploading of files. If the map object passed on save method, contain values that are instances of NSURL objects that point to local files, a multipart request will be constructed to perform the uplaoding. Here is an example usage:
+ The AGPipe also supports uploading of files. If the map object passed on save method, contain values that are instances
+ of NSURL objects that point to local files, a multi-part request will be constructed to perform the uploading. Here is
+ an example usage:
  
  // the files to be uploaded
  NSURL *file1 = [[NSBundle mainBundle] URLForResource:@"picture1" withExtension:@"jpg"];
@@ -134,16 +143,21 @@ Of course the _collection_ behind the responseObject can be stored to a variable
  NSLog(@"Successfully uploaded!");
  
  } failure:^(NSError *error) {
- NSLog(@"An error has occured during upload! \n%@", error);
+ NSLog(@"An error has occurred during upload! \n%@", error);
  }];
  
- Note the 'key' in the dictionary is used as the 'name' field in the multipart request and is required. Further, you don't need to specify the 'Content-type' or the 'filename' fields as they are automatically determined internally by the last path component of the NSURL object passed in. If the mime-type can't be determined an 'application-octet-stream' would be send instead.
+ Note the 'key' in the dictionary is used as the 'name' field in the multi-part request and is required. Further, you
+ don't need to specify the 'Content-type' or the 'filename' fields as they are automatically determined internally by
+ the last path component of the NSURL object passed in. If the mime-type can't be determined an 'application-octet-stream'
+ would be send instead.
  
  
  ## Time out and Cancel pending operations
 
  ### Timeout
- During construction of the Pipe object, you can optionally specify a timeout interval (default is 60 secs) for an operation to complete. If the time interval is exceeded with no response from the server, then the _failure_ callback is executed with an error code set to _NSURLErrorTimedOut_.
+ During construction of the Pipe object, you can optionally specify a timeout interval (default is 60 secs) for an
+ operation to complete. If the time interval is exceeded with no response from the server, then the _failure_ callback
+ is executed with an error code set to _NSURLErrorTimedOut_.
 
  From the todo example above:
 
@@ -152,17 +166,20 @@ Of course the _collection_ behind the responseObject can be stored to a variable
         [config setTimeout:20];  // set the time interval to 20 secs
     }];
  
- Note: If you are running on iOS versions < 6 and a timeout occurs on a pipe's _save_ operation, the error code is set to _NSURLErrorCancelled_.
+ Note: If you are running on iOS versions < 6 and a timeout occurs on a pipe's _save_ operation, the error code is set
+ to _NSURLErrorCancelled_.
 
  ### Cancel
- At any time after starting your operations, you can call ```cancel``` on the Pipe object to cancel all running Pipe operations. Doing so will invoke the pipe's _failure_ block with an error code set to  _NSURLErrorCancelled_. You can then check this code in order to perform your 'cancellation' logic .
+ At any time after starting your operations, you can call ```cancel``` on the Pipe object to cancel all running Pipe
+ operations. Doing so will invoke the pipe's _failure_ block with an error code set to  _NSURLErrorCancelled_. You can
+ then check this code in order to perform your 'cancellation' logic .
 
     [projects read:^(id responseObject) {
         // LOG the JSON response, returned from the server:
         NSLog(@"READ RESPONSE\n%@", [responseObject description]);
     } failure:^(NSError *error) {
         // when an error occurs... at least log it to the console..
-        NSLog(@"Read: An error occured! \n%@", error);
+        NSLog(@"Read: An error occurred! \n%@", error);
     }];
 
     // cancel the request
@@ -188,7 +205,7 @@ Of course the _collection_ behind the responseObject can be stored to a variable
  * data of request.
  *
  * @param failure A block object to be executed when the request operation finishes unsuccessfully,
- * or that finishes successfully, but encountered an error while parsing the resonse data.
+ * or that finishes successfully, but encountered an error while parsing the response data.
  * This block has no return value and takes one argument: The `NSError` object describing
  * the network or parsing error that occurred.
  */
@@ -205,7 +222,7 @@ Of course the _collection_ behind the responseObject can be stored to a variable
  * data of request.
  *
  * @param failure A block object to be executed when the request operation finishes unsuccessfully,
- * or that finishes successfully, but encountered an error while parsing the resonse data.
+ * or that finishes successfully, but encountered an error while parsing the response data.
  * This block has no return value and takes one argument: The `NSError` object describing
  * the network or parsing error that occurred.
  */
@@ -238,7 +255,7 @@ Of course the _collection_ behind the responseObject can be stored to a variable
  * Saves (or updates) a given object from the underlying server connection.
  *
  * @param object a 'JSON' map, representing the data to save/update. If the map contains values
- * of NSURL objects that point to local files, a multipart request will be constructed to upload the
+ * of NSURL objects that point to local files, a multi-part request will be constructed to upload the
  * files to the server. To track progress of the upload, call [AGPipe setUploadProgressBlock:].
  *
  * @param success A block object to be executed when the request operation finishes successfully.

@@ -25,7 +25,9 @@
 /**
  An internal AGPipe implementation that uses REST as the communication transport.
  
- *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned automatically when a Pipe with default configuration is constructed or with the _type_ config option set to _"REST"_. See AGPipeline and AGPipe class documentation for more information.
+ *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned
+ automatically when a Pipe with default configuration is constructed or with the _type_ config option set to _"REST"_.
+ See AGPipeline and AGPipe class documentation for more information.
  */ 
 @interface AGRESTPipe : AGBaseAdapter <AGPipe> {
     // now subclasses can see the 'ivar':

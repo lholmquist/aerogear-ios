@@ -22,7 +22,7 @@
 @class AGCryptoBox;
 
 /**
-  Base clase for any given AGEncryptionService implementation. See AGPasswordKeyServices
+  Base class for any given AGEncryptionService implementation. See AGPasswordKeyServices
   and AGPassphraseKeyServices class documentation for concrete implementations.
  */
 @interface AGBaseEncryptionService : NSObject <AGEncryptionService> {

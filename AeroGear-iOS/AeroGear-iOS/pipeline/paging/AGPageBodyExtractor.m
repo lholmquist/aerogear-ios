@@ -33,7 +33,7 @@
     
     NSDictionary* info = (NSDictionary*)response;
     
-    // buld the MAP of links....:
+    // build the MAP of links....:
     NSMutableDictionary *mapOfLink = [NSMutableDictionary dictionary];
     
     if ([info valueForKey:nextIdentifier] != nil)

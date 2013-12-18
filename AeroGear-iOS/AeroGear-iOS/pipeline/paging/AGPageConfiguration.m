@@ -47,7 +47,7 @@
     return self;
 }
 
-// custom getter for the prarameter provider...
+// custom getter for the parameter provider...
 // If the user does NOT provide a "parameter provider",
 // the values for limit/offset are used
 -(NSDictionary *)parameterProvider {

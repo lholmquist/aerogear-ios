@@ -34,7 +34,7 @@
 - (BOOL)isAuthenticated;
 
 /**
- * Performs deauthorization, after logout.
+ * Performs de-authorization, after logout.
  */
 - (void)deauthorize;
 

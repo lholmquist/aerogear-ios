@@ -30,7 +30,7 @@
 
 Below is simple example that creates a DataManager initialized to use the default _in-memory_ store.
 
-    // create the datamanager
+    // create the DataManager
     AGDataManager* dm = [AGDataManager manager];
     // add a new (default) store object:
     id<AGStore> myStore = [dm store:^(id<AGStoreConfig> config) {
@@ -50,17 +50,17 @@ Below is an example that stores the received objects, read from the [AGPipe read
 
     [tasksPipe read:^(id responseObject) {
         // the response object represents an NSArray,
-        // containing multile 'Tasks' (as NSDictionary objects)
+        // containing multiple 'Tasks' (as NSDictionary objects)
 
         // Save the response object to the store
         NSError *error;
         
         if (![myStore save:responseObject error:&error])
-            NSLog(@"Save: An error occured during save! \n%@", error);    
+            NSLog(@"Save: An error occurred during save! \n%@", error);
 
     } failure:^(NSError *error) {
         // when an error occurs... at least log it to the console..
-        NSLog(@"Read: An error occured! \n%@", error);
+        NSLog(@"Read: An error occurred! \n%@", error);
     }];
 
 When loading all tasks from the server, the AGStore object is used inside of the _read_ block from the AGPipe object. The returned collection of tasks is stored inside our in-memory store, from where the data can be accessed.
@@ -85,7 +85,7 @@ The ```remove``` function allows you to delete a single entry in the collection,
     NSError *error;
 
     if (![myStore remove:@"0" error:error])
-        NSLog(@"Save: An error occured during remove! \n%@", error);    
+        NSLog(@"Save: An error occurred during remove! \n%@", error);
 
 The remove method accepts the _recordID_ of the object you want to remove. If the object does not exist in the store, NO is returned.
 
@@ -142,7 +142,7 @@ The reset function allows you the erase all data available in the used AGStore o
     NSError *error;
 
     if (![myStore reset:&error])
-        NSLog(@"Reset: An error occured during reset! \n%@", error);    
+        NSLog(@"Reset: An error occurred during reset! \n%@", error);
 
  */
 @interface AGDataManager : NSObject

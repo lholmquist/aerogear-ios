@@ -21,11 +21,14 @@
 #import "AGAuthenticationModule.h"
 
 /**
- AGPipeline represents a 'collection' of server connections (aka [Pipes](AGPipe)). It provides a standard way to communicate with the server no matter the data format or transport expected. It contains some simple management APIs to create and remove [Pipe](AGPipe) objects.
+ AGPipeline represents a 'collection' of server connections (aka [Pipes](AGPipe)). It provides a standard way to
+ communicate with the server no matter the data format or transport expected. It contains some simple management APIs to
+ create and remove [Pipe](AGPipe) objects.
 
  ## Creating a Pipeline and a Pipe object
 
- Below is an example that creates a Pipeline to AeroGear TODO server application and adds a [Pipe](AGPipe) to it, that points to the *projects* REST endpoint.
+ Below is an example that creates a Pipeline to AeroGear TODO server application and adds a [Pipe](AGPipe) to it, that
+ points to the *projects* REST endpoint.
 
     NSString* baseURL = @"http://todo-aerogear.rhcloud.com/todo-server/";
 
@@ -75,7 +78,8 @@
 /**
  * Adds a new AGPipe object, based on the given configuration object.
  *
- * @param config A block object which passes in an implementation of the AGPipeConfig protocol that is used to configure the AGPipe object.
+ * @param config A block object which passes in an implementation of the AGPipeConfig protocol that is used to configure
+ * the AGPipe object.
  *
  * @return the newly created AGPipe object.
  */

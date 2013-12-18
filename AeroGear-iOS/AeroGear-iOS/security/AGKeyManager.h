@@ -26,7 +26,8 @@
  
  ## Example usage
  
- Here is an example usage of retrieving an encryption service (based on PBKDF2) and assigning to a data store to provide on-the fly encryption and decryption of data:
+ Here is an example usage of retrieving an encryption service (based on PBKDF2) and assigning to a data store to provide
+ on-the fly encryption and decryption of data:
  
      // randomly generate salt
      NSData *salt = [AGRandomGenerator randomBytes];  // [1]
@@ -55,13 +56,20 @@
      if (data)
         // decryption succeeded!
  
- In [1] we initialize a random salt that will be used in the encryption. In [2] we initialize an instance of a CryptoConfig configuration object to set our crypto params. Here we use an PassphraseCryptoConfig object, that sets the necessary crypto params for the PBKDF2 Encryption Service, mainly the salt [3] and the passphrase [4].
+ In [1] we initialize a random salt that will be used in the encryption. In [2] we initialize an instance of a
+ CryptoConfig configuration object to set our crypto params. Here we use an PassphraseCryptoConfig object, that sets
+ the necessary crypto params for the PBKDF2 Encryption Service, mainly the salt [3] and the passphrase [4].
  
- Now that we have setup the configuration, it’s time to obtain an instance of an EncryptionService and that’s exactly what we do in [5]. KeyManager parses the configuration and returns an instance of it. Because we passed an PassphraseCryptoConfig object, a PBKDF2 encryption service would be returned.
+ Now that we have setup the configuration, it’s time to obtain an instance of an EncryptionService and that’s exactly
+ what we do in [5]. KeyManager parses the configuration and returns an instance of it. Because we passed an
+ PassphraseCryptoConfig object, a PBKDF2 encryption service would be returned.
  
- In [6] we initialize our data store (an encrypted plist [7]), setting the encryption service we obtained earlier [8]. Reading and saving operations are done like all the other stores, but this time the data are transparently encrypted/decrypted.
+ In [6] we initialize our data store (an encrypted plist [7]), setting the encryption service we obtained earlier [8].
+ Reading and saving operations are done like all the other stores, but this time the data are transparently
+ encrypted/decrypted.
  
- In [9] we attempt to read data from the store. If that fails, then user supplied wrong crypto parameters (either passphrase or salt).
+ In [9] we attempt to read data from the store. If that fails, then user supplied wrong crypto parameters
+ (either passphrase or salt).
 */
 @interface AGKeyManager : NSObject
 
@@ -73,7 +81,8 @@
 + (id)manager;
 
 /**
- * Return an implementation of an AGEncryptionService based on the AGCryptoConfig configuration object passed in. See AGPasswordKeyServices and AGPassphraseKeyServices for the different encyption providers.
+ * Return an implementation of an AGEncryptionService based on the AGCryptoConfig configuration object passed in.
+ * See AGPasswordKeyServices and AGPassphraseKeyServices for the different encyption providers.
  *
  * @param config The CryptoConfig object. See AGKeyStoreCryptoConfig and AGPassphraseCryptoConfig configuration objects.
  *

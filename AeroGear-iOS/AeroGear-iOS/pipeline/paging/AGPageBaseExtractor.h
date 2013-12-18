@@ -21,7 +21,7 @@
 
 /**
  * Abstract base class that concrete page extractor implementations can derive for.
- * Used to provide useful methods, that implementions can use.
+ * It provides useful methods that implementation classes can use.
  */
 @interface AGPageBaseExtractor : NSObject<AGPageParameterExtractor>
 

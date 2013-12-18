@@ -26,7 +26,7 @@
 @interface AGEncryptedMemoryStorage : AGMemoryStorage
 
 /**
- * utility method to save an NSData object on the ecrypted store.
+ * Utility method to save an NSData object on the encrypted store.
  * The object is required to be 'Property List compliant' and 'encrypted' with
  * the key that this EncryptedMemory storage was initialized in.
  *

@@ -41,7 +41,7 @@
 - (id)initWithConfig:(id<AGStoreConfig>) storeConfig {
     self = [super init];
     if (self) {
-        // base inits:
+        // base init:
         
         _type = storeConfig.type;
         
@@ -130,7 +130,7 @@
     if (!plist)
         return NO;
     
-    // since 'NSData:writeToFile' fails silently, constuct an
+    // since 'NSData:writeToFile' fails silently, construct an
     // error object to inform client
     if (![plist writeToURL:_file atomically:YES]) {
         if (error)

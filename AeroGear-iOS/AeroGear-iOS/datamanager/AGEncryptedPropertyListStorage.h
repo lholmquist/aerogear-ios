@@ -22,7 +22,9 @@
 /**
  An internal AGStore implementation that uses an encrypted "plist" storage.
  
- *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned automatically when an DataStore with default configuration is constructed or with the _type_ config option set to _"ENCRYPTED_PLIST"_. See AGDataManager and AGStore class documentation for more information.
+ *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned
+ automatically when an DataStore with default configuration is constructed or with the _type_ config option set to
+ _"ENCRYPTED_PLIST"_. See AGDataManager and AGStore class documentation for more information.
  */
 @interface AGEncryptedPropertyListStorage : AGBaseStorage <AGStore>
 

@@ -21,7 +21,7 @@
 
 /**
   Marker class for the different Crypto configuration objects. See AGKeyStoreCryptoConfig and
-  AGPassPhraseCyptoConfig class documentation for concrete implementations.
+  AGPassphraseCryptoConfig class documentation for concrete implementations.
  */
 @protocol AGCryptoConfig <AGConfig>
 

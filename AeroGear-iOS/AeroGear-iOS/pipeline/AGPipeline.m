@@ -26,7 +26,6 @@
 @end
 
 @implementation AGPipeline {
-    // ivars...
     NSURL* _baseURL;
 }
 @synthesize pipes = _pipes;

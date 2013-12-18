@@ -18,7 +18,9 @@
 #import <Foundation/Foundation.h>
 
 /**
-AGAuthenticationModule represents an authentication module and provides the authentication and enrollment API. The default implementation uses REST as the auth transport. Similar to the [Pipe](AGPipe), technical details of the underlying system are not exposed.
+AGAuthenticationModule represents an authentication module and provides the authentication and enrollment API. The
+default implementation uses REST as the auth transport. Similar to the [Pipe](AGPipe), technical details of the
+underlying system are not exposed.
 
 ## Register a user
 
@@ -41,11 +43,15 @@ The ```enroll``` function of the _AGAuthenticationModule_ protocol is used to re
         NSLog(@"SAVE: An error occured! \n%@", error);
     }];
 
-The ```enroll``` function submits a generic map object which contains all the information about the new user, that the server endpoint requires. The default (REST) auth module issues for the above, a request against _https://todo-aerogear.rhcloud.com/todo-server/auth/enroll_. Besides the NSDictionary, the function accepts two simple blocks that are invoked on success or in case of an failure.
+The ```enroll``` function submits a generic map object which contains all the information about the new user, that the
+server endpoint requires. The default (REST) auth module issues for the above, a request against
+_https://todo-aerogear.rhcloud.com/todo-server/auth/enroll_. Besides the NSDictionary, the function accepts two simple
+blocks that are invoked on success or in case of an failure.
 
 ## Login 
 
-Once you have a _valid_ user you can use that information to issue a login against the server, to start accessing protected endpoints:
+Once you have a _valid_ user you can use that information to issue a login against the server, to start accessing
+protected endpoints:
 
     // issuing a login
     [myMod login:@{@"username": @"john", @"password": @"123"} success:^(id object) {
@@ -56,13 +62,15 @@ Once you have a _valid_ user you can use that information to issue a login again
         NSLog(@"SAVE: An error occured! \n%@", error);
     }];
 
-The ```login``` function submits a generic map object which contains the credentials that the server login service requires and accepts two simple blocks that are invoked on success or in case of a failure to login.
+The ```login``` function submits a generic map object which contains the credentials that the server login service
+requires and accepts two simple blocks that are invoked on success or in case of a failure to login.
  
 The default (REST) auth module issues for the above, a request against _https://todo-aerogear.rhcloud.com/todo-server/auth/login
 
 ## Pass the auth module to a pipe
 
-After running a successful login, you can start using the _AGAuthenticationModule_ object on a _AGPipe_ object to access protected endpoints:
+After running a successful login, you can start using the _AGAuthenticationModule_ object on a _AGPipe_ object to access
+protected endpoints:
 
     ...
     id<AGPipe> tasks = [pipeline pipe:^(id<AGPipeConfig> config) {
@@ -79,7 +87,8 @@ After running a successful login, you can start using the _AGAuthenticationModul
         NSLog(@"Read: An error occured! \n%@", error);
     }];
 
-When creating a [Pipe](AGPipe) you need to use the _authModule_ argument in order to pass in an _AGAuthenticationModule_ object.
+When creating a [Pipe](AGPipe) you need to use the _authModule_ argument in order to pass in an _AGAuthenticationModule_
+object.
 
 ## Logout
 
@@ -93,11 +102,13 @@ The logout from the server can be archived by using the ```logout``` function:
         NSLog(@"SAVE: An error occured! \n%@", error);
     }];
 
-The default (REST) auth module issues for the above a request against _https://todo-aerogear.rhcloud.com/todo-server/auth/logout_. The function accepts two simple blocks that are invoked on success or in case of an failure.
+The default (REST) auth module issues for the above a request against _https://todo-aerogear.rhcloud.com/todo-server/auth/logout_.
+The function accepts two simple blocks that are invoked on success or in case of an failure.
 
 ## Time out and Cancel pending operations
 
-As with the case of Pipe, configured timeout interval (in the config object) and cancel operation in _AGAuthenticationModule_ is supported too.  
+As with the case of Pipe, configured timeout interval (in the config object) and cancel operation in
+_AGAuthenticationModule_ is supported too.
  */
 @protocol AGAuthenticationModule <NSObject>
 
@@ -128,7 +139,7 @@ As with the case of Pipe, configured timeout interval (in the config object) and
 
 
 /**
- * Performs a signup of a new user. The request accepts a NSDictionary which will be translated to JSON 
+ * Performs a sign-up of a new user. The request accepts a NSDictionary which will be translated to JSON
  * and send to the endpoint.
  *
  * @param userData A map (NSDictionary) containing all the information requested by the
@@ -136,7 +147,7 @@ As with the case of Pipe, configured timeout interval (in the config object) and
  *
  * @param success A block object to be executed when the operation finishes successfully.
  * This block has no return value and takes one argument: A collection (NSDictionary), containing the response
- * from the 'signup' service.
+ * from the 'sign-up' service.
  *
  * @param failure A block object to be executed when the operation finishes unsuccessfully.
  * This block has no return value and takes one argument: The `NSError` object describing
@@ -147,10 +158,10 @@ As with the case of Pipe, configured timeout interval (in the config object) and
      failure:(void (^)(NSError *error))failure;
 
 /**
- * DEPREACTED.
+ * DEPRECATED.
  *
  * Performs the login for the given user. Since the data will be sent in plaintext, it is IMPORTANT,
- * to run the signin via TLS/HTTPS.
+ * to run the sign-in via TLS/HTTPS.
  *
  * @param username username
  *
@@ -172,7 +183,7 @@ As with the case of Pipe, configured timeout interval (in the config object) and
 
 /**
  * Performs the login for the given user. Since the data will be sent in plaintext, it is IMPORTANT,
- * to run the signin via TLS/HTTPS.
+ * to run the sign-in via TLS/HTTPS.
  *
  * @param loginData A map (NSDictionary) containing the credentials required by the
  * 'log in' service.

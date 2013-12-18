@@ -20,7 +20,7 @@
 @interface AGBaseStorage : NSObject
 
 /**
- * utility method to get an NSURL pointing to the file system 
+ * Utility method to get an NSURL pointing to the file system
  * for the given filename.
  *
  * @param filename The filename.
@@ -30,7 +30,7 @@
 + (NSURL *)storeURLWithName:(NSString *) filename;
 
 /**
- * utility method to get and set(if missing) an ID to an object. In
+ * Utility method to get and set(if missing) an ID to an object. In
  * the case the ID is missing a generated UUID will be used.
  *
  * @return an NString with the ID of the object.
