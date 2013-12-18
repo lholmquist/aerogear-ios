@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		08D43362329A46488E585071 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65D1DA06FAB24A18AB6A5963 /* libPods.a */; };
 		1D0A1358119648AFB949959A /* libPods-AeroGear-iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E065C8DDD305422BBB3237D5 /* libPods-AeroGear-iOSTests.a */; };
+		38EAB6DDCEDC350EEEB294DF /* AGRestAuthzModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB8B515B16A800D9ACAC2 /* AGRestAuthzModule.m */; };
+		38EAB9B564447C63EDA4F3BD /* AGAuthzConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EABA4C6581856F7241CB57 /* AGAuthzConfiguration.m */; };
+		38EABEA20822C924B3E36AED /* AGAuthorizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB9A5AFB633EF9E1DFD6C /* AGAuthorizer.m */; };
 		3A3FA0F7DE3FD6E3C9B77946 /* AGPageBaseExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */; };
 		3A3FA1B99E5E1EBF301778DA /* AGPageWebLinkingExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA7B7F632A59A9D4C53F1 /* AGPageWebLinkingExtractorSpec.m */; };
 		3A3FA2A2DD7A17FFCE0B9510 /* AGPageHeaderExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA907DCCCFBA82B64DE9D /* AGPageHeaderExtractorSpec.m */; };
@@ -124,6 +127,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		38EAB0A7B277164A8D63F747 /* AGAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthorizer.h; sourceTree = "<group>"; };
+		38EAB406473CD49D16965D21 /* AGAuthzModuleAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzModuleAdapter.h; sourceTree = "<group>"; };
+		38EAB5ADD30E415FE3231321 /* AGAuthzConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzConfig.h; sourceTree = "<group>"; };
+		38EAB725EDD875FE3054B456 /* AGAuthzModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzModule.h; sourceTree = "<group>"; };
+		38EAB75EEDE516BF6B6EAEE7 /* AGAuthzConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzConfiguration.h; sourceTree = "<group>"; };
+		38EAB8B515B16A800D9ACAC2 /* AGRestAuthzModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGRestAuthzModule.m; sourceTree = "<group>"; };
+		38EAB9A5AFB633EF9E1DFD6C /* AGAuthorizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGAuthorizer.m; sourceTree = "<group>"; };
+		38EABA4C6581856F7241CB57 /* AGAuthzConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGAuthzConfiguration.m; sourceTree = "<group>"; };
+		38EABEBAA0F7D219BD79AC96 /* AGRestAuthzModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGRestAuthzModule.h; sourceTree = "<group>"; };
 		3A3FA042B2FA52968D0AA580 /* AGAuthenticatorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGAuthenticatorSpec.m; sourceTree = "<group>"; };
 		3A3FA5F4C5D127CFCD4C15D9 /* AGPageBodyExtractorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPageBodyExtractorSpec.m; sourceTree = "<group>"; };
 		3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPageBaseExtractorSpec.m; sourceTree = "<group>"; };
@@ -277,6 +289,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		38EAB91D6CFFEDC2CAD696A4 /* Authorizer */ = {
+			isa = PBXGroup;
+			children = (
+				38EAB406473CD49D16965D21 /* AGAuthzModuleAdapter.h */,
+				38EAB75EEDE516BF6B6EAEE7 /* AGAuthzConfiguration.h */,
+				38EAB9A5AFB633EF9E1DFD6C /* AGAuthorizer.m */,
+				38EAB5ADD30E415FE3231321 /* AGAuthzConfig.h */,
+				38EAB0A7B277164A8D63F747 /* AGAuthorizer.h */,
+				38EAB725EDD875FE3054B456 /* AGAuthzModule.h */,
+				38EABA4C6581856F7241CB57 /* AGAuthzConfiguration.m */,
+				38EAB8B515B16A800D9ACAC2 /* AGRestAuthzModule.m */,
+				38EABEBAA0F7D219BD79AC96 /* AGRestAuthzModule.h */,
+			);
+			name = Authorizer;
+			path = security/Authorizer;
+			sourceTree = "<group>";
+		};
 		573B7099161D9D51009F0452 /* Security */ = {
 			isa = PBXGroup;
 			children = (
@@ -303,6 +332,7 @@
 				6FE3D1351834E3F100C3A09A /* AGPassphraseKeyServices.m */,
 				6FE3D1361834E3F100C3A09A /* AGPasswordKeyServices.h */,
 				6FE3D1371834E3F100C3A09A /* AGPasswordKeyServices.m */,
+				38EAB91D6CFFEDC2CAD696A4 /* Authorizer */,
 			);
 			name = Security;
 			sourceTree = "<group>";
@@ -682,6 +712,9 @@
 				6FC8F192172FC84F00905C2F /* AGPageBaseExtractor.m in Sources */,
 				6F7B5EED17325A7D00ED4F83 /* AGPageConfiguration.m in Sources */,
 				489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */,
+				38EABEA20822C924B3E36AED /* AGAuthorizer.m in Sources */,
+				38EAB9B564447C63EDA4F3BD /* AGAuthzConfiguration.m in Sources */,
+				38EAB6DDCEDC350EEEB294DF /* AGRestAuthzModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
