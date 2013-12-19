@@ -62,6 +62,7 @@
 		6F14F193170EDA02001E14BA /* AGPageWebLinkingExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F14F190170EDA02001E14BA /* AGPageWebLinkingExtractor.m */; };
 		6F393F081834100B00FFB44D /* AGEncryptedMemoryStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F393F051834100B00FFB44D /* AGEncryptedMemoryStorage.m */; };
 		6F393F091834100B00FFB44D /* AGEncryptedPropertyListStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F393F071834100B00FFB44D /* AGEncryptedPropertyListStorage.m */; };
+		6F573BBE1863080C000F4076 /* AGMultipart.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F573BBD1863080C000F4076 /* AGMultipart.m */; };
 		6F6C39BF1771996B009B3A57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F6C39BE1771996B009B3A57 /* SystemConfiguration.framework */; };
 		6F6C39C117719970009B3A57 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F6C39C017719970009B3A57 /* MobileCoreServices.framework */; };
 		6F6C39C217719986009B3A57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F6C39BE1771996B009B3A57 /* SystemConfiguration.framework */; };
@@ -200,6 +201,8 @@
 		6F393F051834100B00FFB44D /* AGEncryptedMemoryStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGEncryptedMemoryStorage.m; path = datamanager/AGEncryptedMemoryStorage.m; sourceTree = "<group>"; };
 		6F393F061834100B00FFB44D /* AGEncryptedPropertyListStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGEncryptedPropertyListStorage.h; path = datamanager/AGEncryptedPropertyListStorage.h; sourceTree = "<group>"; };
 		6F393F071834100B00FFB44D /* AGEncryptedPropertyListStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGEncryptedPropertyListStorage.m; path = datamanager/AGEncryptedPropertyListStorage.m; sourceTree = "<group>"; };
+		6F573BBC1863080C000F4076 /* AGMultipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGMultipart.h; path = core/AGMultipart.h; sourceTree = "<group>"; };
+		6F573BBD1863080C000F4076 /* AGMultipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGMultipart.m; path = core/AGMultipart.m; sourceTree = "<group>"; };
 		6F6C39BE1771996B009B3A57 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		6F6C39C017719970009B3A57 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		6F6C39C417719990009B3A57 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -473,6 +476,8 @@
 			children = (
 				57345BD615E3D18600B74FEB /* AGHttpClient.h */,
 				57345BD715E3D18600B74FEB /* AGHttpClient.m */,
+				6F573BBC1863080C000F4076 /* AGMultipart.h */,
+				6F573BBD1863080C000F4076 /* AGMultipart.m */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -663,6 +668,7 @@
 				480FD4DB185B088500D8CAD3 /* AGEncryptedSQLiteStorage.m in Sources */,
 				48B5C59118521C7000FF7108 /* AGEncoder.m in Sources */,
 				A0A37ADA16AEAEDE00979868 /* AGNSMutableArray+Paging.m in Sources */,
+				6F573BBE1863080C000F4076 /* AGMultipart.m in Sources */,
 				6FE3D1391834E3F100C3A09A /* AGKeyManager.m in Sources */,
 				6F14F191170EDA02001E14BA /* AGPageBodyExtractor.m in Sources */,
 				6F14F192170EDA02001E14BA /* AGPageHeaderExtractor.m in Sources */,
