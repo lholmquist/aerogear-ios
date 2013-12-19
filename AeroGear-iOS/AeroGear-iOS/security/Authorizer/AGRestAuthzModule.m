@@ -89,7 +89,7 @@
 
     // Form the URL string.
     NSString *targetURLString = [NSString stringWithFormat:@"%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
-                    _authzEndpoint,
+                    [self authzEndpoint],
                     [self scope],
                     _redirectURL,
                     _clientId];

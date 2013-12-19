@@ -31,11 +31,11 @@
     return self;
 }
 
-+(id) authenticator {
++(id) authorizer {
     return [[self alloc] init];
 }
 
--(id<AGAuthzModule>) auth:(void (^)(id<AGAuthzConfig> config)) config {
+-(id<AGAuthzModule>) authz:(void (^)(id<AGAuthzConfig> config)) config {
     AGAuthzConfiguration* authzConfig = [[AGAuthzConfiguration alloc] init];
     
     if (config) {
@@ -53,12 +53,12 @@
 }
 
 -(id<AGAuthzModule>)remove:(NSString*) moduleName {
-    id<AGAuthzModule> module = [self authModuleWithName:moduleName];
+    id<AGAuthzModule> module = [self authzModuleWithName:moduleName];
     [_modules removeObjectForKey:moduleName];
     return module;
 }
 
--(id<AGAuthzModule>)authModuleWithName:(NSString*) moduleName {
+-(id<AGAuthzModule>)authzModuleWithName:(NSString*) moduleName {
     return [_modules valueForKey:moduleName];
 }
 
