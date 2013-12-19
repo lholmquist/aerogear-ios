@@ -35,7 +35,7 @@
     self = [super init];
     if (self) {
         // default values:
-        _type = @"AG_OAUT2";
+        _type = @"AG_OAUTH2";
         _authzEndpoint = @"oauth2/auth";
         _redirectURL = @"myURL";
         _scopes = @[@"email"];
