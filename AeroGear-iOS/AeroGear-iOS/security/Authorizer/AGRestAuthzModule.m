@@ -17,12 +17,12 @@
 
 #import "AGRestAuthzModule.h"
 #import "AGAuthzConfiguration.h"
-#import "AGHttpClient.h"
+#import "AFHTTPClient.h"
 
 
 @implementation AGRestAuthzModule {
     // ivars
-    AGHttpClient* _restClient;
+    AFHTTPClient* _restClient;
 }
 
 // =====================================================
