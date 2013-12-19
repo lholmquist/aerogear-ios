@@ -67,7 +67,8 @@
         _redirectURL = config.redirectURL;
         _clientId = config.clientId;
         _clientSecret = config.clientSecret;
-        
+        _scopes = config.scopes;
+
         _restClient = [[AFHTTPClient alloc] initWithBaseURL:config.baseURL];//clientFor:config.baseURL timeout:config.timeout];
         _restClient.parameterEncoding = AFJSONParameterEncoding;
     }
