@@ -96,12 +96,12 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
     
     NSURLRequest *request;
     
-    if ([self paramsContainFileURLs:parameters]) {
+    if ([self hasMultipartData:parameters]) {
         NSError *error = nil;
         request = [self multipartFormRequestWithMethod:@"POST" path:path parameters:parameters error:&error];
         
         // if there was an error
-        if (!request) {
+        if (error) {
             failure(nil, error);
             return;
         }
@@ -123,12 +123,12 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
     
     NSURLRequest *request;
     
-    if ([self paramsContainFileURLs:parameters]) {
+    if ([self hasMultipartData:parameters]) {
         NSError *error = nil;
         request = [self multipartFormRequestWithMethod:@"PUT" path:path parameters:parameters error:&error];
         
         // if there was an error
-        if (!request) {
+        if (error) {
             failure(nil, error);
             return;
         }
@@ -157,31 +157,74 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
                                                    path:(NSString *)path
                                              parameters:(NSDictionary *)parameters
                                                   error:(NSError **) error {
+    
+    NSMutableURLRequest *req;
+    
+    // extract multipart data;
+    NSMutableDictionary *parts = [[NSMutableDictionary alloc] init];
+    
+    [parameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([obj conformsToProtocol:@protocol(AGMultipart)]) {
+            // add it
+            [parts setObject:obj forKey:key];
+        }  else if ([obj isKindOfClass:[NSURL class]]) { // TODO: deprecated
+            obj = [[AGFilePart alloc] initWithFileURL:obj name:key];
+            [parts setObject:obj forKey:key];
+        }
+    }];
+
+    // cater for AFNetworking default behaviour to call [object description]
+    // for parameters other than NSData and NSNull. We need to filter
+    // AGMultipart objects from the request and apply them in the block later on
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:parameters];
+    [params removeObjectsForKeys:[parts allKeys]];
+    
     __block NSError *err = nil;
     
-    NSMutableURLRequest *request = [self multipartFormRequestWithMethod:method path:path parameters:parameters constructingBodyWithBlock: ^(id <AFMultipartFormData> formData) {
-        
-        [parameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            if ([obj isKindOfClass:[NSURL class]]) {
-                [formData appendPartWithFileURL:obj name:key error:&err];
-            }
-            
-            // if there was any error adding the
-            // file stop immediately
-            if (err)
-                *stop = YES;
+    req = [self multipartFormRequestWithMethod:method path:path parameters:params
+                     constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
+                         
+             [parts enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                 if ([obj isKindOfClass:[AGFilePart class]]) {
+                     AGFilePart *part = (AGFilePart*)obj;
+                     [formData appendPartWithFileURL:part.fileURL
+                                                name:part.name
+                                               error:&err];
+                     
+                     // if there was any error adding the
+                     // file stop immediately
+                     if (err)
+                         *stop = YES;
+                     
+                 } else if ([obj isKindOfClass:[AGFileDataPart class]]) {
+                     AGFileDataPart *part = (AGFileDataPart *)obj;
+                     
+                     [formData appendPartWithFileData:part.data
+                                                 name:part.name
+                                             fileName:part.fileName
+                                             mimeType:part.mimeType];
+
+                 } else if ([obj isKindOfClass:[AGStreamPart class]]) {
+                     AGStreamPart *part = (AGStreamPart *)obj;
+                     
+                     [formData appendPartWithInputStream:part.inputStream
+                                                    name:part.name
+                                                fileName:part.fileName
+                                                  length:part.length
+                                                mimeType:part.mimeType];
+                 }
+             }];
         }];
-    }];
-    
+
     if (err) {
         *error = err;
         return nil;
     }
+
+    // set the timeout interval
+    [req setTimeoutInterval:_interval];
     
-    // finally set the timeout interval
-    [request setTimeoutInterval:_interval];
-    
-    return request;
+    return req;
 }
 
 - (void)setUploadProgressBlock:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block {
@@ -251,18 +294,19 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
     [self enqueueHTTPRequestOperation:operation];
 }
 
-// determine if the parameters contain file objects
--(BOOL)paramsContainFileURLs:(NSDictionary *)params {
-    BOOL hasFiles = NO;
-    
-    for (id value in [params allValues]) {
-        if ([value isKindOfClass:[NSURL class]]) {
-            hasFiles = YES;
-            break;
+// extract any file objects(if any) embedded in the params
+- (BOOL)hasMultipartData:(NSDictionary *)params {
+    __block BOOL hasMultipart = NO;
+
+    [[params allValues] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj conformsToProtocol:@protocol(AGMultipart)] ||
+            [obj isKindOfClass:[NSURL class]]) { // TODO: deprecated
+            hasMultipart = YES;
+            *stop = YES;
         }
-    }
+    }];
     
-    return hasFiles;
+    return hasMultipart;
 }
 
 @end

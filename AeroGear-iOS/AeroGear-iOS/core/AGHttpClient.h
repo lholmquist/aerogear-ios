@@ -17,6 +17,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
+#import "AGMultipart.h"
 
 @interface AGHttpClient : AFHTTPClient
 
