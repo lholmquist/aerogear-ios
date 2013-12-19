@@ -22,6 +22,7 @@
 // private getters...
 @synthesize baseURL = _baseURL;
 @synthesize authzEndpoint = _authzEndpoint;
+@synthesize accessTokenEndpoint = _accessTokenEndpoint;
 @synthesize redirectURL = _redirectURL;
 @synthesize scopes = _scopes;
 @synthesize clientId = _clientId;

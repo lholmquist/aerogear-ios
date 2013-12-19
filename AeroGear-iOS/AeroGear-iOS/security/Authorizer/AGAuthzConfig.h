@@ -33,6 +33,8 @@
  */
 @property (copy, nonatomic) NSString* authzEndpoint;
 
+@property (copy, nonatomic) NSString* accessTokenEndpoint;
+
 @property (copy, nonatomic) NSString* redirectURL;
 
 @property (copy, nonatomic) NSArray* scopes;

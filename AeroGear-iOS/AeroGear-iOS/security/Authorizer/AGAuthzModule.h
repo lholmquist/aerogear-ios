@@ -126,6 +126,7 @@ _AGAuthenticationModule_ is supported too.
  * Returns the 'login endpoint' of the underlying 'auth module implementation'
  */
 @property (nonatomic, readonly) NSString* authzEndpoint;
+@property (nonatomic, readonly) NSString* accessTokenEndpoint;
 
 /**
  * Returns the 'logout endpoint' of the underlying 'auth module implementation'

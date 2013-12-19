@@ -34,6 +34,7 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
 @synthesize type = _type;
 @synthesize baseURL = _baseURL;
 @synthesize authzEndpoint = _authzEndpoint;
+@synthesize accessTokenEndpoint = _accessTokenEndpoint;
 @synthesize redirectURL = _redirectURL;
 @synthesize clientId = _clientId;
 @synthesize clientSecret = _clientSecret;
@@ -67,6 +68,7 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
         _baseURL = config.baseURL.absoluteString;
         _type = config.type;
         _authzEndpoint = config.authzEndpoint;
+        _accessTokenEndpoint = config.accessTokenEndpoint;
         _redirectURL = config.redirectURL;
         _clientId = config.clientId;
         _clientSecret = config.clientSecret;
@@ -121,9 +123,12 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
 // ==============================================================
 
 -(void)exchangeAuthorizationCodeForAccessToken:(NSString*)code{
-    NSDictionary* paramDict = @{@"code":code, @"client_id":_clientId, @"client_secret":_clientSecret, @"redirect_uri": _redirectURL, @"grant_type":@"authorization_code"};
+    NSMutableDictionary* paramDict = [[NSMutableDictionary alloc] initWithDictionary:@{@"code":code, @"client_id":_clientId, @"redirect_uri": _redirectURL, @"grant_type":@"authorization_code"}];
+    if (_clientSecret) {
+        [paramDict setObject:_clientSecret forKey:@"client_secret"];
+    }
     _restClient.parameterEncoding = AFFormURLParameterEncoding;
-    [_restClient postPath:@"https://accounts.google.com/o/oauth2/token" parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [_restClient postPath:[NSString stringWithFormat:@"%@/%@", self.baseURL, self.accessTokenEndpoint] parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"SUCCESS...");
         NSString* responseJSON = [[NSString alloc] initWithData:(NSData *)responseObject encoding:NSUTF8StringEncoding];
         NSLog(@"Invoking successblock....%@", responseJSON);
