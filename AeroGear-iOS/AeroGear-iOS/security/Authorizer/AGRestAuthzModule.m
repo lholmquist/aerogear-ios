@@ -88,7 +88,7 @@
               failure:(void (^)(NSError *error))failure {
 
     // Form the URL string.
-    NSString *targetURLString = [NSString stringWithFormat:@"%@/%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
+    NSString *targetURLString = [NSString stringWithFormat:@"%@%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
                     self.baseURL,
                     self.authzEndpoint,
                     [self scope],
