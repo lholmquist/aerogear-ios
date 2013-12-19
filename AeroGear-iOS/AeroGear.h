@@ -34,9 +34,18 @@
 #import "AGStoreConfig.h"
 
 // Security
+
+//Authentication
 #import "AGAuthenticationModule.h"
 #import "AGAuthenticator.h"
 #import "AGAuthConfig.h"
+
+//Authorization
+#import "AGAuthzModule.h"
+#import "AGAuthorizer.h"
+#import "AGAuthzConfig.h"
+
+//Encryption
 #import "AGCryptoConfig.h"
 #import "AGKeyStoreCryptoConfig.h"
 #import "AGPassphraseCryptoConfig.h"
