@@ -35,7 +35,7 @@
 
 @property (copy, nonatomic) NSString* redirectURL;
 
-@property (copy, nonatomic) NSString* scopes;
+@property (copy, nonatomic) NSArray* scopes;
 
 /**
  * Applies the "logout endpoint" to the configuration.

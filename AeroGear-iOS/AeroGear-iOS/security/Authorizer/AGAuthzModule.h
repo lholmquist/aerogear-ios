@@ -135,7 +135,7 @@ _AGAuthenticationModule_ is supported too.
 /**
  * Returns the 'enroll endpoint' of the underlying 'auth module implementation'
  */
-@property (nonatomic, readonly) NSString* scopes;
+@property (nonatomic, readonly) NSArray* scopes;
 
 @property (nonatomic, readonly) NSString* clientId;
 

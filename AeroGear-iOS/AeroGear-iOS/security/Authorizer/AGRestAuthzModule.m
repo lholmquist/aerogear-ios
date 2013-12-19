@@ -34,6 +34,7 @@
 @synthesize redirectURL = _redirectURL;
 @synthesize clientId = _clientId;
 @synthesize clientSecret = _clientSecret;
+@synthesize scopes = _scopes;
 
 // custom getters for our properties (from AGAuthenticationModule)
 -(NSString*) authEndpoint {
@@ -85,9 +86,16 @@
 -(void) requestAccess:(NSDictionary*) extraParameters
               success:(void (^)(id object))success
               failure:(void (^)(NSError *error))failure {
-    //TODO add parameter
+
+    // Form the URL string.
+    NSString *targetURLString = [NSString stringWithFormat:@"%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
+                    _authzEndpoint,
+                    [self scope],
+                    _redirectURL,
+                    _clientId];
+    //TODO add extraParam
     NSMutableDictionary *authzParameters = [[NSMutableDictionary alloc] initWithDictionary:extraParameters];
-    [_restClient postPath:_authzEndpoint parameters:extraParameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [_restClient postPath:targetURLString parameters:extraParameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
 
         if (success) {
@@ -112,6 +120,32 @@
 // ==============================================================
 // ======== internal API (AGAuthenticationModuleAdapter) ========
 // ==============================================================
+
+- (NSString*) scope {
+    // Create a string to concatenate all scopes existing in the _scopes array.
+    NSString *scope = @"";
+    for (int i=0; i<[_scopes count]; i++) {
+        scope = [scope stringByAppendingString:[self urlEncodeString:[_scopes objectAtIndex:i]]];
+
+        // If the current scope is other than the last one, then add the "+" sign to the string to separate the scopes.
+        if (i < [_scopes count] - 1) {
+            scope = [scope stringByAppendingString:@"+"];
+        }
+    }
+    return scope;
+}
+
+-(NSString *)urlEncodeString:(NSString *)stringToURLEncode{
+    // URL-encode the parameter string and return it.
+    CFStringRef encodedURL = CFURLCreateStringByAddingPercentEscapes(NULL,
+            (__bridge CFStringRef) stringToURLEncode,
+            NULL,
+            (__bridge CFStringRef)@"!@#$%&*'();:=+,/?[]",
+            kCFStringEncodingUTF8);
+    return (NSString *)CFBridgingRelease(encodedURL);
+}
+
+
 - (BOOL)isAuthorized {
     return (nil != _accessTokens);
 }
