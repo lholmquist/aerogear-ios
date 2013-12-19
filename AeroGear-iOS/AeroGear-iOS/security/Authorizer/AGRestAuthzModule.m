@@ -68,7 +68,7 @@
         _clientId = config.clientId;
         _clientSecret = config.clientSecret;
         
-        _restClient = [AGHttpClient clientFor:config.baseURL timeout:config.timeout];
+        _restClient = [[AFHTTPClient alloc] initWithBaseURL:config.baseURL];//clientFor:config.baseURL timeout:config.timeout];
         _restClient.parameterEncoding = AFJSONParameterEncoding;
     }
 
