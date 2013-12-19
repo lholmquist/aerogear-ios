@@ -26,6 +26,7 @@
 #import "AGPipeline.h"
 #import "AGPipeConfig.h"
 #import "AGNSMutableArray+Paging.h"
+#import "AGMultipart.h"
 
 // DataManager
 #import "AGStore.h"

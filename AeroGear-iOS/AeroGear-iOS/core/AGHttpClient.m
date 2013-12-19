@@ -16,6 +16,7 @@
  */
 
 #import "AGHttpClient.h"
+#import "AGMultipart.h"
 
 #import <objc/runtime.h>
 

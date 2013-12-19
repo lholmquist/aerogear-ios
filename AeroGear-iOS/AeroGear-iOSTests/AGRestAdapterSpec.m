@@ -17,6 +17,7 @@
 
 #import <Kiwi/Kiwi.h>
 #import "AGRESTPipe.h"
+#import "AGMultipart.h"
 #import "AGHTTPMockHelper.h"
 
 // useful macro to check iOS version
