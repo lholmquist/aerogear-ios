@@ -106,7 +106,7 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
         //NSLog(@"Inside BLOCK successblock....");
         NSURL *url = [[notification userInfo] valueForKey:@"UIApplicationLaunchOptionsURLKey"];
         NSString* code = [AFParametersFromQueryString([url query]) valueForKey:@"code"];
-        [self exchangeAuthorizationCodeForAccessToken:code];
+        [self exchangeAuthorizationCodeForAccessToken:code success:success failure:failure];
     }];
 
 
@@ -122,7 +122,9 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
 // ======== internal API (AGAuthenticationModuleAdapter) ========
 // ==============================================================
 
--(void)exchangeAuthorizationCodeForAccessToken:(NSString*)code{
+-(void)exchangeAuthorizationCodeForAccessToken:(NSString*)code
+                                       success:(void (^)(id object))success
+                                       failure:(void (^)(NSError *error))failure {
     NSMutableDictionary* paramDict = [[NSMutableDictionary alloc] initWithDictionary:@{@"code":code, @"client_id":_clientId, @"redirect_uri": _redirectURL, @"grant_type":@"authorization_code"}];
     if (_clientSecret) {
         [paramDict setObject:_clientSecret forKey:@"client_secret"];
@@ -138,9 +140,16 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
                                                                    error: nil];
             NSString* accessTokens = [JSON valueForKey:@"access_token"];
             NSLog(@"Token is::%@", accessTokens);
+
+            if (success) {
+                success(accessTokens);
+            }
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"FAILURE...");
+        if(failure) {
+            failure(nil);
+        }
     }];
 
 }
