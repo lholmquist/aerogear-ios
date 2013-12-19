@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
+#import <UIKit/UIKit.h>
 #import "AGRestAuthzModule.h"
 #import "AGAuthzConfiguration.h"
 #import "AFHTTPClient.h"
 
+NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLaunchedWithURLNotification";
 
 @implementation AGRestAuthzModule {
     // ivars
     AFHTTPClient* _restClient;
+    id _applicationLaunchNotificationObserver;
 }
 
 // =====================================================
@@ -69,8 +72,10 @@
         _clientSecret = config.clientSecret;
         _scopes = config.scopes;
 
-        _restClient = [[AFHTTPClient alloc] initWithBaseURL:config.baseURL];//clientFor:config.baseURL timeout:config.timeout];
+        _restClient = [[AFHTTPClient alloc] initWithBaseURL:config.baseURL];
         _restClient.parameterEncoding = AFJSONParameterEncoding;
+
+        _accessTokens = [NSMutableDictionary dictionary];
     }
 
     return self;
@@ -79,7 +84,6 @@
 -(void)dealloc {
     _restClient = nil;
 }
-
 
 // =====================================================
 // ======== public API (AGAuthenticationModule) ========
@@ -90,28 +94,21 @@
 
     // Form the URL string.
     NSString *targetURLString = [NSString stringWithFormat:@"%@%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
-                    self.baseURL,
-                    self.authzEndpoint,
-                    [self scope],
-                    _redirectURL,
-                    _clientId];
-    //TODO add extraParam
-    NSMutableDictionary *authzParameters = [[NSMutableDictionary alloc] initWithDictionary:extraParameters];
-    [_restClient postPath:targetURLString parameters:extraParameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-
-        if (success) {
-            NSLog(@"Invoking successblock....");
-            success(responseObject);
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
-        if (failure) {
-            NSLog(@"Invoking failure block....");
-            failure(error);
-        }
+                                                           self.baseURL,
+                                                           self.authzEndpoint,
+                                                           [self scope],
+                                                           [self urlEncodeString:_redirectURL],
+                                                           _clientId];
+    NSURLRequest *request = [_restClient requestWithMethod:@"POST" path:targetURLString parameters:nil];
+    _applicationLaunchNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kAFApplicationLaunchedWithURLNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        //NSLog(@"Inside BLOCK successblock....");
+        NSURL *url = [[notification userInfo] valueForKey:@"UIApplicationLaunchOptionsURLKey"];
+        NSString* code = [AFParametersFromQueryString([url query]) valueForKey:@"code"];
+        [self exchangeAuthorizationCodeForAccessToken:code];
     }];
+
+
+    [[UIApplication sharedApplication] openURL:[request URL]];
 }
 
 // private method
@@ -122,6 +119,52 @@
 // ==============================================================
 // ======== internal API (AGAuthenticationModuleAdapter) ========
 // ==============================================================
+
+-(void)exchangeAuthorizationCodeForAccessToken:(NSString*)code{
+    NSDictionary* paramDict = @{@"code":code, @"client_id":_clientId, @"client_secret":_clientSecret, @"redirect_uri": _redirectURL, @"grant_type":@"authorization_code"};
+    _restClient.parameterEncoding = AFFormURLParameterEncoding;
+    [_restClient postPath:@"https://accounts.google.com/o/oauth2/token" parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"SUCCESS...");
+        NSString* responseJSON = [[NSString alloc] initWithData:(NSData *)responseObject encoding:NSUTF8StringEncoding];
+        NSLog(@"Invoking successblock....%@", responseJSON);
+        if ([responseJSON rangeOfString:@"access_token"].location != NSNotFound) {
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: responseObject
+                                                                 options: NSJSONReadingMutableContainers
+                                                                   error: nil];
+            NSString* accessTokens = [JSON valueForKey:@"access_token"];
+            NSLog(@"Token is::%@", accessTokens);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"FAILURE...");
+    }];
+
+}
+
+
+static NSDictionary * AFParametersFromQueryString(NSString *queryString) {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    if (queryString) {
+        NSScanner *parameterScanner = [[NSScanner alloc] initWithString:queryString];
+        NSString *name = nil;
+        NSString *value = nil;
+
+        while (![parameterScanner isAtEnd]) {
+            name = nil;
+            [parameterScanner scanUpToString:@"=" intoString:&name];
+            [parameterScanner scanString:@"=" intoString:NULL];
+
+            value = nil;
+            [parameterScanner scanUpToString:@"&" intoString:&value];
+            [parameterScanner scanString:@"&" intoString:NULL];
+
+            if (name && value) {
+                parameters[[name stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            }
+        }
+    }
+
+    return parameters;
+}
 
 - (NSString*) scope {
     // Create a string to concatenate all scopes existing in the _scopes array.
