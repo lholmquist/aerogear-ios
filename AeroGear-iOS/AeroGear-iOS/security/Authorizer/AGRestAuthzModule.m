@@ -18,13 +18,13 @@
 #import <UIKit/UIKit.h>
 #import "AGRestAuthzModule.h"
 #import "AGAuthzConfiguration.h"
-#import "AFHTTPClient.h"
+#import "AGHttpClient.h"
 
 NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLaunchedWithURLNotification";
 
 @implementation AGRestAuthzModule {
     // ivars
-    AFHTTPClient* _restClient;
+    AGHttpClient* _restClient;
     id _applicationLaunchNotificationObserver;
 }
 
