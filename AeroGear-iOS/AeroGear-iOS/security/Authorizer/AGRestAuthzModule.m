@@ -128,7 +128,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
                                                                  options: NSJSONReadingMutableContainers
                                                                    error: nil];
             NSString* accessTokens = [JSON valueForKey:@"access_token"];
-            _accessTokens = accessTokens;
+            _accessTokens = @{@"access_token":accessTokens};
             if (success) {
                 success(accessTokens);
             }
