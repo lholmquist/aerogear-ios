@@ -23,6 +23,7 @@
 @synthesize endpoint = _endpoint;
 @synthesize recordId = _recordId;
 @synthesize authModule = _authModule;
+@synthesize authzModule = _authzModule;
 @synthesize name = _name;
 @synthesize type = _type;
 @synthesize timeout = _timeout;
