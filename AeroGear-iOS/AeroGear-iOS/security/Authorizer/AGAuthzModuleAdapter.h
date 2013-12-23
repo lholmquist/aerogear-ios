@@ -33,6 +33,5 @@
  */
 - (BOOL)isAuthzValid;
 
-//TODO exchnageAuthzCodeForAccessToken
 
 @end

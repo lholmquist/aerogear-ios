@@ -19,7 +19,7 @@
 #import "AGConfig.h"
 
 /**
- * Represents the public API to configure AGAuthenticationModule objects.
+ * Represents the public API to configure AGAuthzModule objects.
  */
 @protocol AGAuthzConfig <AGConfig>
 
@@ -29,23 +29,33 @@
 @property (strong, nonatomic) NSURL* baseURL;
 
 /**
- * Applies the " endpoint" to the configuration.
+ * Applies the "authorization endpoint" to the request token.
  */
 @property (copy, nonatomic) NSString* authzEndpoint;
 
-@property (copy, nonatomic) NSString* accessTokenEndpoint;
-
+/**
+* Applies the "callback URL" once request token issued.
+*/
 @property (copy, nonatomic) NSString* redirectURL;
 
+/**
+ * Applies the "access token endpoint" to the exchange code for access token.
+ */
+@property (copy, nonatomic) NSString* accessTokenEndpoint;
+
+
+/**
+ * Applies the "scope" of the authorization.
+ */
 @property (copy, nonatomic) NSArray* scopes;
 
 /**
- * Applies the "logout endpoint" to the configuration.
+ * Applies the "client id" obtained with the client registration process.
  */
 @property (copy, nonatomic) NSString* clientId;
 
 /**
- * Applies the "enroll endpoint" to the configuration.
+ * Applies the "client secret" obtained with the client registration process.
  */
 @property (copy, nonatomic) NSString* clientSecret;
 

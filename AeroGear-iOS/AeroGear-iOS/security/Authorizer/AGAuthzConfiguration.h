@@ -19,7 +19,7 @@
 #import "AGAuthzConfig.h"
 
 /**
- * The internal implementation of the AGAuthConfig to configure AGAuthenticationModule objects.
+ * The internal implementation of the AGAuthzConfig to configure AGAuthzModule objects.
  */
 @interface AGAuthzConfiguration : NSObject<AGAuthzConfig>
 

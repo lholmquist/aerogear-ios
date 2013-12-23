@@ -20,11 +20,11 @@
 #import "AGAuthzModuleAdapter.h"
 
 /**
- An internal AGAuthenticator module implementation that uses REST as the auth transport.
+ An internal AGAuthorization module implementation that uses REST as the auth transport.
 
  *IMPORTANT:* Users are not required to instantiate this class directly, instead an instance of this class is returned
- automatically when an Authenticator with default configuration is constructed or with the _type_ config option set to
- _"REST"_. See AGAuthenticator and AGAuthenticationModule class documentation for more information.
+ automatically when an Authorizer with default configuration is constructed or with the _type_ config option set to
+ _"REST"_. See AGAuthorizer and AGAuthzModule class documentation for more information.
 
  */
 @interface AGRestAuthzModule : NSObject <AGAuthzModuleAdapter>

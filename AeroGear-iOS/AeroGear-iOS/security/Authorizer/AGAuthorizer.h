@@ -20,47 +20,47 @@
 #import "AGAuthzConfig.h"
 
 /**
-  AGAuthenticator manages different AGAuthenticationModule implementations. It is basically a
-  factory that hides the concrete instantiation of a specific AGAuthenticationModule implementation.
-  The class offers simple APIs to add, remove, or get access to a 'authentication module'.
+  AGAuthorizer manages different AGAuthzModule implementations. It is basically a
+  factory that hides the concrete instantiation of a specific AGAuthzModule implementation.
+  The class offers simple APIs to add, remove, or get access to a 'authorization module'.
  
-## Creating an Authenticator with an Authentication module
+## Creating an Authorizer with an Authorizer module
 
-Below is an example that creates an Authenticator that points to the remote AeroGear TODO server application.
+Below is an example that creates an Authorizer for OAuth2 implementation.
 
-    // create an authenticator object
-    AGAuthenticator* authenticator = [AGAuthenticator authenticator];
+    AGAuthorizer* authorizer = [AGAuthorizer authorizer];
 
-    // the base URL of the application we want to authenticate to
-    NSString* baseURL = @"http://todo-aerogear.rhcloud.com/todo-server/";
- 
-    // add a new auth module and the required 'base URL':
-    id<AGAuthenticationModule> myMod = [authenticator auth:^(id<AGAuthConfig> config) {
-        [config setName:@"authMod"];
-        [config setBaseURL:[NSURL URLWithString:baseURL]];
-    }];
+    _restAuthzModule = [authorizer authz:^(id<AGAuthzConfig> config) {
+        config.name = @"restAuthMod";
+        config.baseURL = [[NSURL alloc] initWithString:@"https://accounts.google.com"];
+        config.authzEndpoint = @"/o/oauth2/auth";
+        config.accessTokenEndpoint = @"/o/oauth2/token";
+        config.clientId = @"XXXXX";
+        config.redirectURL = @"org.aerogear.GoogleDrive:/oauth2Callback";
+        config.scopes = @[@"https://www.googleapis.com/auth/drive"];
+    }];;
  */
 @interface AGAuthorizer : NSObject
 
 /**
- * A factory method to instantiate an empty AGAuthenticator.
+ * A factory method to instantiate an empty AGAuthorizer.
  *
  * @return the AGAuthenticator object
  */
 +(id) authorizer;
 
 /**
- * Adds a new AGAuthenticationModule object, based on the given configuration object.
+ * Adds a new AGAuthzModule object, based on the given configuration object.
  *
- * @param config A block object which passes in an implementation of the AGAuthConfig protocol.
- * the object is used to configure the AGAuthenticationModule object.
+ * @param config A block object which passes in an implementation of the AGAuthzConfig protocol.
+ * the object is used to configure the AGAuthzModule object.
  *
- * @return the newly created AGAuthenticationModule object
+ * @return the newly created AGAuthzModule object
  */
 -(id<AGAuthzModule>) authz:(void (^)(id<AGAuthzConfig> config)) config;
 
 /**
- * Removes a AGAuthenticationModule implementation from the AGAuthenticator. The auth module,
+ * Removes a AGAuthzModule implementation from the AGAuthorizer. The authz module,
  * to be removed is determined by the moduleName argument.
  *
  * @param moduleName The name of the actual auth module object.
@@ -68,9 +68,9 @@ Below is an example that creates an Authenticator that points to the remote Aero
 -(id<AGAuthzModule>)remove:(NSString*) moduleName;
 
 /**
- * Loads a given AGAuthenticationModule implementation, based on the given moduleName argument.
+ * Loads a given AGAuthzModule implementation, based on the given moduleName argument.
  *
- * @param moduleName The name of the actual auth module object.
+ * @param moduleName The name of the actual authz module object.
  */
 -(id<AGAuthzModule>)authzModuleWithName:(NSString*) moduleName;
 

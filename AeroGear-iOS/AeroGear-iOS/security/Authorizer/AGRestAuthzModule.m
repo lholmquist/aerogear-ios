@@ -20,7 +20,7 @@
 #import "AGAuthzConfiguration.h"
 #import "AGHttpClient.h"
 
-NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLaunchedWithURLNotification";
+NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotification";
 
 @implementation AGRestAuthzModule {
     // ivars
@@ -40,7 +40,6 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
 @synthesize clientSecret = _clientSecret;
 @synthesize scopes = _scopes;
 
-// custom getters for our properties (from AGAuthenticationModule)
 -(NSString*) authEndpoint {
     return [_baseURL stringByAppendingString:_authzEndpoint];
 }
@@ -49,8 +48,6 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
 // ======== internal API (AGAuthenticationModuleAdapter) ========
 // ==============================================================
 @synthesize accessTokens = _accessTokens;
-
-
 
 // ==============================================
 // ======== 'factory' and 'init' section ========
@@ -102,10 +99,9 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
                                                            [self urlEncodeString:_redirectURL],
                                                            _clientId];
     NSURLRequest *request = [_restClient requestWithMethod:@"POST" path:targetURLString parameters:nil];
-    _applicationLaunchNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kAFApplicationLaunchedWithURLNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-        //NSLog(@"Inside BLOCK successblock....");
+    _applicationLaunchNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:AGAppLaunchedWithURLNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
         NSURL *url = [[notification userInfo] valueForKey:@"UIApplicationLaunchOptionsURLKey"];
-        NSString* code = [AFParametersFromQueryString([url query]) valueForKey:@"code"];
+        NSString* code = [[self parametersFromQueryString:[url query]] valueForKey:@"code"];
         [self exchangeAuthorizationCodeForAccessToken:code success:success failure:failure];
     }];
 
@@ -113,10 +109,6 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
     [[UIApplication sharedApplication] openURL:[request URL]];
 }
 
-// private method
--(void) readAndStashToken:(AFHTTPRequestOperation*) operation {
-    _accessTokens = [[NSMutableDictionary alloc] init];
-}
 
 // ==============================================================
 // ======== internal API (AGAuthenticationModuleAdapter) ========
@@ -131,22 +123,18 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
     }
     _restClient.parameterEncoding = AFFormURLParameterEncoding;
     [_restClient postPath:[NSString stringWithFormat:@"%@/%@", self.baseURL, self.accessTokenEndpoint] parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"SUCCESS...");
         NSString* responseJSON = [[NSString alloc] initWithData:(NSData *)responseObject encoding:NSUTF8StringEncoding];
-        NSLog(@"Invoking successblock....%@", responseJSON);
         if ([responseJSON rangeOfString:@"access_token"].location != NSNotFound) {
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: responseObject
                                                                  options: NSJSONReadingMutableContainers
                                                                    error: nil];
             NSString* accessTokens = [JSON valueForKey:@"access_token"];
-            NSLog(@"Token is::%@", accessTokens);
-
             if (success) {
                 success(accessTokens);
             }
         }
+        //TODO deal with refresh case
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"FAILURE...");
         if(failure) {
             failure(nil);
         }
@@ -155,7 +143,7 @@ NSString * const kAFApplicationLaunchedWithURLNotification = @"kAFApplicationLau
 }
 
 
-static NSDictionary * AFParametersFromQueryString(NSString *queryString) {
+-(NSDictionary *) parametersFromQueryString:(NSString *)queryString {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     if (queryString) {
         NSScanner *parameterScanner = [[NSScanner alloc] initWithString:queryString];
@@ -195,7 +183,6 @@ static NSDictionary * AFParametersFromQueryString(NSString *queryString) {
 }
 
 -(NSString *)urlEncodeString:(NSString *)stringToURLEncode{
-    // URL-encode the parameter string and return it.
     CFStringRef encodedURL = CFURLCreateStringByAddingPercentEscapes(NULL,
             (__bridge CFStringRef) stringToURLEncode,
             NULL,

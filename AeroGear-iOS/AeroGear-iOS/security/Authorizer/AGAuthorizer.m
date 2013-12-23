@@ -42,7 +42,6 @@
         config(authzConfig);
     }
 
-    // TODO check ALL supported types...
     if (! [authzConfig.type isEqualToString:@"AG_OAUTH2"]) {
         return nil;
     }
