@@ -87,8 +87,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
 // =====================================================
 // ======== public API (AGAuthenticationModule) ========
 // =====================================================
--(void) requestAccess:(NSDictionary*) extraParameters
-              success:(void (^)(id object))success
+-(void) requestAccessSuccess:(void (^)(id object))success
               failure:(void (^)(NSError *error))failure {
 
     // Form the URL string.

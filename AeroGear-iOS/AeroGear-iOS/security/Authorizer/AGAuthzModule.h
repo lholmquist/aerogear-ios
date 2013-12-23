@@ -40,7 +40,7 @@ protected endpoints:
         config.scopes = @[@"https://www.googleapis.com/auth/drive"];
     }];
 
-    [_restAuthzModule requestAccess:nil success:^(id object) {
+    [_restAuthzModule requestAccessSuccess:^(id object) {
        // object contain the access token needed to query exposed web service
        // You can use ipe as usual
     } failure:^(NSError *error) {
@@ -68,8 +68,7 @@ _AGAuthenticationModule_ is supported too.
 @property (nonatomic, readonly) NSString* clientId;
 @property (nonatomic, readonly) NSString* clientSecret;
 
--(void) requestAccess:(NSDictionary*) extraParameters
-     success:(void (^)(id object))success
+-(void) requestAccessSuccess:(void (^)(id object))success
      failure:(void (^)(NSError *error))failure;
 
 //TODO refreshAccess
