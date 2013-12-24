@@ -122,35 +122,49 @@ Of course the _collection_ behind the responseObject can be stored to a variable
 
  ## Upload files
  
- The AGPipe also supports uploading of files. If the map object passed on save method, contain values that are instances
- of NSURL objects that point to local files, a multi-part request will be constructed to perform the uploading. Here is
- an example usage:
+ Support for multipart upload is also provided. The types of data that can be uploaded are local files, instances of NSData and NSInputStream.
+ Let's see how the upload mechanism works with the aid of an example:
  
- // the files to be uploaded
- NSURL *file1 = [[NSBundle mainBundle] URLForResource:@"picture1" withExtension:@"jpg"];
- NSURL *file2 = [[NSBundle mainBundle] URLForResource:@"picture2" withExtension:@"jpg"];
+     // a multipart that contains a file
+     NSURL *file1 = <path to a local file>
+     AGFilePart *filePart = [[AGFilePart alloc]initWithFileURL:file1 name:@"myfile"];
+     
+     // a multipart that contains an NSData object
+     NSData *data1 = [@"Lorem ipsum dolor sit amet.." dataUsingEncoding:NSUTF8StringEncoding];
+     AGFileDataPart *dataPart = [[AGFileDataPart alloc] initWithFileData:data1
+                                                                    name:@"data1"
+                                                            fileName:@"data1.txt" mimeType:@"text/plain"];
+     
+     // set up payload
+     NSDictionary *dict = @{@"somekey": @"somevalue",
+                            @"another_key": @"some_other_key",
+                            @"file1":filePart,
+                            @"file2":dataPart};
  
- // construct the data to sent with the files added
- NSDictionary *dict = @{@"somekey": @"somevalue", @"jboss.jpg":file1, @"jboss2.jpg":file2 };
+     // set an (optional) progress block
+     [[apiClient uploadPipe] setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten,
+                                long long totalBytesExpectedToWrite) {
+            
+        NSLog(@"UPLOADPIPE Sent bytesWritten=%d totalBytesWritten=%qi of 
+                totalBytesExpectedToWrite=%qi bytes", bytesWritten, totalBytesWritten,
+                totalBytesExpectedToWrite);
+     }];
+     
+     // upload data
+     [[apiClient uploadPipe] save:dict success:^(id responseObject) {
+        NSLog(@"Successfully uploaded!");
+     
+     } failure:^(NSError *error) {
+        NSLog(@"An error has occured during upload! \n%@", error);
+     }];
  
- // set an (optional) progress block
- [pipe setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
- NSLog(@"Sent bytesWritten=%d totalBytesWritten=%qi of totalBytesExpectedToWrite=%qi bytes", bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
- }];
+ An _AGFilePart_ and _AGFileDataPart_ objects are used to attach the data we want to upload. The former is initialized to point to a local file whereas the latter point to an NSData object respectively. Not shown in the example above, but an _AGStreamPart_ can be also used to read the data from a NSInputStream directly.
  
- // upload data
- [[pipe save:dict success:^(id responseObject) {
- NSLog(@"Successfully uploaded!");
+ NOTE: For NSData we need to explicitly specify both the _'filename'_ and the _'MIME type'_, since they can not be automatically determined as with the case of a file.
  
- } failure:^(NSError *error) {
- NSLog(@"An error has occurred during upload! \n%@", error);
- }];
+ After initialization of the objects, we simply attach them to the payload, setting an (optional) progress block so we can get notified during the upload.
  
- Note the 'key' in the dictionary is used as the 'name' field in the multi-part request and is required. Further, you
- don't need to specify the 'Content-type' or the 'filename' fields as they are automatically determined internally by
- the last path component of the NSURL object passed in. If the mime-type can't be determined an 'application-octet-stream'
- would be send instead.
- 
+ NOTE: Prior to version 1.4 of the library, multipart upload was supported by the means of attaching an *NSURL* object directly on the payload. The method is still supported, but it is now deprecated and will be removed in the future versions of the library.
  
  ## Time out and Cancel pending operations
 
