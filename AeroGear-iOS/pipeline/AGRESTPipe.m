@@ -216,6 +216,7 @@
     // try to add auth.token:
     [self applyAuthToken];
     NSDictionary *accessTokenParams = [self getAuthzAccessToken];
+    //NSLog(@"AccessToken in save::%@", accessTokenParams);
     // Does a PUT or POST based on the fact if the object
     // already exists (if there is an 'id').
     
@@ -235,17 +236,18 @@
     };
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params addEntriesFromDictionary:object];
-    [params addEntriesFromDictionary:_authzModule.accessTokens];
     id objectKey = [object objectForKey:_recordId];
     
     // we need to check if the map representation contains the "recordID" and its value is actually set:
     if (objectKey == nil || [objectKey isKindOfClass:[NSNull class]]) {
         //TODO: NSLog(@"HTTP POST to create the given object");
+        [_restClient setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Bearer %@", [accessTokenParams objectForKey:@"access_token"]]];
         [_restClient postPath:_URL.path parameters:params success:successCallback failure:failureCallback];
         return;
     } else {
         NSString* updateId = [self getStringValue:objectKey];
         //TODO: NSLog(@"HTTP PUT to update the given object");
+        [_restClient setDefaultHeader:@"Authorization" value:[NSString stringWithFormat:@"Bearer %@", [accessTokenParams objectForKey:@"access_token"]]];
         [_restClient putPath:[self appendObjectPath:updateId] parameters:params success:successCallback failure:failureCallback];
         return;
     }
