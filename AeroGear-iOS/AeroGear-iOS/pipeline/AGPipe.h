@@ -123,7 +123,7 @@ Of course the _collection_ behind the responseObject can be stored to a variable
  ## Upload files
  
  Support for multipart upload is also provided. The types of data that can be uploaded are local files, instances of NSData and NSInputStream.
- Let's see how the upload mechanism works with the aid of an example:
+ Let's see how the upload mechanism works with an example:
  
      // a multipart that contains a file
      NSURL *file1 = <path to a local file>
