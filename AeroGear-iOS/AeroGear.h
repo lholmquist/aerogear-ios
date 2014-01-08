@@ -18,34 +18,34 @@
 #ifndef _AEROGEAR_
 #define _AEROGEAR_
 
-// base
+#pragma mark - base
 #import "AGConfig.h"
 
-// Pipeline
+#pragma mark - Pipeline
 #import "AGPipe.h"
 #import "AGPipeline.h"
 #import "AGPipeConfig.h"
 #import "AGNSMutableArray+Paging.h"
 #import "AGMultipart.h"
 
-// DataManager
+#pragma mark - DataManager
 #import "AGStore.h"
 #import "AGDataManager.h"
 #import "AGStoreConfig.h"
 
-// Security
+#pragma mark - Security
 
-//Authentication
+#pragma mark - Authentication
 #import "AGAuthenticationModule.h"
 #import "AGAuthenticator.h"
 #import "AGAuthConfig.h"
 
-//Authorization
+#pragma mark - Authorization
 #import "AGAuthzModule.h"
 #import "AGAuthorizer.h"
 #import "AGAuthzConfig.h"
 
-//Encryption
+#pragma mark - Encryption
 #import "AGCryptoConfig.h"
 #import "AGKeyStoreCryptoConfig.h"
 #import "AGPassphraseCryptoConfig.h"
