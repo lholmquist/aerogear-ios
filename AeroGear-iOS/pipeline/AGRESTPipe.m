@@ -126,10 +126,14 @@
     
     // try to add auth.token:
     [self applyAuthToken];
-    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    NSDictionary *accessTokenParams = [self getAuthzAccessToken];
+    if ([accessTokenParams count]!=0) {
+        [params addEntriesFromDictionary:accessTokenParams];
+    }
+
     NSString* objectKey = [self getStringValue:value];
-    [_restClient getPath:[self appendObjectPath:objectKey] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+    [_restClient getPath:[self appendObjectPath:objectKey] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
             //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
