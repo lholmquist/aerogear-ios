@@ -123,7 +123,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
     _restClient.parameterEncoding = AFFormURLParameterEncoding;
     [_restClient postPath:[NSString stringWithFormat:@"%@/%@", self.baseURL, self.accessTokenEndpoint] parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSString* accessTokens = [responseObject objectForKey:@"access_token"];
-        _accessTokens = [@{@"access_token":accessTokens} mutableCopy];
+        _accessTokens = @{@"access_token":accessTokens};
         if (success) {
             success(accessTokens);
         }
