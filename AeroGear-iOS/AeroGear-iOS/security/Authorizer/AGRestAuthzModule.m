@@ -71,7 +71,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
         _clientSecret = config.clientSecret;
         _scopes = config.scopes;
 
-        _restClient = [[AFHTTPClient alloc] initWithBaseURL:config.baseURL];
+        _restClient = [AGHttpClient clientFor:config.baseURL timeout:config.timeout];
         _restClient.parameterEncoding = AFJSONParameterEncoding;
 
         _accessTokens = [NSMutableDictionary dictionary];
@@ -122,16 +122,10 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
     }
     _restClient.parameterEncoding = AFFormURLParameterEncoding;
     [_restClient postPath:[NSString stringWithFormat:@"%@/%@", self.baseURL, self.accessTokenEndpoint] parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSString* responseJSON = [[NSString alloc] initWithData:(NSData *)responseObject encoding:NSUTF8StringEncoding];
-        if ([responseJSON rangeOfString:@"access_token"].location != NSNotFound) {
-            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: responseObject
-                                                                 options: NSJSONReadingMutableContainers
-                                                                   error: nil];
-            NSString* accessTokens = [JSON valueForKey:@"access_token"];
-            _accessTokens = @{@"access_token":accessTokens};
-            if (success) {
-                success(accessTokens);
-            }
+        NSString* accessTokens = [responseObject objectForKey:@"access_token"];
+        _accessTokens = [@{@"access_token":accessTokens} mutableCopy];
+        if (success) {
+            success(accessTokens);
         }
         //TODO deal with refresh case
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
