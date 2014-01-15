@@ -29,7 +29,8 @@
 @property (nonatomic, readonly) NSDictionary* accessTokens;
 
 /**
- * Performs a simple check if the user of the module impl. is authenticated.
+ * check is accessTokens are present and not expired.
+ * TODO AGIOS-145
  */
 - (BOOL)isAuthzValid;
 
