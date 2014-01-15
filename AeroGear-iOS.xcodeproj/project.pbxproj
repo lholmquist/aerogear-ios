@@ -91,6 +91,8 @@
 		6FE3D1471834E4C300C3A09A /* AGBaseStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1461834E4C300C3A09A /* AGBaseStorageSpec.m */; };
 		6FE55675169DE7C800E6188E /* AGPropertyListStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE55674169DE7C800E6188E /* AGPropertyListStorage.m */; };
 		6FFF85381760EE060044B5DE /* AGHTTPMockHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FFF85371760EE060044B5DE /* AGHTTPMockHelper.m */; };
+		833BB20A1886C696007760EC /* AGCodeCoverageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 833BB2091886C696007760EC /* AGCodeCoverageHelper.m */; };
+		833BB20C1886C6B1007760EC /* AGTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 833BB20B1886C6B1007760EC /* AGTestObserver.m */; };
 		A0A37AD316AE905F00979868 /* AGPipeConfigSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A37AD216AE905F00979868 /* AGPipeConfigSpec.m */; };
 		A0A37ADA16AEAEDE00979868 /* AGNSMutableArray+Paging.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A37AD916AEAEDE00979868 /* AGNSMutableArray+Paging.m */; };
 /* End PBXBuildFile section */
@@ -250,6 +252,9 @@
 		6FE55674169DE7C800E6188E /* AGPropertyListStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPropertyListStorage.m; path = datamanager/AGPropertyListStorage.m; sourceTree = "<group>"; };
 		6FFF85361760EE060044B5DE /* AGHTTPMockHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGHTTPMockHelper.h; path = utils/AGHTTPMockHelper.h; sourceTree = "<group>"; };
 		6FFF85371760EE060044B5DE /* AGHTTPMockHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGHTTPMockHelper.m; path = utils/AGHTTPMockHelper.m; sourceTree = "<group>"; };
+		833BB2081886C696007760EC /* AGCodeCoverageHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGCodeCoverageHelper.h; sourceTree = "<group>"; };
+		833BB2091886C696007760EC /* AGCodeCoverageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGCodeCoverageHelper.m; sourceTree = "<group>"; };
+		833BB20B1886C6B1007760EC /* AGTestObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGTestObserver.m; sourceTree = "<group>"; };
 		A0A37AD216AE905F00979868 /* AGPipeConfigSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPipeConfigSpec.m; sourceTree = "<group>"; };
 		A0A37AD816AEAEDE00979868 /* AGNSMutableArray+Paging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGNSMutableArray+Paging.h"; path = "pipeline/AGNSMutableArray+Paging.h"; sourceTree = "<group>"; };
 		A0A37AD916AEAEDE00979868 /* AGNSMutableArray+Paging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGNSMutableArray+Paging.m"; path = "pipeline/AGNSMutableArray+Paging.m"; sourceTree = "<group>"; };
@@ -426,6 +431,8 @@
 		57737FDF15E3D01D006B97BB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				833BB2081886C696007760EC /* AGCodeCoverageHelper.h */,
+				833BB2091886C696007760EC /* AGCodeCoverageHelper.m */,
 				57737FE015E3D01D006B97BB /* AeroGear-iOS-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -443,6 +450,7 @@
 		57737FF415E3D01D006B97BB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				833BB20B1886C6B1007760EC /* AGTestObserver.m */,
 				57737FF515E3D01D006B97BB /* AeroGear-iOSTests-Info.plist */,
 				57737FF615E3D01D006B97BB /* InfoPlist.strings */,
 			);
@@ -715,6 +723,7 @@
 				6FE3D1381834E3F100C3A09A /* AGBaseEncryptionService.m in Sources */,
 				6FE3D13C1834E3F100C3A09A /* AGPassphraseKeyServices.m in Sources */,
 				6FC8F192172FC84F00905C2F /* AGPageBaseExtractor.m in Sources */,
+				833BB20A1886C696007760EC /* AGCodeCoverageHelper.m in Sources */,
 				6F7B5EED17325A7D00ED4F83 /* AGPageConfiguration.m in Sources */,
 				489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */,
 				38EABEA20822C924B3E36AED /* AGAuthorizer.m in Sources */,
@@ -736,6 +745,7 @@
 				3A3FA4389A8490B5D7049667 /* AGAuthenticatorSpec.m in Sources */,
 				3A3FAD31FC7EE80261D43F28 /* AGDataManagerSpec.m in Sources */,
 				3A3FAC066A74B0FBA243D661 /* AGHttpClientSpec.m in Sources */,
+				833BB20C1886C6B1007760EC /* AGTestObserver.m in Sources */,
 				6FE3D1431834E44200C3A09A /* AGKeyManagerSpec.m in Sources */,
 				480FD4DD185B08B000D8CAD3 /* AGEncryptedSQLiteStorageSpec.m in Sources */,
 				3A3FA0F7DE3FD6E3C9B77946 /* AGPageBaseExtractorSpec.m in Sources */,
@@ -904,6 +914,74 @@
 			};
 			name = Release;
 		};
+		83EB45E51886BABF0074ED68 /* CodeCoverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"CCBUILD=1",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PROFILING_CODE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = CodeCoverage;
+		};
+		83EB45E61886BABF0074ED68 /* CodeCoverage */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B8AB37EC1AA3464892D758C1 /* Pods.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "";
+				DSTROOT = /tmp/AeroGear_iOS.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AeroGear-iOS/AeroGear-iOS-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TEST_HOST = "";
+			};
+			name = CodeCoverage;
+		};
+		83EB45E71886BABF0074ED68 /* CodeCoverage */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D6A7A8124B23447DA65BC0DE /* Pods-AeroGear-iOSTests.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AeroGear-iOS/AeroGear-iOS-Prefix.pch";
+				INFOPLIST_FILE = "AeroGear-iOSTests/AeroGear-iOSTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = CodeCoverage;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -911,6 +989,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				57737FFC15E3D01D006B97BB /* Debug */,
+				83EB45E51886BABF0074ED68 /* CodeCoverage */,
 				57737FFD15E3D01D006B97BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -920,6 +999,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				57737FFF15E3D01D006B97BB /* Debug */,
+				83EB45E61886BABF0074ED68 /* CodeCoverage */,
 				5773800015E3D01D006B97BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -929,6 +1009,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5773800215E3D01D006B97BB /* Debug */,
+				83EB45E71886BABF0074ED68 /* CodeCoverage */,
 				5773800315E3D01D006B97BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
