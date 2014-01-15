@@ -98,6 +98,9 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
                                                            [self urlEncodeString:_redirectURL],
                                                            _clientId];
     NSURLRequest *request = [_restClient requestWithMethod:@"POST" path:targetURLString parameters:nil];
+    // register with the notification system in order to be notified when the 'authorisation' process completes in the
+    // external browser, and the oauth code is available so that we can then proceed to request the 'access_token'
+    // from the server.
     _applicationLaunchNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:AGAppLaunchedWithURLNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
         NSURL *url = [[notification userInfo] valueForKey:UIApplicationLaunchOptionsURLKey];
         NSString* code = [[self parametersFromQueryString:[url query]] valueForKey:@"code"];
