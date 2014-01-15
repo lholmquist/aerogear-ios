@@ -99,7 +99,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
                                                            _clientId];
     NSURLRequest *request = [_restClient requestWithMethod:@"POST" path:targetURLString parameters:nil];
     _applicationLaunchNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:AGAppLaunchedWithURLNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-        NSURL *url = [[notification userInfo] valueForKey:@"UIApplicationLaunchOptionsURLKey"];
+        NSURL *url = [[notification userInfo] valueForKey:UIApplicationLaunchOptionsURLKey];
         NSString* code = [[self parametersFromQueryString:[url query]] valueForKey:@"code"];
         [self exchangeAuthorizationCodeForAccessToken:code success:success failure:failure];
     }];
