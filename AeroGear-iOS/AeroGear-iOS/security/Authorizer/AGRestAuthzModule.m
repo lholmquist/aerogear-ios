@@ -125,10 +125,9 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
     }
     _restClient.parameterEncoding = AFFormURLParameterEncoding;
     [_restClient postPath:[NSString stringWithFormat:@"%@/%@", self.baseURL, self.accessTokenEndpoint] parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSString* accessTokens = [responseObject objectForKey:@"access_token"];
-        _accessTokens = @{@"access_token":accessTokens};
+        _accessTokens = @{@"Authorization":[NSString stringWithFormat:@"Bearer %@", [responseObject objectForKey:@"access_token"]]};
         if (success) {
-            success(accessTokens);
+            success([responseObject objectForKey:@"access_token"]);
         }
         //TODO deal with refresh case
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
