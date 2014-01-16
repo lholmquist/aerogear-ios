@@ -53,7 +53,7 @@ describe(@"AGRestAuthzModule", ^{
             config.clientId = @"XXXXX";
             config.redirectURL = @"org.aerogear.GoogleDrive:/oauth2Callback";
             config.scopes = @[@"https://www.googleapis.com/auth/drive"];
-            config.timeout =1; // this is just for testing of timeout methods
+            config.timeout = 1; // this is just for testing of timeout methods
 
             restAuthzModule = [AGRestAuthzModule moduleWithConfig:config];
         });
