@@ -4,7 +4,6 @@ before_install:
     - gem install cocoapods
     - brew update
     - brew uninstall xctool && brew install xctool
-    - cd AeroGear-iOS
 
 script:
     - xctool -workspace AeroGear-iOS.xcworkspace -scheme AeroGear-iOSTests -sdk iphonesimulator -configuration Release test
