@@ -26,10 +26,12 @@
 
 //category:
 #import "AGNSMutableArray+Paging.h"
+#import "AGAuthzModuleAdapter.h"
 
 @implementation AGRESTPipe {
     // TODO make properties on a PRIVATE category...
     id<AGAuthenticationModuleAdapter> _authModule;
+    id<AGAuthzModuleAdapter> _authzModule;
     NSString* _recordId;
     
     AGPipeConfiguration* _config;
@@ -67,6 +69,7 @@
         _URL = finalURL;
         _recordId = _config.recordId;
         _authModule = (id<AGAuthenticationModuleAdapter>) _config.authModule;
+        _authzModule = (id<AGAuthzModuleAdapter>) _config.authzModule;
         
         _restClient = [AGHttpClient clientFor:finalURL timeout:_config.timeout];
         _restClient.parameterEncoding = AFJSONParameterEncoding;
@@ -123,10 +126,9 @@
     
     // try to add auth.token:
     [self applyAuthToken];
-    
+
     NSString* objectKey = [self getStringValue:value];
     [_restClient getPath:[self appendObjectPath:objectKey] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
         if (success) {
             //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
@@ -155,13 +157,13 @@
     
     // try to add auth.token:
     [self applyAuthToken];
-    
+
     // if none has been passed, we use the "global" setting
     // which can be the default limit/offset OR what has
     // been configured on the PIPE level.....:
     if (!parameterProvider)
         parameterProvider = _pageConfig.parameterProvider;
-    
+
     [_restClient getPath:_URL.path parameters:parameterProvider success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         NSMutableArray* pagingObject;
@@ -206,9 +208,6 @@
     // try to add auth.token:
     [self applyAuthToken];
     
-    // Does a PUT or POST based on the fact if the object
-    // already exists (if there is an 'id').
-    
     // the blocks are unique to PUT and POST, so let's define them up-front:
     id successCallback = ^(AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
@@ -223,18 +222,19 @@
             failure(error);
         }
     };
-    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params addEntriesFromDictionary:object];
     id objectKey = [object objectForKey:_recordId];
-    
+
     // we need to check if the map representation contains the "recordID" and its value is actually set:
     if (objectKey == nil || [objectKey isKindOfClass:[NSNull class]]) {
         //TODO: NSLog(@"HTTP POST to create the given object");
-        [_restClient postPath:_URL.path parameters:object success:successCallback failure:failureCallback];
+        [_restClient postPath:_URL.path parameters:params success:successCallback failure:failureCallback];
         return;
     } else {
         NSString* updateId = [self getStringValue:objectKey];
         //TODO: NSLog(@"HTTP PUT to update the given object");
-        [_restClient putPath:[self appendObjectPath:updateId] parameters:object success:successCallback failure:failureCallback];
+        [_restClient putPath:[self appendObjectPath:updateId] parameters:params success:successCallback failure:failureCallback];
         return;
     }
 }
@@ -252,7 +252,7 @@
     
     // try to add auth.token:
     [self applyAuthToken];
-    
+
     id objectKey = [object objectForKey:_recordId];
     // we need to check if the map representation contains the "recordID" and its value is actually set:
     if (objectKey == nil || [objectKey isKindOfClass:[NSNull class]]) {
@@ -305,10 +305,23 @@
 
 // helper method:
 -(void) applyAuthToken {
+    NSDictionary* dict = [NSDictionary dictionary];
     if (_authModule && [_authModule isAuthenticated]) {
-        [[_authModule authTokens] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            [_restClient setDefaultHeader:key value:obj];
-        }];
+        dict = [_authModule authTokens];
+    } else if (_authzModule && [_authzModule accessTokens]) {
+        dict = [_authzModule accessTokens];
+    }
+
+    [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [_restClient setDefaultHeader:key value:obj];
+    }];
+}
+
+-(NSDictionary *) getAuthzAccessToken {
+    if (_authzModule && [_authzModule.accessTokens count]!=0) {
+       return  _authzModule.accessTokens ;
+    } else {
+        return nil;
     }
 }
 

@@ -15,35 +15,35 @@
  * limitations under the License.
  */
 
-#import "AGPipeConfiguration.h"
+#import "AGAuthzConfiguration.h"
 
-@implementation AGPipeConfiguration
+@implementation AGAuthzConfiguration
 
+// private getters...
 @synthesize baseURL = _baseURL;
-@synthesize endpoint = _endpoint;
-@synthesize recordId = _recordId;
-@synthesize authModule = _authModule;
-@synthesize authzModule = _authzModule;
+@synthesize authzEndpoint = _authzEndpoint;
+@synthesize accessTokenEndpoint = _accessTokenEndpoint;
+@synthesize redirectURL = _redirectURL;
+@synthesize scopes = _scopes;
+@synthesize clientId = _clientId;
+@synthesize clientSecret = _clienSecret;
+@synthesize timeout = _timeout;
+
 @synthesize name = _name;
 @synthesize type = _type;
-@synthesize timeout = _timeout;
-@synthesize credential = _credential;
-@synthesize pageConfig = _pageConfig;
 
 - (id)init {
     self = [super init];
     if (self) {
         // default values:
-        _type = @"REST";
-        _recordId = @"id";
-        _timeout = 60;  // the default timeout interval of NSMutableURLRequest (60 secs)
+        _type = @"AG_OAUTH2";
+        _authzEndpoint = @"oauth2/auth";
+        _redirectURL = @"myURL";
+        _scopes = @[@"email"];
+        _timeout = 60; // the default timeout interval of NSMutableURLRequest (60 secs)
     }
+    
     return self;
-}
-
-// custom getter to return name if no endpoint is specified.
--(NSString*) endpoint {
-    return (_endpoint == nil? _name: _endpoint);
 }
 
 @end
