@@ -10,7 +10,6 @@
 		08D43362329A46488E585071 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65D1DA06FAB24A18AB6A5963 /* libPods.a */; };
 		1D0A1358119648AFB949959A /* libPods-AeroGear-iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E065C8DDD305422BBB3237D5 /* libPods-AeroGear-iOSTests.a */; };
 		38EAB6DDCEDC350EEEB294DF /* AGRestAuthzModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB8B515B16A800D9ACAC2 /* AGRestAuthzModule.m */; };
-		38EAB8CD0C2F656C080243A4 /* AGRestAuthzModuleSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB38CBBB3218667A9C1B9 /* AGRestAuthzModuleSpec.m */; };
 		38EAB9B564447C63EDA4F3BD /* AGAuthzConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EABA4C6581856F7241CB57 /* AGAuthzConfiguration.m */; };
 		38EABEA20822C924B3E36AED /* AGAuthorizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 38EAB9A5AFB633EF9E1DFD6C /* AGAuthorizer.m */; };
 		3A3FA0F7DE3FD6E3C9B77946 /* AGPageBaseExtractorSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3FA74285D05B5DFF014629 /* AGPageBaseExtractorSpec.m */; };
@@ -130,7 +129,6 @@
 
 /* Begin PBXFileReference section */
 		38EAB0A7B277164A8D63F747 /* AGAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthorizer.h; sourceTree = "<group>"; };
-		38EAB38CBBB3218667A9C1B9 /* AGRestAuthzModuleSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGRestAuthzModuleSpec.m; sourceTree = "<group>"; };
 		38EAB406473CD49D16965D21 /* AGAuthzModuleAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzModuleAdapter.h; sourceTree = "<group>"; };
 		38EAB5ADD30E415FE3231321 /* AGAuthzConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzConfig.h; sourceTree = "<group>"; };
 		38EAB725EDD875FE3054B456 /* AGAuthzModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGAuthzModule.h; sourceTree = "<group>"; };
@@ -365,7 +363,6 @@
 				6F7C9A1A17CFBB6900058365 /* AGBaseAdapterSpec.m */,
 				6FE3D13F1834E44200C3A09A /* AGKeyManagerSpec.m */,
 				6FE3D1461834E4C300C3A09A /* AGBaseStorageSpec.m */,
-				38EAB38CBBB3218667A9C1B9 /* AGRestAuthzModuleSpec.m */,
 			);
 			name = "Unit Tests";
 			sourceTree = "<group>";
@@ -720,7 +717,6 @@
 				38EABEA20822C924B3E36AED /* AGAuthorizer.m in Sources */,
 				38EAB9B564447C63EDA4F3BD /* AGAuthzConfiguration.m in Sources */,
 				38EAB6DDCEDC350EEEB294DF /* AGRestAuthzModule.m in Sources */,
-				38EAB8CD0C2F656C080243A4 /* AGRestAuthzModuleSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
