@@ -308,21 +308,13 @@
     NSDictionary* dict = [NSDictionary dictionary];
     if (_authModule && [_authModule isAuthenticated]) {
         dict = [_authModule authTokens];
-    } else if (_authzModule && [_authzModule accessTokens]) {
+    } else if (_authzModule && [_authzModule isAuthorized]) {
         dict = [_authzModule accessTokens];
     }
 
     [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         [_restClient setDefaultHeader:key value:obj];
     }];
-}
-
--(NSDictionary *) getAuthzAccessToken {
-    if (_authzModule && [_authzModule.accessTokens count]!=0) {
-       return  _authzModule.accessTokens ;
-    } else {
-        return nil;
-    }
 }
 
 -(NSString *) description {

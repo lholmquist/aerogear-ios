@@ -73,8 +73,6 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
 
         _restClient = [AGHttpClient clientFor:config.baseURL timeout:config.timeout];
         _restClient.parameterEncoding = AFJSONParameterEncoding;
-
-        _accessTokens = [NSMutableDictionary dictionary];
     }
 
     return self;

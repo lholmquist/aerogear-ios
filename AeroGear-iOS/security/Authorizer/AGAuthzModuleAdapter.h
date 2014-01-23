@@ -32,7 +32,7 @@
  * check is accessTokens are present and not expired.
  * TODO AGIOS-145
  */
-- (BOOL)isAuthzValid;
+- (BOOL)isAuthorized;
 
 
 @end
