@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-#import "AGCodeCoverageHelper.h"
-
 #ifdef CCBUILD
 
+@interface AGCodeCoverageHelper : NSObject
 
-extern void __gcov_flush(void);
+@end
 
 @implementation AGCodeCoverageHelper
 
-+(void)flushGcov {
-    __gcov_flush();
++(void)load {
+    [[NSUserDefaults standardUserDefaults] setValue:@"XCTestLog,AGTestObserver" forKey:@"XCTestObserverClass"];
 }
 
 @end

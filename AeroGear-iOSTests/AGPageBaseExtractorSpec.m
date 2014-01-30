@@ -16,6 +16,7 @@
  */
 
 #import <Kiwi/Kiwi.h>
+#import <XCTest/XCTest.h>
 
 #import "AGPageBaseExtractor.h"
 
@@ -29,7 +30,7 @@
 @implementation AGMockedPageExtractor2
 @end
 
-@interface AGPageBaseExtractorTests : SenTestCase
+@interface AGPageBaseExtractorTests : XCTestCase
 
 @end
 

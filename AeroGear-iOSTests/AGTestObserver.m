@@ -17,37 +17,18 @@
 
 #ifdef CCBUILD
 
-#import <SenTestingKit/SenTestingKit.h>
-#import "AGCodeCoverageHelper.h"
+#import <XCTest/XCTestObserver.h>
 
-@interface AGTestObserver : SenTestObserver
+@interface AGTestObserver : XCTestObserver
 @end
-
-static id mainSuite = nil;
 
 @implementation AGTestObserver
 
-+ (void)initialize {
-    [[NSUserDefaults standardUserDefaults] setValue:@"AGTestObserver" forKey:SenTestObserverClassKey];
-    [super initialize];
-}
-
-+(void)testSuiteDidStart:(NSNotification*)notification {
-    [super testSuiteDidStart:notification];
+- (void)stopObserving {
+    [super stopObserving];
     
-    SenTestSuiteRun* suite = notification.object;
-    if(mainSuite == nil) {
-        mainSuite = suite;
-    }
-}
-
-+(void)testSuiteDidStop:(NSNotification *)notification {
-    [super testSuiteDidStop:notification];
-    
-    SenTestSuiteRun* suite = notification.object;
-    if(mainSuite == suite) {
-        [AGCodeCoverageHelper flushGcov];
-    }
+    extern void __gcov_flush(void);
+    __gcov_flush();
 }
 
 @end

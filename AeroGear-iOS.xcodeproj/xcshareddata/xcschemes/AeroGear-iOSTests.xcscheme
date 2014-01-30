@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "57737FE915E3D01D006B97BB"
-               BuildableName = "AeroGear-iOSTests.octest"
+               BuildableName = "AeroGear-iOSTests.xctest"
                BlueprintName = "AeroGear-iOSTests"
                ReferencedContainer = "container:AeroGear-iOS.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "57737FE915E3D01D006B97BB"
-               BuildableName = "AeroGear-iOSTests.octest"
+               BuildableName = "AeroGear-iOSTests.xctest"
                BlueprintName = "AeroGear-iOSTests"
                ReferencedContainer = "container:AeroGear-iOS.xcodeproj">
             </BuildableReference>

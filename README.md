@@ -32,4 +32,3 @@ To get the code covered by tests, follow these steps:
 `xctool -workspace AeroGear-iOS.xcworkspace -sdk iphonesimulator -scheme AeroGear-iOS -configuration CodeCoverage clean test`
 2. Verify that the command generated `.gcno` and `.gcda` files in `~/Library/Developer/Xcode/DerivedData/AeroGear-iOS-{generated sequence}/Build/Intermediates/AeroGear-iOS.build/CodeCoverage-iphonesimulator/AeroGear-iOS.build/Objects-normal/i386`
 3. Open those `.gcda` and `.gcno` files in [CoverStory](https://code.google.com/p/coverstory/)
-4. Navigate to ~/Library/Application Support/iPhone Simulator/{version}/Library/Preferences and delete file otest.plist

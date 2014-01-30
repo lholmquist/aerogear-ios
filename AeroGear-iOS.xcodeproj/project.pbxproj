@@ -30,7 +30,6 @@
 		489F47B817DDFF110072DE0F /* AGSQLiteStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 489F47B717DDFF110072DE0F /* AGSQLiteStorageSpec.m */; };
 		489F47BB17DDFFF40072DE0F /* AGSQLiteStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 489F47BA17DDFFF40072DE0F /* AGSQLiteStorage.m */; };
 		48B5C59118521C7000FF7108 /* AGEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 48B5C59018521C7000FF7108 /* AGEncoder.m */; };
-		48C4F000186833AA0020AE51 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57737FEB15E3D01D006B97BB /* SenTestingKit.framework */; };
 		571DBACB1610715800A0A3A6 /* AGMemoryStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBACA1610715800A0A3A6 /* AGMemoryStorage.m */; };
 		571DBACF161071BF00A0A3A6 /* AGBaseStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBACE161071BF00A0A3A6 /* AGBaseStorage.m */; };
 		571DBAD51610C3D700A0A3A6 /* AGMemoryStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 571DBAD41610C3D700A0A3A6 /* AGMemoryStorageSpec.m */; };
@@ -55,7 +54,6 @@
 		573CBDA415E4F31B0071E7A6 /* AGPipelineSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 573CBDA315E4F31B0071E7A6 /* AGPipelineSpec.m */; };
 		573CBDAD15E546B70071E7A6 /* AGRestAdapterSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 573CBDAC15E546B70071E7A6 /* AGRestAdapterSpec.m */; };
 		57737FDD15E3D01D006B97BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57737FDC15E3D01D006B97BB /* Foundation.framework */; };
-		57737FEC15E3D01D006B97BB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57737FEB15E3D01D006B97BB /* SenTestingKit.framework */; };
 		57737FEF15E3D01D006B97BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57737FDC15E3D01D006B97BB /* Foundation.framework */; };
 		57737FF215E3D01D006B97BB /* libAeroGear-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57737FD915E3D01D006B97BB /* libAeroGear-iOS.a */; };
 		57737FF815E3D01D006B97BB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 57737FF615E3D01D006B97BB /* InfoPlist.strings */; };
@@ -93,6 +91,7 @@
 		6FFF85381760EE060044B5DE /* AGHTTPMockHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FFF85371760EE060044B5DE /* AGHTTPMockHelper.m */; };
 		833BB20A1886C696007760EC /* AGCodeCoverageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 833BB2091886C696007760EC /* AGCodeCoverageHelper.m */; };
 		833BB20C1886C6B1007760EC /* AGTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 833BB20B1886C6B1007760EC /* AGTestObserver.m */; };
+		83716D01189AC424005D5B1D /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83716D00189AC424005D5B1D /* XCTest.framework */; };
 		A0A37AD316AE905F00979868 /* AGPipeConfigSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A37AD216AE905F00979868 /* AGPipeConfigSpec.m */; };
 		A0A37ADA16AEAEDE00979868 /* AGNSMutableArray+Paging.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A37AD916AEAEDE00979868 /* AGNSMutableArray+Paging.m */; };
 /* End PBXBuildFile section */
@@ -193,8 +192,7 @@
 		57737FD915E3D01D006B97BB /* libAeroGear-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libAeroGear-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		57737FDC15E3D01D006B97BB /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		57737FE015E3D01D006B97BB /* AeroGear-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AeroGear-iOS-Prefix.pch"; sourceTree = "<group>"; };
-		57737FEA15E3D01D006B97BB /* AeroGear-iOSTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AeroGear-iOSTests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		57737FEB15E3D01D006B97BB /* SenTestingKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		57737FEA15E3D01D006B97BB /* AeroGear-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AeroGear-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		57737FF515E3D01D006B97BB /* AeroGear-iOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AeroGear-iOSTests-Info.plist"; sourceTree = "<group>"; };
 		57737FF715E3D01D006B97BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		57C2616116402B2D00793C0F /* AGConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGConfig.h; path = config/AGConfig.h; sourceTree = "<group>"; };
@@ -252,9 +250,9 @@
 		6FE55674169DE7C800E6188E /* AGPropertyListStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPropertyListStorage.m; path = datamanager/AGPropertyListStorage.m; sourceTree = "<group>"; };
 		6FFF85361760EE060044B5DE /* AGHTTPMockHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGHTTPMockHelper.h; path = utils/AGHTTPMockHelper.h; sourceTree = "<group>"; };
 		6FFF85371760EE060044B5DE /* AGHTTPMockHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGHTTPMockHelper.m; path = utils/AGHTTPMockHelper.m; sourceTree = "<group>"; };
-		833BB2081886C696007760EC /* AGCodeCoverageHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGCodeCoverageHelper.h; sourceTree = "<group>"; };
 		833BB2091886C696007760EC /* AGCodeCoverageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGCodeCoverageHelper.m; sourceTree = "<group>"; };
 		833BB20B1886C6B1007760EC /* AGTestObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGTestObserver.m; sourceTree = "<group>"; };
+		83716D00189AC424005D5B1D /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		A0A37AD216AE905F00979868 /* AGPipeConfigSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGPipeConfigSpec.m; sourceTree = "<group>"; };
 		A0A37AD816AEAEDE00979868 /* AGNSMutableArray+Paging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AGNSMutableArray+Paging.h"; path = "pipeline/AGNSMutableArray+Paging.h"; sourceTree = "<group>"; };
 		A0A37AD916AEAEDE00979868 /* AGNSMutableArray+Paging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "AGNSMutableArray+Paging.m"; path = "pipeline/AGNSMutableArray+Paging.m"; sourceTree = "<group>"; };
@@ -268,7 +266,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				48C4F000186833AA0020AE51 /* SenTestingKit.framework in Frameworks */,
 				6F6C39D117719A24009B3A57 /* CoreGraphics.framework in Frameworks */,
 				6F6C39C617719995009B3A57 /* Security.framework in Frameworks */,
 				6F6C39C117719970009B3A57 /* MobileCoreServices.framework in Frameworks */,
@@ -282,13 +279,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83716D01189AC424005D5B1D /* XCTest.framework in Frameworks */,
 				489BC1A017E0C1F80008DAEF /* libsqlite3.0.dylib in Frameworks */,
 				6F6C39D517719B98009B3A57 /* UIKit.framework in Frameworks */,
 				6F6C39D017719A1E009B3A57 /* CoreGraphics.framework in Frameworks */,
 				6F6C39C517719990009B3A57 /* Security.framework in Frameworks */,
 				6F6C39C31771998B009B3A57 /* MobileCoreServices.framework in Frameworks */,
 				6F6C39C217719986009B3A57 /* SystemConfiguration.framework in Frameworks */,
-				57737FEC15E3D01D006B97BB /* SenTestingKit.framework in Frameworks */,
 				57737FEF15E3D01D006B97BB /* Foundation.framework in Frameworks */,
 				57737FF215E3D01D006B97BB /* libAeroGear-iOS.a in Frameworks */,
 				1D0A1358119648AFB949959A /* libPods-AeroGear-iOSTests.a in Frameworks */,
@@ -392,7 +389,7 @@
 			isa = PBXGroup;
 			children = (
 				57737FD915E3D01D006B97BB /* libAeroGear-iOS.a */,
-				57737FEA15E3D01D006B97BB /* AeroGear-iOSTests.octest */,
+				57737FEA15E3D01D006B97BB /* AeroGear-iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -400,9 +397,9 @@
 		57737FDB15E3D01D006B97BB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83716D00189AC424005D5B1D /* XCTest.framework */,
 				6F6C39D417719B98009B3A57 /* UIKit.framework */,
 				57737FDC15E3D01D006B97BB /* Foundation.framework */,
-				57737FEB15E3D01D006B97BB /* SenTestingKit.framework */,
 				6F6C39CF17719A1E009B3A57 /* CoreGraphics.framework */,
 				6F6C39C417719990009B3A57 /* Security.framework */,
 				6F6C39C017719970009B3A57 /* MobileCoreServices.framework */,
@@ -431,7 +428,6 @@
 		57737FDF15E3D01D006B97BB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				833BB2081886C696007760EC /* AGCodeCoverageHelper.h */,
 				833BB2091886C696007760EC /* AGCodeCoverageHelper.m */,
 				57737FE015E3D01D006B97BB /* AeroGear-iOS-Prefix.pch */,
 			);
@@ -591,7 +587,6 @@
 				57737FE515E3D01D006B97BB /* Sources */,
 				57737FE615E3D01D006B97BB /* Frameworks */,
 				57737FE715E3D01D006B97BB /* Resources */,
-				57737FE815E3D01D006B97BB /* ShellScript */,
 				93D7F386A5174719A232F1D0 /* Copy Pods Resources */,
 			);
 			buildRules = (
@@ -601,8 +596,8 @@
 			);
 			name = "AeroGear-iOSTests";
 			productName = "AeroGear-iOSTests";
-			productReference = 57737FEA15E3D01D006B97BB /* AeroGear-iOSTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 57737FEA15E3D01D006B97BB /* AeroGear-iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -643,20 +638,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		57737FE815E3D01D006B97BB /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-			showEnvVarsInLog = 0;
-		};
 		93D7F386A5174719A232F1D0 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -836,6 +817,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				DSTROOT = /tmp/AeroGear_iOS.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -855,6 +837,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				DSTROOT = /tmp/AeroGear_iOS.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -873,8 +856,9 @@
 			baseConfigurationReference = D6A7A8124B23447DA65BC0DE /* Pods-AeroGear-iOSTests.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AeroGear-iOS/AeroGear-iOS-Prefix.pch";
@@ -882,12 +866,11 @@
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -896,8 +879,9 @@
 			baseConfigurationReference = D6A7A8124B23447DA65BC0DE /* Pods-AeroGear-iOSTests.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AeroGear-iOS/AeroGear-iOS-Prefix.pch";
@@ -905,12 +889,11 @@
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -950,6 +933,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				DSTROOT = /tmp/AeroGear_iOS.dst;
+				EXCLUDED_SOURCE_FILE_NAMES = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AeroGear-iOS/AeroGear-iOS-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
@@ -964,8 +948,9 @@
 			baseConfigurationReference = D6A7A8124B23447DA65BC0DE /* Pods-AeroGear-iOSTests.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AeroGear-iOS/AeroGear-iOS-Prefix.pch";
@@ -973,12 +958,11 @@
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "";
 				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = CodeCoverage;
 		};
