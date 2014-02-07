@@ -22,26 +22,26 @@
 static NSString* HTTPMethodCalled;
 static NSDictionary* HTTPRequestHeaders;
 
-+ (void)mockResponse:(NSData*)data {
-    return [self mockResponse:data headers:nil status:200 responseTime:0];
-}
-
-+ (void)mockResponseTimeout:(NSData*)data status:(int)status responseTime:(NSTimeInterval)responseTime {
-    return [self mockResponse:data headers:nil status:200 responseTime:responseTime];
-}
-
-+ (void)mockResponseHeaders:(NSData*)data headers:(NSDictionary*)headers {
-    return [self mockResponse:data headers:headers status:200 responseTime:0];
-}
-
 + (void)mockResponseStatus:(int)status {
-    return [self mockResponse:[NSData data] headers:nil status:status responseTime:0];
+    return [self mockResponse:[NSData data] headers:nil status:status requestTime:0.0];
 }
 
-+ (void)mockResponse:(NSData*)data
-             headers:(NSDictionary*)appendHeaders
++ (void)mockResponse:(NSData*)data {
+    return [self mockResponse:data headers:nil status:200 requestTime:0.0];
+}
+
++ (void)mockResponse:(NSData *)data headers:(NSDictionary*)headers {
+    return [self mockResponse:data headers:headers status:200 requestTime:0.0];
+}
+
++ (void)mockResponse:(NSData *)data status:(int)status requestTime:(NSTimeInterval)requestTime {
+    return [self mockResponse:data headers:nil status:200 requestTime:requestTime];
+}
+
++ (void)mockResponse:(NSData *)data
+             headers:(NSDictionary *)appendHeaders
               status:(int)status
-        responseTime:(NSTimeInterval)responseTime {
+         requestTime:(NSTimeInterval)requestTime {
     
     NSMutableDictionary* headers = [NSMutableDictionary
                                     dictionaryWithObject:@"application/json; charset=utf-8" forKey:@"Content-Type"];
@@ -49,16 +49,16 @@ static NSDictionary* HTTPRequestHeaders;
     if (appendHeaders != nil)
         [headers addEntriesFromDictionary:appendHeaders];
     
-    
-	[OHHTTPStubs addRequestHandler:^(NSURLRequest *request, BOOL onlyCheck) {
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return YES;
+    } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
         HTTPMethodCalled = request.HTTPMethod;
         HTTPRequestHeaders = request.allHTTPHeaderFields;
-        
-        return [OHHTTPStubsResponse responseWithData:data
-                                          statusCode:status
-                                        responseTime:responseTime
-                                             headers:headers];
-	}];
+
+        return [[OHHTTPStubsResponse responseWithData:data
+                                           statusCode:status
+                                              headers:headers] requestTime:requestTime responseTime:0.5];
+    }];
 }
 
 + (NSString*)lastHTTPMethodCalled {
@@ -70,7 +70,7 @@ static NSDictionary* HTTPRequestHeaders;
 }
 
 + (void)clearAllMockedRequests {
-    [OHHTTPStubs removeAllRequestHandlers];
+    [OHHTTPStubs removeAllStubs];
     
     HTTPMethodCalled = nil;
     HTTPRequestHeaders = nil;

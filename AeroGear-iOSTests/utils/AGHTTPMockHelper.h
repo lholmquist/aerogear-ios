@@ -23,18 +23,18 @@
  */
 @interface AGHTTPMockHelper : NSObject
 
-+ (void)mockResponse:(NSData*)data;
-
-+ (void)mockResponseTimeout:(NSData*)data status:(int)status responseTime:(NSTimeInterval)responseTime;
-
-+ (void)mockResponseHeaders:(NSData*)data headers:(NSDictionary*)headers;
-
 + (void)mockResponseStatus:(int)status;
 
-+ (void)mockResponse:(NSData*)data
-             headers:(NSDictionary*)headers
++ (void)mockResponse:(NSData*)data;
+
++ (void)mockResponse:(NSData *)data headers:(NSDictionary*)headers;
+
++ (void)mockResponse:(NSData *)data status:(int)status requestTime:(NSTimeInterval)requestTime;
+
++ (void)mockResponse:(NSData *)data
+             headers:(NSDictionary *)headers
               status:(int)status
-        responseTime:(NSTimeInterval)responseTime;
+         requestTime:(NSTimeInterval)requestTime;
 
 + (NSString*)lastHTTPMethodCalled;
 
