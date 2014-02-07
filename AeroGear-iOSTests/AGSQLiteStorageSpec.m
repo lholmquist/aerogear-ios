@@ -95,7 +95,6 @@ describe(@"AGSQLiteStorage", ^{
             NSError *error = [[NSError alloc] init];
             BOOL success = [sqliteStorage save:user error:&error];
             [[theValue(success) should] equal:theValue(NO)];
-            NSString* errorString =  [[[error userInfo] valueForKey:@"NSLocalizedDescription"] substringFromIndex:12];
 
             [[[[error userInfo] valueForKey:@"NSLocalizedDescription"] should] equal:@"datatype mismatch"];
         });

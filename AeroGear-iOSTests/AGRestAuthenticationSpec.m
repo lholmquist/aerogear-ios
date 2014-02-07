@@ -21,34 +21,22 @@
 #import "AGRestAuthentication.h"
 #import "AGAuthConfiguration.h"
 
-// useful macro to check iOS version
-#define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-
 SPEC_BEGIN(AGRestAuthenticationSpec)
 
 describe(@"AGRestAuthentication", ^{
+    
+     NSString * const PASSING_USERNAME = @"john";
+     NSString * const FAILING_USERNAME = @"fail";
+     NSString * const LOGIN_PASSWORD = @"passwd";
+     NSString * const ENROLL_PASSWORD = @"passwd";
+     NSString * const LOGIN_SUCCESS_RESPONSE = @"{\"username\":\"%@\",\"roles\":[\"admin\"]}";
+
+    __block BOOL finishedFlag;
+    
     context(@"when newly created", ^{
 
-        __block NSString *PASSING_USERNAME = nil;
-        __block NSString *FAILING_USERNAME = nil;
-        __block NSString *LOGIN_PASSWORD = nil;
-        __block NSString *ENROLL_PASSWORD = nil;
-        __block NSString *LOGIN_SUCCESS_RESPONSE = nil;
-
         __block AGRestAuthentication* restAuthModule = nil;
-
-        __block BOOL finishedFlag;
         
-        NSInteger const TIMEOUT_ERROR_CODE = SYSTEM_VERSION_LESS_THAN(@"6")? -999: -1001;
-
-        beforeAll(^{
-            PASSING_USERNAME = @"john";
-            FAILING_USERNAME = @"fail";
-            LOGIN_PASSWORD = @"passwd";
-            ENROLL_PASSWORD = @"passwd";
-            LOGIN_SUCCESS_RESPONSE =  @"{\"username\":\"%@\",\"roles\":[\"admin\"]}";
-        });
-
         beforeEach(^{
             NSURL* baseURL = [NSURL URLWithString:@"https://server.com/context/"];
 
@@ -56,7 +44,6 @@ describe(@"AGRestAuthentication", ^{
             AGAuthConfiguration* config = [[AGAuthConfiguration alloc] init];
             [config setBaseURL:baseURL];
             [config setEnrollEndpoint:@"auth/register"];
-            [config setTimeout:1]; // this is just for testing of timeout methods
 
             restAuthModule = [AGRestAuthentication moduleWithConfig:config];
         });
@@ -85,27 +72,6 @@ describe(@"AGRestAuthentication", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-        });
-
-        it(@"should honour timeout on login", ^{
-            // simulate delay in response
-            // Note that pipe has been default configured for a timeout in 1 sec
-            // here we simulate a delay of 2 sec
-
-            // install the mock:
-            [AGHTTPMockHelper mockResponseTimeout:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
-                    dataUsingEncoding:NSUTF8StringEncoding]
-                                           status:200
-                                     responseTime:2]; // two secs delay
-
-            [restAuthModule login:@{@"loginName": PASSING_USERNAME, @"password": LOGIN_PASSWORD} success:^(id responseObject) {
-                // nope
-            } failure:^(NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                finishedFlag = YES;
-            }];
-
             [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
@@ -118,7 +84,7 @@ describe(@"AGRestAuthentication", ^{
                finishedFlag = YES;
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should successfully logout", ^{
@@ -132,33 +98,6 @@ describe(@"AGRestAuthentication", ^{
 
                 } failure:^(NSError *error) {
                     // nope
-                }];
-            } failure:^(NSError *error) {
-                // nope
-            }];
-
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-        });
-
-        it(@"should honour timeout on logout", ^{
-            // install the mock:
-            [AGHTTPMockHelper mockResponse:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
-                    dataUsingEncoding:NSUTF8StringEncoding]];
-
-            [restAuthModule login:@{@"loginName": PASSING_USERNAME, @"password": LOGIN_PASSWORD} success:^(id object) {
-
-                // install the mock:
-                [AGHTTPMockHelper mockResponseTimeout:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
-                        dataUsingEncoding:NSUTF8StringEncoding]
-                                               status:200
-                                         responseTime:2]; // two secs delay
-
-                [restAuthModule logout:^{
-                    // nope
-
-                } failure:^(NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
                 }];
             } failure:^(NSError *error) {
                 // nope
@@ -178,7 +117,7 @@ describe(@"AGRestAuthentication", ^{
             [registerPayload setValue:@"Doe" forKey:@"lastname"];
             [registerPayload setValue:@"emaadsil@mssssse.com" forKey:@"email"];
             [registerPayload setValue:PASSING_USERNAME forKey:@"username"];
-            [registerPayload setValue:LOGIN_PASSWORD forKey:@"password"];
+            [registerPayload setValue:ENROLL_PASSWORD forKey:@"password"];
             [registerPayload setValue:@"admin" forKey:@"role"];
 
             [restAuthModule enroll:registerPayload success:^(id responseObject) {
@@ -189,38 +128,113 @@ describe(@"AGRestAuthentication", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+    });
+    
+    context(@"timout should be honoured", ^{
+        
+        NSInteger const TIMEOUT_ERROR_CODE = -1001;
+        
+        __block AGRestAuthentication* restAuthModule = nil;
+        
+        beforeEach(^{
+            NSURL* baseURL = [NSURL URLWithString:@"https://server.com/context/"];
+            
+            // setup REST Authenticator
+            AGAuthConfiguration* config = [[AGAuthConfiguration alloc] init];
+            [config setBaseURL:baseURL];
+            [config setEnrollEndpoint:@"auth/register"];
+            [config setTimeout:1]; // this is just for testing of timeout methods
+            
+            restAuthModule = [AGRestAuthentication moduleWithConfig:config];
+        });
+        
+        afterEach(^{
+            // remove all handlers installed by test methods
+            // to avoid any interference
+            [AGHTTPMockHelper clearAllMockedRequests];
+            
+            finishedFlag = NO;
         });
 
-        it(@"should honour timeout on enroll", ^{
+        it(@"on login", ^{
             // simulate delay in response
             // Note that pipe has been default configured for a timeout in 1 sec
             // here we simulate a delay of 2 sec
-
+            
             // install the mock:
-            [AGHTTPMockHelper mockResponseTimeout:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
+            [AGHTTPMockHelper mockResponse:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
                     dataUsingEncoding:NSUTF8StringEncoding]
-                                           status:200
-                                     responseTime:2]; // two secs delay
-
+                                    status:200
+                               requestTime:2]; // two secs delay
+            
+            [restAuthModule login:@{@"loginName": PASSING_USERNAME, @"password": LOGIN_PASSWORD} success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                finishedFlag = YES;
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"on logout", ^{
+            // install the mock:
+            [AGHTTPMockHelper mockResponse:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
+                                            dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            [restAuthModule login:@{@"loginName": PASSING_USERNAME, @"password": LOGIN_PASSWORD} success:^(id object) {
+                
+                // install the mock:
+                [AGHTTPMockHelper mockResponse:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
+                        dataUsingEncoding:NSUTF8StringEncoding]
+                                        status:200
+                                   requestTime:2]; // two secs delay
+                
+                [restAuthModule logout:^{
+                    // nope
+                    
+                } failure:^(NSError *error) {
+                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                    finishedFlag = YES;
+                }];
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"on enroll", ^{
+            // simulate delay in response
+            // Note that pipe has been default configured for a timeout in 1 sec
+            // here we simulate a delay of 2 sec
+            
+            // install the mock:
+            [AGHTTPMockHelper mockResponse:[[NSString stringWithFormat:LOGIN_SUCCESS_RESPONSE, PASSING_USERNAME]
+                    dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+            
             NSMutableDictionary* registerPayload = [NSMutableDictionary dictionary];
-
+            
             [registerPayload setValue:@"John" forKey:@"firstname"];
             [registerPayload setValue:@"Doe" forKey:@"lastname"];
             [registerPayload setValue:@"emaadsil@mssssse.com" forKey:@"email"];
             [registerPayload setValue:PASSING_USERNAME forKey:@"username"];
-            [registerPayload setValue:LOGIN_PASSWORD forKey:@"password"];
+            [registerPayload setValue:ENROLL_PASSWORD forKey:@"password"];
             [registerPayload setValue:@"admin" forKey:@"role"];
-
-
+            
+            
             [restAuthModule enroll:registerPayload success:^(id responseObject) {
                 // nope
             } failure:^(NSError *error) {
                 [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-
+                
                 finishedFlag = YES;
             }];
-
+            
             [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
     });

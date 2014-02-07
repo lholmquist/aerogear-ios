@@ -35,14 +35,14 @@ describe(@"AGRestAuthzModule", ^{
 
         __block BOOL finishedFlag;
         
-        NSInteger const TIMEOUT_ERROR_CODE = SYSTEM_VERSION_LESS_THAN(@"6")? -999: -1001;
+        //NSInteger const TIMEOUT_ERROR_CODE = SYSTEM_VERSION_LESS_THAN(@"6")? -999: -1001;
 
         beforeAll(^{
             ACCESS_TOKEN_RESPONSE =  @"eee";
         });
 
         beforeEach(^{
-            NSURL* baseURL = [NSURL URLWithString:@"https://server.com/context/"];
+            //NSURL* baseURL = [NSURL URLWithString:@"https://server.com/context/"];
 
             // setup REST Authenticator
             AGAuthzConfiguration* config = [[AGAuthzConfiguration alloc] init];

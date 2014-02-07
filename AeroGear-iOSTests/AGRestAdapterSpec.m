@@ -20,36 +20,25 @@
 #import "AGMultipart.h"
 #import "AGHTTPMockHelper.h"
 
-// useful macro to check iOS version
-#define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-
 SPEC_BEGIN(AGRestAdapterSpec)
 
 describe(@"AGRestAdapter", ^{
+    
+    NSString * const PROJECTS = @"[{\"id\":1,\"title\":\"First Project\",\"style\":\"project-161-58-58\",\"tasks\":[]},{\"id\":2,\"title\":\"Second Project\",\"style\":\"project-64-144-230\",\"tasks\":[]}]";
+
+    NSString * const PROJECT = @"{\"id\":1,\"title\":\"First Project\",\"style\":\"project-161-58-58\",\"tasks\":[]}";
+    
+    __block BOOL finishedFlag = NO;
+    
     context(@"when newly created", ^{
 
-        __block NSString *PROJECTS = nil;
-        __block NSString *PROJECT = nil;
-
         __block AGRESTPipe* restPipe = nil;
-        __block BOOL finishedFlag;
-        
-        NSInteger const TIMEOUT_ERROR_CODE = SYSTEM_VERSION_LESS_THAN(@"6")? -999: -1001;
-       
-        beforeAll(^{
-            PROJECTS = @"[{\"id\":1,\"title\":\"First Project\",\"style\":\"project-161-58-58\",\"tasks\":[]},{\"id\":                 2,\"title\":\"Second Project\",\"style\":\"project-64-144-230\",\"tasks\":[]}]";
-            PROJECT = @"{\"id\":1,\"title\":\"First Project\",\"style\":\"project-161-58-58\",\"tasks\":[]}";
-        });
         
         beforeEach(^{
             AGPipeConfiguration* config = [[AGPipeConfiguration alloc] init];
             [config setBaseURL:[NSURL URLWithString:@"http://server.com"]];
             [config setName:@"projects"];
 
-            // Note: we set the timeout(sec) to a low level so that
-            // we can test the timeout methods with adjusting response delay
-            [config setTimeout:1];
-            
             restPipe = [AGRESTPipe pipeWithConfig:config];
         });
 
@@ -85,7 +74,7 @@ describe(@"AGRestAdapter", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should successfully save (POST)", ^{
@@ -104,7 +93,7 @@ describe(@"AGRestAdapter", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should successfully save (PUT)", ^{
@@ -122,7 +111,7 @@ describe(@"AGRestAdapter", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should successfully remove (DELETE)", ^{
@@ -141,7 +130,7 @@ describe(@"AGRestAdapter", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should read an object with integer argument", ^{
@@ -157,7 +146,7 @@ describe(@"AGRestAdapter", ^{
                     }
             ];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should fail to read an object with nil argument", ^{
@@ -169,7 +158,7 @@ describe(@"AGRestAdapter", ^{
                     }
             ];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should fail to remove an object with nil argument", ^{
@@ -181,7 +170,7 @@ describe(@"AGRestAdapter", ^{
                 finishedFlag = YES;
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
         
         it(@"should accept valid types", ^{
@@ -195,333 +184,375 @@ describe(@"AGRestAdapter", ^{
             // REST lowecase should not be accepted
             [[theValue([AGRESTPipe accepts:@"rest"]) should] equal:theValue(NO)];
         });
+    });
+    
+    context(@"timout should be honoured", ^{
         
-        context(@"timout should be honoured", ^{
+        NSInteger const TIMEOUT_ERROR_CODE = -1001;
+        
+        __block AGRESTPipe* restPipe = nil;
+        
+        beforeEach(^{
+            AGPipeConfiguration* config = [[AGPipeConfiguration alloc] init];
+            [config setBaseURL:[NSURL URLWithString:@"http://server.com"]];
+            [config setName:@"projects"];
             
-            it(@"should honour timeout on save (POST)", ^{
-                // here we simulate POST
-                // for iOS 5 and iOS 6 the timeout should be honoured correctly
-                // regardless of the iOS 5 bug
-                
-                // install the mock:
-                [AGHTTPMockHelper mockResponseTimeout:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
-                                               status:200
-                                         responseTime:2]; // two secs delay
-                NSMutableDictionary* project = [NSMutableDictionary
-                                                dictionaryWithObjectsAndKeys:@"First Project", @"title",
-                                                @"project-161-58-58", @"style", nil];
-                
-                [restPipe save:project success:^(id responseObject) {
-                    // nope
-                    
-                } failure:^(NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-            });
+            // Note: we set the timeout(sec) to a low level so that
+            // we can test the timeout methods with adjusting response delay
+            [config setTimeout:1];
             
-            it(@"should honour timeout on save (PUT)", ^{
-                [AGHTTPMockHelper mockResponseTimeout:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
-                                               status:200
-                                         responseTime:2]; // two secs delay
-                NSMutableDictionary* project = [NSMutableDictionary
-                                                dictionaryWithObjectsAndKeys:@"1", @"id", @"First Project", @"title",
-                                                @"project-161-58-58", @"style", nil];
-                
-                
-                [restPipe save:project success:^(id responseObject) {
-                    // nope
-                } failure:^(NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-            });
+            restPipe = [AGRESTPipe pipeWithConfig:config];
         });
         
-        context(@"should hanlde multipart requests", ^{
+        afterEach(^{
+            // remove all handlers installed by test methods
+            // to avoid any interference
+            [AGHTTPMockHelper clearAllMockedRequests];
             
-            it(@"save with NSURL objects without ID should trigger a POST multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
+            finishedFlag = NO;
+        });
+        
+        it(@"on save (POST)", ^{
+            // here we simulate POST
+            // for iOS 5 and iOS 6 the timeout should be honoured correctly
+            // regardless of the iOS 5 bug
+            
+            // install the mock:
+            [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+            NSMutableDictionary* project = [NSMutableDictionary
+                                            dictionaryWithObjectsAndKeys:@"First Project", @"title",
+                                            @"project-161-58-58", @"style", nil];
+            
+            [restPipe save:project success:^(id responseObject) {
+                // nope
                 
-                // create a dummy file to send
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                finishedFlag = YES;
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"on save (PUT)", ^{
+            [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+            NSMutableDictionary* project = [NSMutableDictionary
+                                            dictionaryWithObjectsAndKeys:@"1", @"id", @"First Project", @"title",
+                                            @"project-161-58-58", @"style", nil];
+            
+            
+            [restPipe save:project success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                finishedFlag = YES;
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+    });
+    
+    context(@"should handle multipart requests", ^{
+        
+        __block AGRESTPipe* restPipe = nil;
+        
+        beforeEach(^{
+            AGPipeConfiguration* config = [[AGPipeConfiguration alloc] init];
+            [config setBaseURL:[NSURL URLWithString:@"http://server.com"]];
+            [config setName:@"projects"];
+            
+            restPipe = [AGRESTPipe pipeWithConfig:config];
+        });
+        
+        afterEach(^{
+            // remove all handlers installed by test methods
+            // to avoid any interference
+            [AGHTTPMockHelper clearAllMockedRequests];
+            
+            finishedFlag = NO;
+        });
+        
+        it(@"save with NSURL objects without ID should trigger a POST multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create a dummy file to send
+            
+            // access support directory
+            NSURL *tmpFolder = [[NSFileManager defaultManager]
+                                URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+            
+            // write a file
+            NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
+            [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"somekey": @"somevalue", @"file":file};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                // access support directory
-                NSURL *tmpFolder = [[NSFileManager defaultManager]
-                                    URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-                
-                // write a file
-                NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
-                [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
-                
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"somekey": @"somevalue", @"file":file};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
 
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
 
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-                // remove dummy file
-                [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
-            });
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            // remove dummy file
+            [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
+        });
+        
+        it(@"save with NSURL objects and an ID should trigger a PUT multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
             
-            it(@"save with NSURL objects and an ID should trigger a PUT multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
-                
-                // create a dummy file to send
-                
-                // access support directory
-                NSURL *tmpFolder = [[NSFileManager defaultManager]
-                                    URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-                
-                // write a file
-                NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
-                [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
-                
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":file};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-                // remove dummy file
-                [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
-            });
+            // create a dummy file to send
             
-            it(@"should throw an error when the NSURL is not a file url", ^{
-                NSURL *invalidURL = [NSURL URLWithString:@"http://foo.com"];
-                NSDictionary *dict = @{@"somekey": @"somevalue", @"file":invalidURL};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    // nope
-                } failure:^(NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(NSURLErrorBadURL)];
-                    finishedFlag = YES;
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-            });
+            // access support directory
+            NSURL *tmpFolder = [[NSFileManager defaultManager]
+                                URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
             
-            it(@"should throw an error when the NSURL points to an non reachable file", ^{
-                NSURL *tmpFolder = [[NSFileManager defaultManager]
-                                    URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-                
-                // write a file
-                NSURL *file = [tmpFolder URLByAppendingPathComponent:@"notexist.txt"];
-                
-                
-                NSDictionary *dict = @{@"somekey": @"somevalue", @"file":file};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    // nope
-                } failure:^(NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(NSURLErrorBadURL)];
-                    finishedFlag = YES;
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-            });
+            // write a file
+            NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
+            [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
             
-            it(@"save with AGFilePart object without ID should trigger a POST multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
-                
-                // create a dummy file to send
-                
-                // access support directory
-                NSURL *tmpFolder = [[NSFileManager defaultManager]
-                                    URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-                
-                // write a file
-                NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
-                [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
-                
-                AGFilePart *part = [[AGFilePart alloc] initWithFileURL:file name:@"file"];
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"somekey": @"somevalue", @"file":part};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-                // remove dummy file
-                [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
-            });
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":file};
             
-            it(@"save with AGFilePart object and an ID should trigger a PUT multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
                 
-                // create a dummy file to send
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
-                // access support directory
-                NSURL *tmpFolder = [[NSFileManager defaultManager]
-                                    URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-                
-                // write a file
-                NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
-                [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
-                
-                AGFilePart *part = [[AGFilePart alloc] initWithFileURL:file name:@"file"];
-                
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":part};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-                // remove dummy file
-                [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
-            });
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
             
-            it(@"save with AGFileDataPart object without ID should trigger a POST multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
-                
-                // create dummy NSData to send
-                NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
-                
-                AGFileDataPart *part = [[AGFileDataPart alloc] initWithFileData:data name:@"file" fileName:@"file.txt" mimeType:@"text/plain"];
-                
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"somekey": @"somevalue", @"file":part};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-            });
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            // remove dummy file
+            [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
+        });
+        
+        it(@"should throw an error when the NSURL is not a file url", ^{
+            NSURL *invalidURL = [NSURL URLWithString:@"http://foo.com"];
+            NSDictionary *dict = @{@"somekey": @"somevalue", @"file":invalidURL};
             
-            it(@"save with AGFileDataPart object without ID should trigger a PUT multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
-                
-                // create dummy NSData to send
-                NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
-                
-                AGFileDataPart *part = [[AGFileDataPart alloc] initWithFileData:data name:@"file" fileName:@"file.txt" mimeType:@"text/plain"];
-                
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":part};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-            });
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(NSURLErrorBadURL)];
+                finishedFlag = YES;
+            }];
             
-            it(@"save with AGStreamPart object and an ID should trigger a POST multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
-                
-                // create dummy NSData to send
-                NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
-                // construct stream from data
-                NSInputStream *stream = [[NSInputStream alloc] initWithData:data];
-                
-                AGStreamPart *part = [[AGStreamPart alloc] initWithInputStream:stream name:@"file" fileName:@"file.txt" length:[data length] mimeType:@"text/plain"];
-                
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"somekey": @"somevalue", @"file":part};
-                
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
-                
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-            });
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"should throw an error when the NSURL points to an non reachable file", ^{
+            NSURL *tmpFolder = [[NSFileManager defaultManager]
+                                URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
             
-            it(@"save with AGStreamPart object and an ID should trigger a PUT multipart request", ^{
-                [AGHTTPMockHelper mockResponseStatus:200];
+            // write a file
+            NSURL *file = [tmpFolder URLByAppendingPathComponent:@"notexist.txt"];
+            
+            
+            NSDictionary *dict = @{@"somekey": @"somevalue", @"file":file};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(NSURLErrorBadURL)];
+                finishedFlag = YES;
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"save with AGFilePart object without ID should trigger a POST multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create a dummy file to send
+            
+            // access support directory
+            NSURL *tmpFolder = [[NSFileManager defaultManager]
+                                URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+            
+            // write a file
+            NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
+            [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            
+            AGFilePart *part = [[AGFilePart alloc] initWithFileURL:file name:@"file"];
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"somekey": @"somevalue", @"file":part};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                // create dummy NSData to send
-                NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
-                // construct stream from data
-                NSInputStream *stream = [[NSInputStream alloc] initWithData:data];
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
-                AGStreamPart *part = [[AGStreamPart alloc] initWithInputStream:stream name:@"file" fileName:@"file.txt" length:[data length] mimeType:@"text/plain"];
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            // remove dummy file
+            [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
+        });
+        
+        it(@"save with AGFilePart object and an ID should trigger a PUT multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create a dummy file to send
+            
+            // access support directory
+            NSURL *tmpFolder = [[NSFileManager defaultManager]
+                                URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+            
+            // write a file
+            NSURL *file = [tmpFolder URLByAppendingPathComponent:@"file.txt"];
+            [@"Lorem ipsum dolor sit amet," writeToURL:file atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            
+            AGFilePart *part = [[AGFilePart alloc] initWithFileURL:file name:@"file"];
+            
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":part};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
                 
-                // construct the payload with the file added
-                NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":part};
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
-                // upload
-                [restPipe save:dict success:^(id responseObject) {
-                    [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
-                    
-                    [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
-                                hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
-                    
-                    finishedFlag = YES;
-                } failure:^(NSError *error) {
-                    // nope
-                }];
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            // remove dummy file
+            [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
+        });
+        
+        it(@"save with AGFileDataPart object without ID should trigger a POST multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create dummy NSData to send
+            NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
+            
+            AGFileDataPart *part = [[AGFileDataPart alloc] initWithFileData:data name:@"file" fileName:@"file.txt" mimeType:@"text/plain"];
+            
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"somekey": @"somevalue", @"file":part};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
-            });
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
+                
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"save with AGFileDataPart object and an ID should trigger a PUT multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create dummy NSData to send
+            NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
+            
+            AGFileDataPart *part = [[AGFileDataPart alloc] initWithFileData:data name:@"file" fileName:@"file.txt" mimeType:@"text/plain"];
+            
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":part};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
+                
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
+                
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"save with AGStreamPart object without ID should trigger a POST multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create dummy NSData to send
+            NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
+            // construct stream from data
+            NSInputStream *stream = [[NSInputStream alloc] initWithData:data];
+            
+            AGStreamPart *part = [[AGStreamPart alloc] initWithInputStream:stream name:@"file" fileName:@"file.txt" length:[data length] mimeType:@"text/plain"];
+            
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"somekey": @"somevalue", @"file":part};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
+                
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
+                
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+        
+        it(@"save with AGStreamPart object and an ID should trigger a PUT multipart request", ^{
+            [AGHTTPMockHelper mockResponseStatus:200];
+            
+            // create dummy NSData to send
+            NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
+            // construct stream from data
+            NSInputStream *stream = [[NSInputStream alloc] initWithData:data];
+            
+            AGStreamPart *part = [[AGStreamPart alloc] initWithInputStream:stream name:@"file" fileName:@"file.txt" length:[data length] mimeType:@"text/plain"];
+            
+            // construct the payload with the file added
+            NSDictionary *dict = @{@"id": @"1", @"somekey": @"somevalue", @"file":part};
+            
+            // upload
+            [restPipe save:dict success:^(id responseObject) {
+                [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
+                
+                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                            hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
+                
+                finishedFlag = YES;
+            } failure:^(NSError *error) {
+                // nope
+            }];
+            
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
     });
 });

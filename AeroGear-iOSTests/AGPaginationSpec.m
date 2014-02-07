@@ -23,20 +23,15 @@
 SPEC_BEGIN(AGPaginationSpec)
 
 describe(@"AGPagination", ^{
+    
+    NSString * const RESPONSE_FIRST = @"[{\"id\":1,\"color\":\"black\",\"brand\":\"BMW\"}]";
+    NSString * const RESPONSE_SECOND =  @"[{\"id\":2,\"color\":\"black\",\"brand\":\"FIAT\"}]";
+    NSString * const RESPONSE_TWO_ITEMS = @"[{\"id\":1,\"color\":\"black\",\"brand\":\"BMW\"},{\"id\":2,\"color\":\"black\",\"brand\":\"FIAT\"}]";
+
+    __block id<AGPipe> pipe = nil;
+    __block BOOL finishedFlag;
+    
     context(@"when newly created", ^{
-
-        __block NSString *RESPONSE_FIRST = nil;
-        __block NSString *RESPONSE_SECOND = nil;
-        __block NSString *RESPONSE_TWO_ITEMS = nil;
-
-        __block id<AGPipe> pipe = nil;
-        __block BOOL finishedFlag;
-
-        beforeAll(^{
-            RESPONSE_FIRST  = @"[{\"id\":1,\"color\":\"black\",\"brand\":\"BMW\"}]";
-            RESPONSE_SECOND = @"[{\"id\":2,\"color\":\"black\",\"brand\":\"FIAT\"}]";
-            RESPONSE_TWO_ITEMS = @"[{\"id\":1,\"color\":\"black\",\"brand\":\"BMW\"},{\"id\":2,\"color\":\"black\",\"brand\":\"FIAT\"}]";
-        });
 
         beforeEach(^{
             AGPipeConfiguration* config = [[AGPipeConfiguration alloc] init];
@@ -66,8 +61,8 @@ describe(@"AGPagination", ^{
 
         it(@"should move to the next page", ^{
             // set the mocked response for the first page
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:@{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:@{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
             __block NSMutableArray *pagedResultSet;
 
@@ -97,13 +92,13 @@ describe(@"AGPagination", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should NOT move back from the first page", ^{
             // set the mocked response for the first page
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:@{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:@{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
             __block NSMutableArray *pagedResultSet;
 
@@ -136,13 +131,13 @@ describe(@"AGPagination", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should move to the next page and then back", ^{
             // set the mocked response for the first page
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:@{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:@{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
             __block NSMutableArray *pagedResultSet;
 
@@ -156,17 +151,17 @@ describe(@"AGPagination", ^{
                         // to the next page down in the test.
                         NSString *car_id = [[[responseObject objectAtIndex:0] objectForKey:@"id"] stringValue];
 
-                        [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_SECOND dataUsingEncoding:NSUTF8StringEncoding]
-                                                      headers:
-                                                              @{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=2&limit=1]",
-                                                                      @"AG-Links-Previous":@"http://server.com/context/?color=black&offset=0&limit=1]"}];
+                        [AGHTTPMockHelper mockResponse:[RESPONSE_SECOND dataUsingEncoding:NSUTF8StringEncoding]
+                                               headers:
+                                                       @{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=2&limit=1",
+                                                               @"AG-Links-Previous" : @"http://server.com/context?color=black&offset=0&limit=1"}];
 
                         // move to the second page
                         [pagedResultSet next:^(id responseObject) {
 
                             // set the mocked response for the first page again
-                            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                                          headers:@{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+                            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                                   headers:@{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
                             // move backwards (aka. page 1)
                             [pagedResultSet previous:^(id responseObject) {
@@ -184,9 +179,9 @@ describe(@"AGPagination", ^{
                         }];
                     } failure:^(NSError *error) {
                         // nope
-            }];
+                    }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should honour the override of the parameter provider", ^{
@@ -203,8 +198,8 @@ describe(@"AGPagination", ^{
 
             pipe = [AGRESTPipe pipeWithConfig:config];
 
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:@{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:@{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
             [pipe readWithParams:nil success:^(id responseObject) {
 
@@ -227,7 +222,7 @@ describe(@"AGPagination", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should fail to move to the next page if 'next identifier' is bogus", ^{
@@ -244,10 +239,10 @@ describe(@"AGPagination", ^{
             pipe = [AGRESTPipe pipeWithConfig:config];
 
             // set the mocked response for the first page
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:
-                                                  @{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=1&limit=1]",
-                                                          @"AG-Links-Previous":@"http://server.com/context/?color=black&offset=0&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:
+                                           @{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=1&limit=1",
+                                                   @"AG-Links-Previous" : @"http://server.com/context?color=black&offset=0&limit=1"}];
 
             __block NSMutableArray *pagedResultSet;
 
@@ -271,7 +266,7 @@ describe(@"AGPagination", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should fail to move to the previous page if 'previous identifier' is bogus", ^{
@@ -287,10 +282,10 @@ describe(@"AGPagination", ^{
             pipe = [AGRESTPipe pipeWithConfig:config];
 
             // set the mocked response for the first page
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:
-                                                  @{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=3&limit=1]",
-                                                          @"AG-Links-Previous":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:
+                                           @{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=3&limit=1",
+                                                   @"AG-Links-Previous" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
             __block NSMutableArray *pagedResultSet;
 
@@ -314,7 +309,7 @@ describe(@"AGPagination", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
 
         it(@"should fail to move to the previous page if 'previous identifier' is bogus", ^{
@@ -331,10 +326,10 @@ describe(@"AGPagination", ^{
             __block NSMutableArray *pagedResultSet;
 
             // set the mocked response for the first page
-            [AGHTTPMockHelper mockResponseHeaders:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
-                                          headers:
-                                                  @{@"AG-Links-Next":@"http://server.com/context/?color=black&offset=3&limit=1]",
-                                                          @"AG-Links-Previous":@"http://server.com/context/?color=black&offset=1&limit=1]"}];
+            [AGHTTPMockHelper mockResponse:[RESPONSE_FIRST dataUsingEncoding:NSUTF8StringEncoding]
+                                   headers:
+                                           @{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=3&limit=1",
+                                                   @"AG-Links-Previous" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
             [pipe readWithParams:@{@"color" : @"black", @"offset" : @"2", @"limit" : [NSNumber numberWithInt:1]} success:^(id responseObject) {
 
@@ -356,7 +351,7 @@ describe(@"AGPagination", ^{
                 // nope
             }];
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
     });
 });
