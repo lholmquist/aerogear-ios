@@ -92,11 +92,12 @@ describe(@"AGSQLiteStorage", ^{
         it(@"should fail with errounous save statement with string instead of numeric", ^{
             NSMutableDictionary* user = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Corinne", @"name", @"hello", @"id", nil];
 
-            NSError *error = [[NSError alloc] init];
+            NSError *error;
             BOOL success = [sqliteStorage save:user error:&error];
             [[theValue(success) should] equal:theValue(NO)];
 
-            [[[[error userInfo] valueForKey:@"NSLocalizedDescription"] should] equal:@"datatype mismatch"];
+            NSString* errorString =  [[error userInfo] valueForKey:@"NSLocalizedDescription"];
+            [[errorString should] equal:@"datatype mismatch"];
         });
 
         it(@"should save a single object ", ^{
@@ -313,8 +314,10 @@ describe(@"AGSQLiteStorage", ^{
             NSArray* objects;
             BOOL success;
 
+            NSError *error;
+            
             // store it
-            success = [sqliteStorage save:users error:nil];
+            success = [sqliteStorage save:users error:&error];
             [[theValue(success) should] equal:theValue(YES)];
 
             // read it
