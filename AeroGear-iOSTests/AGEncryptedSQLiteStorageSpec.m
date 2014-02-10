@@ -23,10 +23,8 @@ SPEC_BEGIN(AGEcryptedSQLiteStorageSpec)
 
 describe(@"AGEncryptedSQLiteStorage", ^{
     
-    
     context(@"when trying to save without valid config", ^{
 
-        // An 'property list' storage object:
         __block AGStoreConfiguration *config = nil;
         __block AGEncryptedSQLiteStorage *sqliteStorage = nil;
 
@@ -66,16 +64,17 @@ describe(@"AGEncryptedSQLiteStorage", ^{
 
     context(@"when newly created", ^{
 
-        // An 'property list' storage object:
         __block AGStoreConfiguration* config = nil;
         __block AGEncryptedSQLiteStorage* sqliteStorage = nil;
         __block AGPassphraseKeyServices* encryptService = nil;
         __block AGPassphraseCryptoConfig* cryptoConfig = nil;
-        NSData* kSalt = [@"b4921b85 54359e54 936e85ae 05500da3" dataUsingEncoding:NSUTF8StringEncoding];
+
+        NSData * const kSalt = [@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
+        NSString * const kPassphrase = @"PASSPHRASE";
 
         beforeEach(^{
             cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
-            cryptoConfig.passphrase = @"secret4crypting";
+            cryptoConfig.passphrase = kPassphrase;
             cryptoConfig.salt = kSalt;
 
             encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
@@ -85,11 +84,14 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             [config setEncryptionService:encryptService];
 
             sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
+        });
+
+        afterEach(^{
             // remove all elements from the store
             // so next test starts fresh
             [sqliteStorage reset:nil];
         });
-
+        
         it(@"should not be nil", ^{
             [sqliteStorage shouldNotBeNil];
         });
@@ -594,6 +596,110 @@ describe(@"AGEncryptedSQLiteStorage", ^{
                 [[user[@"department"][@"name"] should] equal:@"Software"];
                 [[theValue([user[@"salary"] intValue]) should] beBetween:theValue(1500) and:theValue(2000)];
             }
+        });
+    });
+    
+    context(@"should fail to reload with corrupted crypto params", ^{
+        
+        __block AGEncryptedSQLiteStorage *sqliteStorage = nil;
+
+        NSData * const kSalt = [@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
+        NSData * const kSaltFail = [@"bweywsaf3bbdf5121nc72he412ex" dataUsingEncoding:NSUTF8StringEncoding];
+        NSString * const kPassphrase = @"PASSPHRASE";
+        NSString * const kPassphraseFail = @"FAIL_PASSPHRASE";
+        
+        NSMutableDictionary * const user = [NSMutableDictionary
+                                            dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"0",@"id", nil];
+        
+        beforeEach(^{
+            AGPassphraseCryptoConfig *cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
+            cryptoConfig.passphrase = kPassphrase;
+            cryptoConfig.salt = kSalt;
+            
+            AGPassphraseKeyServices *encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            
+            AGStoreConfiguration *config = [[AGStoreConfiguration alloc] init];
+            
+            [config setName:@"Users"];
+            [config setRecordId:@"id"];
+            [config setEncryptionService:encryptService];
+            
+            sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
+            
+            // initialize store with an element
+            [sqliteStorage save:user error:nil];
+        });
+        
+        afterEach(^{
+            // remove all elements from the store
+            // so next test starts fresh
+            [sqliteStorage reset:nil];
+        });
+       
+         context(@"should fail to reload with corrupted salt", ^{
+             
+             beforeEach(^{
+                 // re-initialize store with a bogus salt
+                 AGPassphraseCryptoConfig *cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
+                 cryptoConfig.passphrase = kPassphrase;
+                 cryptoConfig.salt = kSaltFail; //bogus salt
+                 
+                 AGPassphraseKeyServices *encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+                 
+                 AGStoreConfiguration *config = [[AGStoreConfiguration alloc] init];
+                 [config setName:@"Users"];
+                 [config setRecordId:@"id"];
+                 [config setEncryptionService:encryptService];
+                 
+                 sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
+             });
+             
+            it(@"on (read)", ^{
+                // try to read it
+                NSMutableDictionary *object = [sqliteStorage read:@"0"];
+                // should fail
+                [object shouldBeNil];
+            });
+            
+            it(@"on (readAll)", ^{
+                // try to read all
+                NSArray *objects = [sqliteStorage readAll];
+                // should fail
+                [objects shouldBeNil];
+            });
+         });
+        
+        context(@"should fail to reload with corrupted passphrase", ^{
+            
+            beforeEach(^{
+                // re-initialize store with a bogus passphrase
+                AGPassphraseCryptoConfig *cryptoConfig = [[AGPassphraseCryptoConfig alloc] init];
+                cryptoConfig.passphrase = kPassphraseFail; // bogus passphrase
+                cryptoConfig.salt = kSalt;
+                
+                AGPassphraseKeyServices *encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+                
+                AGStoreConfiguration *config = [[AGStoreConfiguration alloc] init];
+                [config setName:@"Users"];
+                [config setRecordId:@"id"];
+                [config setEncryptionService:encryptService];
+                
+                sqliteStorage = [AGEncryptedSQLiteStorage storeWithConfig:config];
+            });
+            
+            it(@"on (read)", ^{
+                // try to read it
+                NSMutableDictionary* object = [sqliteStorage read:@"0"];
+                // should fail
+                [object shouldBeNil];
+            });
+            
+            it(@"on (readAll)", ^{
+                // try to read all
+                NSArray *objects = [sqliteStorage readAll];
+                // should fail
+                [objects shouldBeNil];
+            });
         });
     });
 });
