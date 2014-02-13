@@ -86,8 +86,8 @@
 
 @implementation AGJsonEncoder
 
-- (NSData *)encode:(id)plist error:(NSError **)error {
-    return [NSJSONSerialization dataWithJSONObject:plist
+- (NSData *)encode:(id)json error:(NSError **)error {
+    return [NSJSONSerialization dataWithJSONObject:json
                                            options:NSJSONWritingPrettyPrinted
                                              error:error];
 }
@@ -105,8 +105,8 @@
     
 }
 
-- (BOOL)isValid:(id)plist {
-    return [NSJSONSerialization isValidJSONObject:plist];
+- (BOOL)isValid:(id)json {
+    return [NSJSONSerialization isValidJSONObject:json];
 }
 
 @end
