@@ -68,14 +68,14 @@ static char const * const AGParamProviderKey = "AGParamProviderKey";
 
 #pragma mark accessor AssociatedObjects
 -(void) setPipe:(id<AGPipe>)pipe {
-    objc_setAssociatedObject(self, AGPipeKey, pipe, OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self, AGPipeKey, pipe, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 -(id<AGPipe>) pipe {
     return objc_getAssociatedObject(self, AGPipeKey);
 }
 -(void) setParameterProvider:(NSDictionary *)parameterProvider {
-    objc_setAssociatedObject(self, AGParamProviderKey, parameterProvider, OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self, AGParamProviderKey, parameterProvider, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 -(NSDictionary *) parameterProvider {
