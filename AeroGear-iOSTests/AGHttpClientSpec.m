@@ -26,326 +26,252 @@
 
 SPEC_BEGIN(AGHttpClientSpec)
 
-describe(@"AGHttpClient", ^{
-    
-    NSString * const PROJECTS = @"[{\"id\":1,\"title\":\"First Project\",\"style\":\"project-161-58-58\",\"tasks\":[]}, {\"id\":2,\"title\":\"Second Project\",\"style\":\"project-64-144-230\",\"tasks\":[]}]";
+    describe(@"AGHttpClient", ^{
 
-    __block BOOL finishedFlag;
+        NSString * const PROJECTS = @"[{\"id\":1,\"title\":\"First Project\",\"style\":\"project-161-58-58\",\"tasks\":[]}, {\"id\":2,\"title\":\"Second Project\",\"style\":\"project-64-144-230\",\"tasks\":[]}]";
 
-    context(@"when newly created", ^{
+        __block BOOL finishedFlag;
 
-        __block AGHttpClient* _restClient = nil;
-        
-        beforeEach(^{
-            
-            NSURL* baseURL = [NSURL URLWithString:@"http://server.com/context/"];
+        context(@"when newly created", ^{
 
-            _restClient = [AGHttpClient clientFor:baseURL];
-            _restClient.parameterEncoding = AFJSONParameterEncoding;
+            __block AGHttpClient* _restClient = nil;
+
+            beforeEach(^{
+
+                NSURL* baseURL = [NSURL URLWithString:@"http://server.com/context/"];
+
+                _restClient = [AGHttpClient clientFor:baseURL];
+                _restClient.parameterEncoding = AFJSONParameterEncoding;
+            });
+
+            afterEach(^{
+                // remove all handlers installed by test methods
+                // to avoid any interference
+                [AGHTTPMockHelper clearAllMockedRequests];
+
+                finishedFlag = NO;
+            });
+
+            it(@"should not be nil", ^{
+
+                [_restClient shouldNotBeNil];
+            });
+
+            it(@"should successfully perform GET", ^{
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
+
+                [_restClient getPath:@"projects" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [responseObject shouldNotBeNil];
+
+                    finishedFlag = YES;
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    // nope
+                } ];
+
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
+
         });
 
-        afterEach(^{
-            // remove all handlers installed by test methods
-            // to avoid any interference
-            [AGHTTPMockHelper clearAllMockedRequests];
+        context(@"timeout should be honoured", ^{
 
-            finishedFlag = NO;
-        });
+            NSInteger const TIMEOUT_ERROR_CODE = -1001;
 
-        it(@"should not be nil", ^{
+            __block AGHttpClient* _restClient = nil;
 
-            [_restClient shouldNotBeNil];
-        });
+            beforeEach(^{
+                NSURL* baseURL = [NSURL URLWithString:@"http://server.com/context/"];
 
-        it(@"should successfully perform GET", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
+                // Note: we set the timeout(sec) to a low level so that
+                // we can test the timeout methods with adjusting response delay
+                _restClient = [AGHttpClient clientFor:baseURL timeout:1];
+                _restClient.parameterEncoding = AFJSONParameterEncoding;
+            });
 
-            [_restClient getPath:@"projects" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [responseObject shouldNotBeNil];
+            afterEach(^{
+                // remove all handlers installed by test methods
+                // to avoid any interference
+                [AGHTTPMockHelper clearAllMockedRequests];
 
-                finishedFlag = YES;
+                finishedFlag = NO;
+            });
 
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-            } ];
+            it(@"when performing PUT", ^{
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                        status:200
+                                   requestTime:2]; // two secs delay
 
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-        
-        it(@"timeout timer should be invalidated after a successful POST", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
-            
-            NSMutableDictionary* project = [NSMutableDictionary
-                                            dictionaryWithObjectsAndKeys:@"First Project", @"title",
-                                            @"project-161-58-58", @"style", nil];
-            
-            [_restClient postPath:@"projects" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [operation.timer shouldBeNil];
-                
-                finishedFlag = YES;
-                
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-            }];
-            
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-        
-        it(@"timeout timer should be invalidated after a failed POST", ^{
-            [AGHTTPMockHelper mockResponseStatus:404];
-            
-            NSMutableDictionary* project = [NSMutableDictionary
-                                            dictionaryWithObjectsAndKeys:@"First Project", @"title",
-                                            @"project-161-58-58", @"style", nil];
-            
-            [_restClient postPath:@"projects" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                // nope
-                
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [operation.timer shouldBeNil];
-                
-                finishedFlag = YES;
-            }];
-            
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-        
-        it(@"timeout timer should be invalidated after a successful PUT", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
-            
-            NSMutableDictionary* project = [NSMutableDictionary
-                                            dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
-                                            @"project-161-58-58", @"style", nil];
-            
-            [_restClient putPath:@"projects/0" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [operation.timer shouldBeNil];
-                
-                finishedFlag = YES;
-                
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-            }];
-            
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-        
-        it(@"timeout timer should be invalidated after a failed PUT", ^{
-            [AGHTTPMockHelper mockResponseStatus:404];
-            
-            NSMutableDictionary* project = [NSMutableDictionary
-                                            dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
-                                            @"project-161-58-58", @"style", nil];
-            
-            [_restClient putPath:@"projects/0" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                // nope
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [operation.timer shouldBeNil];
-                
-                finishedFlag = YES;
-            }];
-            
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+                NSMutableDictionary* project = [NSMutableDictionary
+                        dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
+                                                     @"project-161-58-58", @"style", nil];
+
+                [_restClient putPath:@"projects/0" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    // nope
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                    finishedFlag = YES;
+                }];
+
+                // NOTE:
+                /// we set kiwi's shouldEventually to 5 secs > 2 secs of the simulated timeout
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
+
+            it(@"when performing POST", ^{
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                        status:200
+                                   requestTime:2]; // two secs delay
+
+                NSMutableDictionary* project = [NSMutableDictionary
+                        dictionaryWithObjectsAndKeys:@"First Project", @"title",
+                                                     @"project-161-58-58", @"style", nil];
+
+                [_restClient postPath:@"projects" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    // nope
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                    finishedFlag = YES;
+                }];
+
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
+
+            it(@"when performing successive POST's and the second one timeouts", ^{
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
+
+                NSMutableDictionary* projectFirst = [NSMutableDictionary
+                        dictionaryWithObjectsAndKeys:@"First Project", @"title",
+                                                     @"project-161-58-58", @"style", nil];
+
+                [_restClient postPath:@"projects" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [responseObject shouldNotBeNil];
+
+                    NSMutableDictionary* projectSecond = [NSMutableDictionary
+                            dictionaryWithObjectsAndKeys:@"Second Project", @"title",
+                                                         @"project-111-45-51", @"style", nil];
+
+                    [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                            status:200
+                                       requestTime:2]; // two secs delay
+
+                    [_restClient postPath:@"projects" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        // nope
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                        finishedFlag = YES;
+                    } ];
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    // nope
+                }];
+
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
+
+            it(@"when performing successive PUT's and the second one timeouts", ^{
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
+
+                NSMutableDictionary* projectFirst = [NSMutableDictionary
+                        dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
+                                                     @"project-161-58-58", @"style", nil];
+
+                [_restClient putPath:@"projects/0" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [responseObject shouldNotBeNil];
+
+                    NSMutableDictionary* projectSecond = [NSMutableDictionary
+                            dictionaryWithObjectsAndKeys:@"1", @"id", @"Second Project", @"title",
+                                                         @"project-111-45-51", @"style", nil];
+
+                    // install the mock:
+                    [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                            status:200
+                                       requestTime:2]; // two secs delay
+
+                    [_restClient putPath:@"projects/1" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        // nope
+
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                        finishedFlag = YES;
+                    } ];
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    // nope
+                }];
+
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
+
+            it(@"when performing POST then PUT and PUT timeouts", ^{
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
+
+                NSMutableDictionary* projectFirst = [NSMutableDictionary
+                        dictionaryWithObjectsAndKeys:@"First Project", @"title",
+                                                     @"project-161-58-58", @"style", nil];
+
+                [_restClient postPath:@"projects" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [responseObject shouldNotBeNil];
+
+                    NSMutableDictionary* projectSecond = [NSMutableDictionary
+                            dictionaryWithObjectsAndKeys:@"1", @"id", @"Second Project", @"title",
+                                                         @"project-111-45-51", @"style", nil];
+
+                    // install the mock:
+                    [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                            status:200
+                                       requestTime:2]; // two secs delay
+
+                    [_restClient putPath:@"projects/1" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        // nope
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                        finishedFlag = YES;
+                    } ];
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    // nope
+                }];
+
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
+
+            it(@"when performing PUT then POST and POST timeouts", ^{
+
+                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
+
+                NSMutableDictionary* projectFirst = [NSMutableDictionary
+                        dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
+                                                     @"project-161-58-58", @"style", nil];
+
+                [_restClient putPath:@"projects/0" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [responseObject shouldNotBeNil];
+
+                    NSMutableDictionary* projectSecond = [NSMutableDictionary
+                            dictionaryWithObjectsAndKeys:@"Second Project", @"title",
+                                                         @"project-111-45-51", @"style", nil];
+
+                    // install the mock:
+                    [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                            status:200
+                                       requestTime:2]; // two secs delay
+
+                    [_restClient postPath:@"projects" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        // nope
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                        finishedFlag = YES;
+                    } ];
+
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    // nope
+                }];
+
+                [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+            });
         });
     });
-    
-    context(@"timeout should be honoured", ^{
-        
-        NSInteger const TIMEOUT_ERROR_CODE = -1001;
-
-        __block AGHttpClient* _restClient = nil;
-        
-        beforeEach(^{
-            NSURL* baseURL = [NSURL URLWithString:@"http://server.com/context/"];
-            
-            // Note: we set the timeout(sec) to a low level so that
-            // we can test the timeout methods with adjusting response delay
-            _restClient = [AGHttpClient clientFor:baseURL timeout:1];
-            _restClient.parameterEncoding = AFJSONParameterEncoding;
-        });
-        
-        afterEach(^{
-            // remove all handlers installed by test methods
-            // to avoid any interference
-            [AGHTTPMockHelper clearAllMockedRequests];
-            
-            finishedFlag = NO;
-        });
-        
-        it(@"when performing PUT", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
-                                    status:200
-                               requestTime:2]; // two secs delay
-
-            NSMutableDictionary* project = [NSMutableDictionary
-                    dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
-                                                 @"project-161-58-58", @"style", nil];
-
-            [_restClient putPath:@"projects/0" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                // nope
-
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                finishedFlag = YES;
-            }];
-
-            // NOTE:
-            /// we set kiwi's shouldEventually to 5 secs > 2 secs of the simulated timeout
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-
-        it(@"when performing POST", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
-                                    status:200
-                               requestTime:2]; // two secs delay
-
-            NSMutableDictionary* project = [NSMutableDictionary
-                    dictionaryWithObjectsAndKeys:@"First Project", @"title",
-                                                 @"project-161-58-58", @"style", nil];
-
-            [_restClient postPath:@"projects" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                // nope
-
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                finishedFlag = YES;
-            }];
-
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-
-        it(@"when performing successive POST's and the second one timeouts", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
-
-            NSMutableDictionary* projectFirst = [NSMutableDictionary
-                    dictionaryWithObjectsAndKeys:@"First Project", @"title",
-                                                 @"project-161-58-58", @"style", nil];
-
-            [_restClient postPath:@"projects" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [responseObject shouldNotBeNil];
-
-                NSMutableDictionary* projectSecond = [NSMutableDictionary
-                        dictionaryWithObjectsAndKeys:@"Second Project", @"title",
-                                                     @"project-111-45-51", @"style", nil];
-
-                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
-                                        status:200
-                                   requestTime:2]; // two secs delay
-
-                [_restClient postPath:@"projects" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                    // nope
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
-                } ];
-
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-            }];
-
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-
-        it(@"when performing successive PUT's and the second one timeouts", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
-
-            NSMutableDictionary* projectFirst = [NSMutableDictionary
-                    dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
-                                                 @"project-161-58-58", @"style", nil];
-
-            [_restClient putPath:@"projects/0" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [responseObject shouldNotBeNil];
-
-                NSMutableDictionary* projectSecond = [NSMutableDictionary
-                        dictionaryWithObjectsAndKeys:@"1", @"id", @"Second Project", @"title",
-                                                     @"project-111-45-51", @"style", nil];
-
-                // install the mock:
-                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
-                                        status:200
-                                   requestTime:2]; // two secs delay
-
-                [_restClient putPath:@"projects/1" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                    // nope
-
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
-                } ];
-
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-            }];
-
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-
-        it(@"when performing POST then PUT and PUT timeouts", ^{
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
-
-            NSMutableDictionary* projectFirst = [NSMutableDictionary
-                    dictionaryWithObjectsAndKeys:@"First Project", @"title",
-                                                 @"project-161-58-58", @"style", nil];
-
-            [_restClient postPath:@"projects" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [responseObject shouldNotBeNil];
-
-                NSMutableDictionary* projectSecond = [NSMutableDictionary
-                        dictionaryWithObjectsAndKeys:@"1", @"id", @"Second Project", @"title",
-                                                     @"project-111-45-51", @"style", nil];
-
-                // install the mock:
-                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
-                                        status:200
-                                   requestTime:2]; // two secs delay
-
-                [_restClient putPath:@"projects/1" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                    // nope
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
-                } ];
-
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-           }];
-
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-
-        it(@"when performing PUT then POST and POST timeouts", ^{
-
-            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
-
-            NSMutableDictionary* projectFirst = [NSMutableDictionary
-                    dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
-                                                 @"project-161-58-58", @"style", nil];
-
-            [_restClient putPath:@"projects/0" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                [responseObject shouldNotBeNil];
-
-                NSMutableDictionary* projectSecond = [NSMutableDictionary
-                        dictionaryWithObjectsAndKeys:@"Second Project", @"title",
-                                                     @"project-111-45-51", @"style", nil];
-
-                // install the mock:
-                [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
-                                        status:200
-                                   requestTime:2]; // two secs delay
-
-                [_restClient postPath:@"projects" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                    // nope
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
-                    finishedFlag = YES;
-                } ];
-
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                // nope
-            }];
-
-            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        });
-    });
-});
 
 SPEC_END
