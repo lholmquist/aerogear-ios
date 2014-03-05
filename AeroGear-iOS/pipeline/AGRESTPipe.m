@@ -50,7 +50,7 @@
 // ==============================================
 
 +(id) pipeWithConfig:(id<AGPipeConfig>) pipeConfig {
-    return [[self alloc] initWithConfig:pipeConfig];
+    return [[[self class] alloc] initWithConfig:pipeConfig];
 }
 
 -(id) initWithConfig:(id<AGPipeConfig>) pipeConfig {
@@ -71,15 +71,14 @@
         _authModule = (id<AGAuthenticationModuleAdapter>) _config.authModule;
         _authzModule = (id<AGAuthzModuleAdapter>) _config.authzModule;
         
-        _restClient = [AGHttpClient clientFor:finalURL timeout:_config.timeout];
-        _restClient.parameterEncoding = AFJSONParameterEncoding;
-        
+        _restClient = [AGHttpClient clientFor:finalURL sessionConfiguration:_config.sessionConfiguration];
+
         // if NSURLCredential object is set on the config
         if (_config.credential) {
             // apply it
             [_restClient setDefaultCredential:_config.credential];
         }
-        
+
         _pageConfig = [[AGPageConfiguration alloc] init];
         
         // set up paging config from the user supplied block

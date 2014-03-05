@@ -18,10 +18,10 @@
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
 
-@interface AGHttpClient : AFHTTPClient
+@interface AGHttpClient : AFHTTPSessionManager
 
 + (AGHttpClient *)clientFor:(NSURL *)url;
-+ (AGHttpClient *)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval;
++ (AGHttpClient *)clientFor:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration;
 
 - (void)setUploadProgressBlock:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block;
 @end

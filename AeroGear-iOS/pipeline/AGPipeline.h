@@ -76,6 +76,16 @@
 +(id) pipelineWithBaseURL:(NSURL*) baseURL;
 
 /**
+ * A factory method to instantiate an empty AGPipeline.
+ *
+ * @param baseURL the URL of the server.
+ * @param configuration The session configuration object that Pipe object would respect
+ *
+ * @return the AGPipeline object.
+ */
++(id) pipelineWithBaseURL:(NSURL*) baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration;
+
+/**
  * Adds a new AGPipe object, based on the given configuration object.
  *
  * @param config A block object which passes in an implementation of the AGPipeConfig protocol that is used to configure

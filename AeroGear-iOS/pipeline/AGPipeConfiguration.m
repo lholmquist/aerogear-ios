@@ -20,6 +20,7 @@
 @implementation AGPipeConfiguration
 
 @synthesize baseURL = _baseURL;
+@synthesize sessionConfiguration = _sessionConfiguration;
 @synthesize endpoint = _endpoint;
 @synthesize recordId = _recordId;
 @synthesize authModule = _authModule;

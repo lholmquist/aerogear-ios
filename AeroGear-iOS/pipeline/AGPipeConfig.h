@@ -32,6 +32,11 @@
 @property (strong, nonatomic) NSURL* baseURL;
 
 /**
+ * The session configuration this pipe adheres.
+ */
+@property (strong, nonatomic) NSURLSessionConfiguration* sessionConfiguration;
+
+/**
  * The endpoint to the configuration.
  * If no endpoint is specified, the name will be used as its value.
  */

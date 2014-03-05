@@ -27,28 +27,19 @@ typedef void (^AGURLConnectionOperationProgressBlock)(NSUInteger bytes, long lon
 }
 
 + (AGHttpClient *)clientFor:(NSURL *)url {
-    return [[self alloc] initWithBaseURL:url timeout:60 /* the default timeout interval */];
+    return [[[self class] alloc] initWithBaseURL:url sessionConfiguration:nil];
 }
 
-+ (AGHttpClient *)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval {
-    return [[self alloc] initWithBaseURL:url timeout:interval];
++ (AGHttpClient *)clientFor:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration {
+    return [[[self class] alloc] initWithBaseURL:url sessionConfiguration:configuration];
 }
 
-- (id)initWithBaseURL:(NSURL *)url timeout:(NSTimeInterval)interval {
+- (id)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration; {
 
-    self = [super initWithBaseURL:url];
+    self = [super initWithBaseURL:url sessionConfiguration:configuration];
     if (!self) {
         return nil;
     }
-
-    // set the timeout interval for requests
-    _interval = interval;
-
-    [self registerHTTPOperationClass:[AFJSONRequestOperation class]];
-
-    // Accept HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1
-    [self setDefaultHeader:@"Accept" value:@"application/json"];
-
     return self;
 }
 

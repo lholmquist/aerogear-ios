@@ -27,34 +27,44 @@
 
 @implementation AGPipeline {
     NSURL* _baseURL;
+    NSURLSessionConfiguration *_sessionConfiguration;
 }
 @synthesize pipes = _pipes;
 
-
 - (id)init {
-    self = [super init];
-    if (self) {
-        _pipes = [NSMutableDictionary dictionary];
-    }
-    return self;
+   return [self initWithBaseURL:nil];
 }
 
-- (id)initWithBaseURL:(NSURL*) baseURL {
-    self = [self init];
-    if (self) {
-        
+- (id)initWithBaseURL:(NSURL *)baseURL {
+    return [self initWithBaseURL:baseURL sessionConfiguration:nil];
+}
+
+- (id)initWithBaseURL:(NSURL *)baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration {
+    if (self = [super init]) {
+        // to hold our Pipes
+        _pipes = [NSMutableDictionary dictionary];
         // stash the baseURL, used for the 'add' functions that have no (base)URL argument
         _baseURL = baseURL;
+
+        _sessionConfiguration = configuration;
+        // if no session configuration is provided, create a default one
+        if (!_sessionConfiguration) {
+            _sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        }
     }
     return self;
 }
 
 +(id)pipeline {
-    return [[self alloc] init];
+    return [[[self class] alloc] init];
 }
 
 +(id)pipelineWithBaseURL:(NSURL*) baseURL; {
-    return [[self alloc] initWithBaseURL:baseURL];
+    return [[[self class] alloc] initWithBaseURL:baseURL];
+}
+
++(id)pipelineWithBaseURL:(NSURL*) baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration {
+    return [[[self class] alloc] initWithBaseURL:baseURL sessionConfiguration:configuration];
 }
 
 -(id<AGPipe>) pipe:(void (^)(id<AGPipeConfig> config)) config {
@@ -62,6 +72,7 @@
 
     // applying the defaults:
     [pipeConfig setBaseURL:_baseURL];
+    [pipeConfig setSessionConfiguration:_sessionConfiguration];
 
     if (config) {
         config(pipeConfig);
