@@ -83,8 +83,8 @@
 		6FE3D1391834E3F100C3A09A /* AGKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D12F1834E3F100C3A09A /* AGKeyManager.m */; };
 		6FE3D13A1834E3F100C3A09A /* AGKeyStoreCryptoConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1311834E3F100C3A09A /* AGKeyStoreCryptoConfig.m */; };
 		6FE3D13B1834E3F100C3A09A /* AGPassphraseCryptoConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1331834E3F100C3A09A /* AGPassphraseCryptoConfig.m */; };
-		6FE3D13C1834E3F100C3A09A /* AGPassphraseKeyServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1351834E3F100C3A09A /* AGPassphraseKeyServices.m */; };
-		6FE3D13D1834E3F100C3A09A /* AGPasswordKeyServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1371834E3F100C3A09A /* AGPasswordKeyServices.m */; };
+		6FE3D13C1834E3F100C3A09A /* AGPassphraseEncryptionServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1351834E3F100C3A09A /* AGPassphraseEncryptionServices.m */; };
+		6FE3D13D1834E3F100C3A09A /* AGPasswordEncryptionServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1371834E3F100C3A09A /* AGPasswordEncryptionServices.m */; };
 		6FE3D1431834E44200C3A09A /* AGKeyManagerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D13F1834E44200C3A09A /* AGKeyManagerSpec.m */; };
 		6FE3D1471834E4C300C3A09A /* AGBaseStorageSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE3D1461834E4C300C3A09A /* AGBaseStorageSpec.m */; };
 		6FE55675169DE7C800E6188E /* AGPropertyListStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE55674169DE7C800E6188E /* AGPropertyListStorage.m */; };
@@ -240,10 +240,10 @@
 		6FE3D1311834E3F100C3A09A /* AGKeyStoreCryptoConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGKeyStoreCryptoConfig.m; path = security/AGKeyStoreCryptoConfig.m; sourceTree = "<group>"; };
 		6FE3D1321834E3F100C3A09A /* AGPassphraseCryptoConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGPassphraseCryptoConfig.h; path = security/AGPassphraseCryptoConfig.h; sourceTree = "<group>"; };
 		6FE3D1331834E3F100C3A09A /* AGPassphraseCryptoConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPassphraseCryptoConfig.m; path = security/AGPassphraseCryptoConfig.m; sourceTree = "<group>"; };
-		6FE3D1341834E3F100C3A09A /* AGPassphraseKeyServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGPassphraseKeyServices.h; path = security/AGPassphraseKeyServices.h; sourceTree = "<group>"; };
-		6FE3D1351834E3F100C3A09A /* AGPassphraseKeyServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPassphraseKeyServices.m; path = security/AGPassphraseKeyServices.m; sourceTree = "<group>"; };
-		6FE3D1361834E3F100C3A09A /* AGPasswordKeyServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGPasswordKeyServices.h; path = security/AGPasswordKeyServices.h; sourceTree = "<group>"; };
-		6FE3D1371834E3F100C3A09A /* AGPasswordKeyServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPasswordKeyServices.m; path = security/AGPasswordKeyServices.m; sourceTree = "<group>"; };
+		6FE3D1341834E3F100C3A09A /* AGPassphraseEncryptionServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGPassphraseEncryptionServices.h; path = security/AGPassphraseEncryptionServices.h; sourceTree = "<group>"; };
+		6FE3D1351834E3F100C3A09A /* AGPassphraseEncryptionServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPassphraseEncryptionServices.m; path = security/AGPassphraseEncryptionServices.m; sourceTree = "<group>"; };
+		6FE3D1361834E3F100C3A09A /* AGPasswordEncryptionServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGPasswordEncryptionServices.h; path = security/AGPasswordEncryptionServices.h; sourceTree = "<group>"; };
+		6FE3D1371834E3F100C3A09A /* AGPasswordEncryptionServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AGPasswordEncryptionServices.m; path = security/AGPasswordEncryptionServices.m; sourceTree = "<group>"; };
 		6FE3D13F1834E44200C3A09A /* AGKeyManagerSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGKeyManagerSpec.m; sourceTree = "<group>"; };
 		6FE3D1461834E4C300C3A09A /* AGBaseStorageSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGBaseStorageSpec.m; sourceTree = "<group>"; };
 		6FE55673169DE5D900E6188E /* AGPropertyListStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AGPropertyListStorage.h; path = datamanager/AGPropertyListStorage.h; sourceTree = "<group>"; };
@@ -334,10 +334,10 @@
 				6FE3D1311834E3F100C3A09A /* AGKeyStoreCryptoConfig.m */,
 				6FE3D1321834E3F100C3A09A /* AGPassphraseCryptoConfig.h */,
 				6FE3D1331834E3F100C3A09A /* AGPassphraseCryptoConfig.m */,
-				6FE3D1341834E3F100C3A09A /* AGPassphraseKeyServices.h */,
-				6FE3D1351834E3F100C3A09A /* AGPassphraseKeyServices.m */,
-				6FE3D1361834E3F100C3A09A /* AGPasswordKeyServices.h */,
-				6FE3D1371834E3F100C3A09A /* AGPasswordKeyServices.m */,
+				6FE3D1341834E3F100C3A09A /* AGPassphraseEncryptionServices.h */,
+				6FE3D1351834E3F100C3A09A /* AGPassphraseEncryptionServices.m */,
+				6FE3D1361834E3F100C3A09A /* AGPasswordEncryptionServices.h */,
+				6FE3D1371834E3F100C3A09A /* AGPasswordEncryptionServices.m */,
 				38EAB91D6CFFEDC2CAD696A4 /* Authorizer */,
 			);
 			name = Security;
@@ -696,13 +696,13 @@
 				6FE3D1391834E3F100C3A09A /* AGKeyManager.m in Sources */,
 				6F14F191170EDA02001E14BA /* AGPageBodyExtractor.m in Sources */,
 				6F14F192170EDA02001E14BA /* AGPageHeaderExtractor.m in Sources */,
-				6FE3D13D1834E3F100C3A09A /* AGPasswordKeyServices.m in Sources */,
+				6FE3D13D1834E3F100C3A09A /* AGPasswordEncryptionServices.m in Sources */,
 				6FE3D13A1834E3F100C3A09A /* AGKeyStoreCryptoConfig.m in Sources */,
 				6FE3D13B1834E3F100C3A09A /* AGPassphraseCryptoConfig.m in Sources */,
 				6F14F193170EDA02001E14BA /* AGPageWebLinkingExtractor.m in Sources */,
 				6F393F091834100B00FFB44D /* AGEncryptedPropertyListStorage.m in Sources */,
 				6FE3D1381834E3F100C3A09A /* AGBaseEncryptionService.m in Sources */,
-				6FE3D13C1834E3F100C3A09A /* AGPassphraseKeyServices.m in Sources */,
+				6FE3D13C1834E3F100C3A09A /* AGPassphraseEncryptionServices.m in Sources */,
 				6FC8F192172FC84F00905C2F /* AGPageBaseExtractor.m in Sources */,
 				833BB20A1886C696007760EC /* AGCodeCoverageHelper.m in Sources */,
 				6F7B5EED17325A7D00ED4F83 /* AGPageConfiguration.m in Sources */,

@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-#import "AGPassphraseKeyServices.h"
+#import "AGPassphraseEncryptionServices.h"
 
 #import <AGPBKDF2.h>
 #import <AGCryptoBox.h>
 
-@implementation AGPassphraseKeyServices
+@implementation AGPassphraseEncryptionServices
 
 - (id)initWithConfig:(AGPassphraseCryptoConfig *)config {
     self = [super init];

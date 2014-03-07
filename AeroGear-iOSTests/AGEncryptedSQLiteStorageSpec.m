@@ -17,7 +17,7 @@
 
 #import <Kiwi/Kiwi.h>
 #import "AGEncryptedSQLiteStorage.h"
-#import "AGPassphraseKeyServices.h"
+#import "AGPassphraseEncryptionServices.h"
 
 SPEC_BEGIN(AGEcryptedSQLiteStorageSpec)
 
@@ -66,7 +66,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
 
         __block AGStoreConfiguration* config = nil;
         __block AGEncryptedSQLiteStorage* sqliteStorage = nil;
-        __block AGPassphraseKeyServices* encryptService = nil;
+        __block AGPassphraseEncryptionServices* encryptService = nil;
         __block AGPassphraseCryptoConfig* cryptoConfig = nil;
 
         NSData * const kSalt = [@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
@@ -77,7 +77,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             cryptoConfig.passphrase = kPassphrase;
             cryptoConfig.salt = kSalt;
 
-            encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            encryptService = [[AGPassphraseEncryptionServices alloc] initWithConfig:cryptoConfig];
             config = [[AGStoreConfiguration alloc] init];
             [config setName:@"Users"];
             [config setRecordId:@"id"];
@@ -616,7 +616,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
             cryptoConfig.passphrase = kPassphrase;
             cryptoConfig.salt = kSalt;
             
-            AGPassphraseKeyServices *encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+            AGPassphraseEncryptionServices *encryptService = [[AGPassphraseEncryptionServices alloc] initWithConfig:cryptoConfig];
             
             AGStoreConfiguration *config = [[AGStoreConfiguration alloc] init];
             
@@ -644,7 +644,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
                  cryptoConfig.passphrase = kPassphrase;
                  cryptoConfig.salt = kSaltFail; //bogus salt
                  
-                 AGPassphraseKeyServices *encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+                 AGPassphraseEncryptionServices *encryptService = [[AGPassphraseEncryptionServices alloc] initWithConfig:cryptoConfig];
                  
                  AGStoreConfiguration *config = [[AGStoreConfiguration alloc] init];
                  [config setName:@"Users"];
@@ -677,7 +677,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
                 cryptoConfig.passphrase = kPassphraseFail; // bogus passphrase
                 cryptoConfig.salt = kSalt;
                 
-                AGPassphraseKeyServices *encryptService = [[AGPassphraseKeyServices alloc] initWithConfig:cryptoConfig];
+                AGPassphraseEncryptionServices *encryptService = [[AGPassphraseEncryptionServices alloc] initWithConfig:cryptoConfig];
                 
                 AGStoreConfiguration *config = [[AGStoreConfiguration alloc] init];
                 [config setName:@"Users"];

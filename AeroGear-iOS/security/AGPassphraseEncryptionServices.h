@@ -21,14 +21,14 @@
 /**
  An AGEncryptionService that generates crypto params randomly by using AGPBKDF2
  */
-@interface AGPassphraseKeyServices : AGBaseEncryptionService
+@interface AGPassphraseEncryptionServices : AGBaseEncryptionService
 
 /**
  * Initialize the provider with the given config
  *
  * @param config An AGPassphraseCryptoConfig configuration object.
  *
- * @return the newly created AGPassphraseKeyServices object.
+ * @return the newly created AGPassphraseEncryptionServices object.
  */
 - (id)initWithConfig:(AGPassphraseCryptoConfig *)config;
 

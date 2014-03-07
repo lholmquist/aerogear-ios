@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-#import "AGPasswordKeyServices.h"
+#import "AGPasswordEncryptionServices.h"
 
 #import <AGRandomGenerator.h>
 #import <AGCryptoBox.h>
 
-@implementation AGPasswordKeyServices {
+@implementation AGPasswordEncryptionServices {
     NSString *_passKeyTag;
     NSString *_symmetricKeyTag;
 }
