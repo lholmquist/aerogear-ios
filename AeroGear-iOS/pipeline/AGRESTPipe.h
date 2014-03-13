@@ -35,7 +35,7 @@
     AGHttpClient* _restClient;
 }
 
-+(id) pipeWithConfig:(id<AGPipeConfig>) pipeConfig;
--(id) initWithConfig:(id<AGPipeConfig>) pipeConfig;
++(instancetype) pipeWithConfig:(id<AGPipeConfig>) pipeConfig;
+-(instancetype) initWithConfig:(id<AGPipeConfig>) pipeConfig;
 
 @end

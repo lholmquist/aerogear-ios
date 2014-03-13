@@ -18,8 +18,7 @@
 #import <Foundation/Foundation.h>
 #import "AGPageConfig.h"
 #import "AGAuthenticationModule.h"
-
-@protocol AGAuthzModule;
+#import "AGAuthzModule.h"
 
 /**
  * Represents the public API to configure AGPipe objects.

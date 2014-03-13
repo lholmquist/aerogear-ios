@@ -16,8 +16,6 @@
  */
 
 #import "AGRESTPipe.h"
-#import "AGAuthenticationModuleAdapter.h"
-
 #import "AGHttpClient.h"
 
 #import "AGPageHeaderExtractor.h"
@@ -26,40 +24,30 @@
 
 //category:
 #import "AGNSMutableArray+Paging.h"
-#import "AGAuthzModuleAdapter.h"
 
 @implementation AGRESTPipe {
-    // TODO make properties on a PRIVATE category...
-    id<AGAuthenticationModuleAdapter> _authModule;
-    id<AGAuthzModuleAdapter> _authzModule;
+
     NSString* _recordId;
     
-    AGPipeConfiguration* _config;
     AGPageConfiguration* _pageConfig;
 }
-
-// =====================================================
-// ================ public API (AGPipe) ================
-// =====================================================
 
 @synthesize type = _type;
 @synthesize URL = _URL;
 
-// ==============================================
-// ======== 'factory' and 'init' section ========
-// ==============================================
+#pragma mark - 'factory' and 'init' section
 
-+(id) pipeWithConfig:(id<AGPipeConfig>) pipeConfig {
++(instancetype) pipeWithConfig:(id<AGPipeConfig>) pipeConfig {
     return [[[self class] alloc] initWithConfig:pipeConfig];
 }
 
--(id) initWithConfig:(id<AGPipeConfig>) pipeConfig {
+-(instancetype) initWithConfig:(id<AGPipeConfig>) pipeConfig {
     self = [super init];
     if (self) {
         _type = @"REST";
         
         // set all the things:
-        _config = (AGPipeConfiguration*) pipeConfig;
+        AGPipeConfiguration *_config = (AGPipeConfiguration*) pipeConfig;
         
         NSURL* baseURL = _config.baseURL;
         NSString* endpoint = _config.endpoint;
@@ -68,20 +56,25 @@
         
         _URL = finalURL;
         _recordId = _config.recordId;
-        _authModule = (id<AGAuthenticationModuleAdapter>) _config.authModule;
-        _authzModule = (id<AGAuthzModuleAdapter>) _config.authzModule;
-        
-        _restClient = [AGHttpClient clientFor:finalURL sessionConfiguration:_config.sessionConfiguration];
+
+        _restClient = [AGHttpClient clientFor:finalURL timeout:_config.timeout sessionConfiguration:_config.sessionConfiguration];
 
         // if NSURLCredential object is set on the config
         if (_config.credential) {
             // apply it
-            [_restClient setDefaultCredential:_config.credential];
+
+            // capture the value to avoid strong reference cycle
+            NSURLCredential *credential = _config.credential;
+            // set it
+            [_restClient setTaskDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition(NSURLSession *session, NSURLSessionTask *task, NSURLAuthenticationChallenge *challenge, __autoreleasing NSURLCredential **cred) {
+                *cred = credential;
+                return NSURLSessionAuthChallengePerformDefaultHandling;
+            }];
         }
 
+        // set up paging config from the user supplied block
         _pageConfig = [[AGPageConfiguration alloc] init];
         
-        // set up paging config from the user supplied block
         if (pipeConfig.pageConfig)
             pipeConfig.pageConfig(_pageConfig);
         
@@ -94,48 +87,34 @@
                 [_pageConfig setPageExtractor:[[AGPageBodyExtractor alloc] init]];
             }
         }
+
+        // set up auth/authz config if configured
+        _restClient.authModule = (id<AGAuthenticationModuleAdapter>) _config.authModule;
+        _restClient.authzModule = (id<AGAuthzModuleAdapter>) _config.authzModule;
     }
     
     return self;
 }
 
-// private helper to append the endpoint
--(NSURL*) appendEndpoint:(NSString*)endpoint toURL:(NSURL*)baseURL {
-    if (endpoint == nil) {
-        endpoint = @"";
-    }
-    
-    // append the endpoint name and use it as the final URL
-    return [baseURL URLByAppendingPathComponent:endpoint];
-}
-
-// =====================================================
-// ======== public API (AGPipe) ========
-// =====================================================
+#pragma mark - public API (AGPipe)
 
 -(void) read:(id)value
      success:(void (^)(id responseObject))success
      failure:(void (^)(NSError *error))failure {
-    
+
     if (value == nil || [value isKindOfClass:[NSNull class]]) {
         [self raiseError:@"read" msg:@"read id value was nil" failure:failure];
         // do nothing
         return;
     }
-    
-    // try to add auth.token:
-    [self applyAuthToken];
 
     NSString* objectKey = [self getStringValue:value];
-    [_restClient getPath:[self appendObjectPath:objectKey] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [_restClient GET:[self appendObjectPath:objectKey] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     }];
@@ -144,7 +123,7 @@
 // read all, via HTTP GET
 -(void) read:(void (^)(id responseObject))success
      failure:(void (^)(NSError *error))failure {
-    
+
     [self readWithParams:nil success:success failure:failure];
 }
 
@@ -153,9 +132,6 @@
 -(void) readWithParams:(NSDictionary*)parameterProvider
                success:(void (^)(id responseObject))success
                failure:(void (^)(NSError *error))failure {
-    
-    // try to add auth.token:
-    [self applyAuthToken];
 
     // if none has been passed, we use the "global" setting
     // which can be the default limit/offset OR what has
@@ -163,30 +139,28 @@
     if (!parameterProvider)
         parameterProvider = _pageConfig.parameterProvider;
 
-    [_restClient getPath:_URL.path parameters:parameterProvider success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+    [_restClient GET:_URL.path parameters:parameterProvider success:^(NSURLSessionDataTask *task, id responseObject) {
+
         NSMutableArray* pagingObject;
-        
+
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             pagingObject = [NSMutableArray arrayWithObject:responseObject];
         } else {
             pagingObject = (NSMutableArray*) [responseObject mutableCopy];
         }
-        
+
         // stash pipe reference:
         pagingObject.pipe = self;
         pagingObject.parameterProvider = [_pageConfig.pageExtractor parse:responseObject
-                                                                  headers:[[operation response] allHeaderFields]
+                                                                  headers:[(NSHTTPURLResponse *) [task response] allHeaderFields]
                                                                      next:_pageConfig.nextIdentifier
                                                                      prev:_pageConfig.previousIdentifier];
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success(pagingObject);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     } ];
@@ -196,61 +170,51 @@
 -(void) save:(NSDictionary*) object
      success:(void (^)(id responseObject))success
      failure:(void (^)(NSError *error))failure {
-    
+
     // when null is provided we try to invoke the failure block
     if (object == nil || [object isKindOfClass:[NSNull class]]) {
         [self raiseError:@"save" msg:@"object was nil" failure:failure];
         // do nothing
         return;
     }
-    
-    // try to add auth.token:
-    [self applyAuthToken];
-    
+
     // the blocks are unique to PUT and POST, so let's define them up-front:
-    id successCallback = ^(AFHTTPRequestOperation *operation, id responseObject) {
+    id successCallback = ^(NSURLSessionDataTask *task, id responseObject) {
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
         }
     };
-    
-    id failureCallback = ^(AFHTTPRequestOperation *operation, NSError *error) {
+
+    id failureCallback = ^(NSURLSessionDataTask *task, NSError *error) {
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     };
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    [params addEntriesFromDictionary:object];
+
     id objectKey = [object objectForKey:_recordId];
 
-    // we need to check if the map representation contains the "recordID" and its value is actually set:
+    // we need to check if the map representation contains the "recordID" and its value is actually set,
+    // to determine whether POST or PUT should be attempted
     if (objectKey == nil || [objectKey isKindOfClass:[NSNull class]]) {
-        //TODO: NSLog(@"HTTP POST to create the given object");
-        [_restClient postPath:_URL.path parameters:params success:successCallback failure:failureCallback];
-        return;
+        [_restClient POST:_URL.path parameters:object success:successCallback failure:failureCallback];
     } else {
+
+        // extract object's id
         NSString* updateId = [self getStringValue:objectKey];
-        //TODO: NSLog(@"HTTP PUT to update the given object");
-        [_restClient putPath:[self appendObjectPath:updateId] parameters:params success:successCallback failure:failureCallback];
-        return;
+       [_restClient PUT:[self appendObjectPath:updateId] parameters:object success:successCallback failure:failureCallback];
     }
 }
 
 -(void) remove:(NSDictionary*) object
        success:(void (^)(id responseObject))success
        failure:(void (^)(NSError *error))failure {
-    
+
     // when null is provided we try to invoke the failure block
     if (object == nil || [object isKindOfClass:[NSNull class]]) {
         [self raiseError:@"remove" msg:@"object was nil" failure:failure];
         // do nothing
         return;
     }
-    
-    // try to add auth.token:
-    [self applyAuthToken];
 
     id objectKey = [object objectForKey:_recordId];
     // we need to check if the map representation contains the "recordID" and its value is actually set:
@@ -259,32 +223,36 @@
         // do nothing
         return;
     }
-    
+
     NSString* deleteKey = [self getStringValue:objectKey];
-    
-    [_restClient deletePath:[self appendObjectPath:deleteKey] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+
+    [_restClient DELETE:[self appendObjectPath:deleteKey] parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     } ];
 }
 
 -(void) cancel {
-    // cancel all running http operations
-    [_restClient.operationQueue cancelAllOperations];
+    // enumerate all running tasks
+    [_restClient.tasks enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSURLSessionTask *task = obj;
+        // cancel it
+        [task cancel];
+    }];
 }
 
-- (void)setUploadProgressBlock:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block {
-    [_restClient setUploadProgressBlock:block];
+- (void)setUploadProgressBlock:(void (^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend))block {
+    [_restClient setTaskDidSendBodyDataBlock:block];
 }
+
+#pragma mark - utility methods
 
 // extract the sting value (e.g. for read:id, or remove:id)
 -(NSString *) getStringValue:(id) value {
@@ -302,41 +270,37 @@
     return [NSString stringWithFormat:@"%@/%@", _URL, path];
 }
 
-// helper method:
--(void) applyAuthToken {
-    NSDictionary* dict = [NSDictionary dictionary];
-    if (_authModule && [_authModule isAuthenticated]) {
-        dict = [_authModule authTokens];
-    } else if (_authzModule && [_authzModule isAuthorized]) {
-        dict = [_authzModule accessTokens];
-    }
-
-    [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [_restClient setDefaultHeader:key value:obj];
-    }];
-}
-
--(NSString *) description {
-    return [NSString stringWithFormat: @"%@ [type=%@, url=%@]", self.class, _type, _URL];
-}
-
 -(void) raiseError:(NSString*) domain
                msg:(NSString*) msg
            failure:(void (^)(NSError *error))failure {
-    
+
     if (!failure)
         return;
-    
+
     NSError* error = [NSError errorWithDomain:[NSString stringWithFormat:@"org.aerogear.pipes.%@", domain]
                                          code:0
                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:msg,
-                                               NSLocalizedDescriptionKey, nil]];
-    
+                                                                                         NSLocalizedDescriptionKey, nil]];
+
     failure(error);
 }
 
 + (BOOL) accepts:(NSString *) type {
     return [type isEqualToString:@"REST"];
+}
+
+// private helper to append the endpoint
+-(NSURL*) appendEndpoint:(NSString*)endpoint toURL:(NSURL*)baseURL {
+    if (endpoint == nil) {
+        endpoint = @"";
+    }
+
+    // append the endpoint name and use it as the final URL
+    return [baseURL URLByAppendingPathComponent:endpoint];
+}
+
+-(NSString *) description {
+    return [NSString stringWithFormat: @"%@ [type=%@, url=%@]", self.class, _type, _URL];
 }
 
 @end

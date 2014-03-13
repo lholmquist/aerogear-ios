@@ -324,6 +324,6 @@ Of course the _collection_ behind the responseObject can be stored to a variable
  *
  * NOTE. The block can be called several times and is always executed on the main thread.
  */
-- (void) setUploadProgressBlock:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite)) block;
+- (void)setUploadProgressBlock:(void (^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend))block;
 
 @end
