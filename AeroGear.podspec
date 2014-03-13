@@ -14,5 +14,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.dependency 'AFNetworking', '1.3.3'
   s.dependency 'FMDB', '2.1'
-  s.dependency 'AeroGear-Crypto', '0.2.0'  
+  s.dependency 'AeroGear-Crypto', '0.2.1'  
 end
