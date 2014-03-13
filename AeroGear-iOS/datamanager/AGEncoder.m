@@ -97,12 +97,7 @@
                                              options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves
                                                error:error];
     
-    // cater for iOS 5 returning an 'immutable' array when the size is empty
-    if ([arr count] == 0 && ![arr isKindOfClass:[NSMutableArray class]])
-        return nil;
-    
     return arr;
-    
 }
 
 - (BOOL)isValid:(id)json {
