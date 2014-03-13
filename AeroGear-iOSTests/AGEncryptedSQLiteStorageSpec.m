@@ -70,7 +70,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
         __block AGPassphraseEncryptionServices* encryptService = nil;
         __block AGPassphraseCryptoConfig* cryptoConfig = nil;
 
-        __block NSData * const kSalt = [AGRandomGenerator randomBytes];//[@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
+        NSData * const kSalt = [@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
         NSString * const kPassphrase = @"PASSPHRASE";
 
         beforeEach(^{
