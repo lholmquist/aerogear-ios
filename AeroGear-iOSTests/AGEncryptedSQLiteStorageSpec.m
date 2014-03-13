@@ -18,8 +18,9 @@
 #import <Kiwi/Kiwi.h>
 #import "AGEncryptedSQLiteStorage.h"
 #import "AGPassphraseEncryptionServices.h"
+#import "AGRandomGenerator.h"
 
-SPEC_BEGIN(AGEcryptedSQLiteStorageSpec)
+SPEC_BEGIN(AGEncryptedSQLiteStorageSpec)
 
 describe(@"AGEncryptedSQLiteStorage", ^{
     
@@ -69,7 +70,7 @@ describe(@"AGEncryptedSQLiteStorage", ^{
         __block AGPassphraseEncryptionServices* encryptService = nil;
         __block AGPassphraseCryptoConfig* cryptoConfig = nil;
 
-        NSData * const kSalt = [@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
+        __block NSData * const kSalt = [AGRandomGenerator randomBytes];//[@"e5ecbaaf33bd751a1ac728d45e6" dataUsingEncoding:NSUTF8StringEncoding];
         NSString * const kPassphrase = @"PASSPHRASE";
 
         beforeEach(^{
