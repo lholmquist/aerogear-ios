@@ -19,11 +19,6 @@
 #import "AGHttpClient.h"
 #import "AGHTTPMockHelper.h"
 
-// access the timer of the operation for the purpose of testing
-@interface AFHTTPRequestOperation (Testing)
-@property (nonatomic, retain) NSTimer* timer;
-@end
-
 SPEC_BEGIN(AGHttpClientSpec)
 
     describe(@"AGHttpClient", ^{
@@ -41,7 +36,6 @@ SPEC_BEGIN(AGHttpClientSpec)
                 NSURL* baseURL = [NSURL URLWithString:@"http://server.com/context/"];
 
                 _restClient = [AGHttpClient clientFor:baseURL];
-                _restClient.parameterEncoding = AFJSONParameterEncoding;
             });
 
             afterEach(^{
@@ -60,12 +54,12 @@ SPEC_BEGIN(AGHttpClientSpec)
             it(@"should successfully perform GET", ^{
                 [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]];
 
-                [_restClient getPath:@"projects" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient GET:@"projects" parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
                     [responseObject shouldNotBeNil];
 
                     finishedFlag = YES;
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     // nope
                 } ];
 
@@ -86,7 +80,6 @@ SPEC_BEGIN(AGHttpClientSpec)
                 // Note: we set the timeout(sec) to a low level so that
                 // we can test the timeout methods with adjusting response delay
                 _restClient = [AGHttpClient clientFor:baseURL timeout:1];
-                _restClient.parameterEncoding = AFJSONParameterEncoding;
             });
 
             afterEach(^{
@@ -106,10 +99,10 @@ SPEC_BEGIN(AGHttpClientSpec)
                         dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
                                                      @"project-161-58-58", @"style", nil];
 
-                [_restClient putPath:@"projects/0" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient PUT:@"projects/0" parameters:project success:^(NSURLSessionDataTask *task, id responseObject) {
                     // nope
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
                     finishedFlag = YES;
                 }];
@@ -128,10 +121,10 @@ SPEC_BEGIN(AGHttpClientSpec)
                         dictionaryWithObjectsAndKeys:@"First Project", @"title",
                                                      @"project-161-58-58", @"style", nil];
 
-                [_restClient postPath:@"projects" parameters:project success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient POST:@"projects" parameters:project success:^(NSURLSessionDataTask *task, id responseObject) {
                     // nope
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
                     finishedFlag = YES;
                 }];
@@ -146,7 +139,7 @@ SPEC_BEGIN(AGHttpClientSpec)
                         dictionaryWithObjectsAndKeys:@"First Project", @"title",
                                                      @"project-161-58-58", @"style", nil];
 
-                [_restClient postPath:@"projects" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient POST:@"projects" parameters:projectFirst success:^(NSURLSessionDataTask *task, id responseObject) {
                     [responseObject shouldNotBeNil];
 
                     NSMutableDictionary* projectSecond = [NSMutableDictionary
@@ -157,14 +150,14 @@ SPEC_BEGIN(AGHttpClientSpec)
                                             status:200
                                        requestTime:2]; // two secs delay
 
-                    [_restClient postPath:@"projects" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [_restClient POST:@"projects" parameters:projectSecond success:^(NSURLSessionDataTask *task, id responseObject) {
                         // nope
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    } failure:^(NSURLSessionDataTask *task, NSError *error) {
                         [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
                         finishedFlag = YES;
                     } ];
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     // nope
                 }];
 
@@ -178,7 +171,7 @@ SPEC_BEGIN(AGHttpClientSpec)
                         dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
                                                      @"project-161-58-58", @"style", nil];
 
-                [_restClient putPath:@"projects/0" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient PUT:@"projects/0" parameters:projectFirst success:^(NSURLSessionDataTask *task, id responseObject) {
                     [responseObject shouldNotBeNil];
 
                     NSMutableDictionary* projectSecond = [NSMutableDictionary
@@ -190,15 +183,15 @@ SPEC_BEGIN(AGHttpClientSpec)
                                             status:200
                                        requestTime:2]; // two secs delay
 
-                    [_restClient putPath:@"projects/1" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [_restClient PUT:@"projects/1" parameters:projectSecond success:^(NSURLSessionDataTask *task, id responseObject) {
                         // nope
 
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    } failure:^(NSURLSessionDataTask *task, NSError *error) {
                         [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
                         finishedFlag = YES;
                     } ];
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     // nope
                 }];
 
@@ -212,7 +205,7 @@ SPEC_BEGIN(AGHttpClientSpec)
                         dictionaryWithObjectsAndKeys:@"First Project", @"title",
                                                      @"project-161-58-58", @"style", nil];
 
-                [_restClient postPath:@"projects" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient POST:@"projects" parameters:projectFirst success:^(NSURLSessionDataTask *task, id responseObject) {
                     [responseObject shouldNotBeNil];
 
                     NSMutableDictionary* projectSecond = [NSMutableDictionary
@@ -224,14 +217,14 @@ SPEC_BEGIN(AGHttpClientSpec)
                                             status:200
                                        requestTime:2]; // two secs delay
 
-                    [_restClient putPath:@"projects/1" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [_restClient PUT:@"projects/1" parameters:projectSecond success:^(NSURLSessionDataTask *task, id responseObject) {
                         // nope
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    } failure:^(NSURLSessionDataTask *task, NSError *error) {
                         [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
                         finishedFlag = YES;
                     } ];
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     // nope
                 }];
 
@@ -246,7 +239,7 @@ SPEC_BEGIN(AGHttpClientSpec)
                         dictionaryWithObjectsAndKeys:@"0", @"id", @"First Project", @"title",
                                                      @"project-161-58-58", @"style", nil];
 
-                [_restClient putPath:@"projects/0" parameters:projectFirst success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [_restClient PUT:@"projects/0" parameters:projectFirst success:^(NSURLSessionDataTask *task, id responseObject) {
                     [responseObject shouldNotBeNil];
 
                     NSMutableDictionary* projectSecond = [NSMutableDictionary
@@ -258,14 +251,14 @@ SPEC_BEGIN(AGHttpClientSpec)
                                             status:200
                                        requestTime:2]; // two secs delay
 
-                    [_restClient postPath:@"projects" parameters:projectSecond success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [_restClient POST:@"projects" parameters:projectSecond success:^(NSURLSessionDataTask *task, id responseObject) {
                         // nope
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    } failure:^(NSURLSessionDataTask *task, NSError *error) {
                         [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
                         finishedFlag = YES;
                     } ];
 
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                } failure:^(NSURLSessionDataTask *task, NSError *error) {
                     // nope
                 }];
 

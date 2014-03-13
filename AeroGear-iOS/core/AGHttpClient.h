@@ -17,11 +17,25 @@
 
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
+#import "AGAuthenticationModuleAdapter.h"
+#import "AGAuthzModuleAdapter.h"
 
 @interface AGHttpClient : AFHTTPSessionManager
 
-+ (AGHttpClient *)clientFor:(NSURL *)url;
-+ (AGHttpClient *)clientFor:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration;
+@property (nonatomic, strong) id<AGAuthenticationModuleAdapter> authModule;
+@property (nonatomic, strong) id<AGAuthzModuleAdapter> authzModule;
 
-- (void)setUploadProgressBlock:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))block;
++ (instancetype)clientFor:(NSURL *)url;
++ (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval;
++ (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval sessionConfiguration:(NSURLSessionConfiguration *)configuration;
+
+- (NSURLSessionDataTask *)POST:(NSString *)URLString
+                    parameters:(NSDictionary *)parameters
+                       success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                       failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
+
+- (NSURLSessionDataTask *)PUT:(NSString *)URLString
+                   parameters:(NSDictionary *)parameters
+                      success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
+                      failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
 @end
