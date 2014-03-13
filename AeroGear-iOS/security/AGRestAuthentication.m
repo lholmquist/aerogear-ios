@@ -74,9 +74,11 @@
         _logoutEndpoint = config.logoutEndpoint;
         _enrollEndpoint = config.enrollEndpoint;
         _baseURL = config.baseURL.absoluteString;
-        
-        _restClient = [AGHttpClient clientFor:config.baseURL timeout:config.timeout];
-        _restClient.parameterEncoding = AFJSONParameterEncoding;
+
+        _restClient = [AGHttpClient clientFor:config.baseURL];
+
+        // apply timeout config
+        _restClient.requestSerializer.timeoutInterval = config.timeout;
     }
 
     return self;
@@ -93,25 +95,19 @@
 -(void) enroll:(NSDictionary*) userData
      success:(void (^)(id object))success
      failure:(void (^)(NSError *error))failure {
-    
-    
-    [_restClient postPath:_enrollEndpoint parameters:userData success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
+    [_restClient POST:_enrollEndpoint parameters:userData success:^(NSURLSessionDataTask *task, id responseObject) {
         // stash the auth token...:
-        [self readAndStashToken:operation];
-        
+        [self readAndStashToken:task response:responseObject];
+
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     }];
-    
 }
 
 -(void) login:(NSString*) username
@@ -125,26 +121,19 @@
 -(void) login:(NSDictionary*) loginData
     success:(void (^)(id object))success
     failure:(void (^)(NSError *error))failure {
-    
-    [_restClient postPath:_loginEndpoint parameters:loginData success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+
+    [_restClient POST:_loginEndpoint parameters:loginData success:^(NSURLSessionDataTask *task, id responseObject) {
         // stash the auth token...:
-        [self readAndStashToken:operation];
-        
+        [self readAndStashToken:task response:responseObject];
+
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success(responseObject);
         }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     }];
-    
-    
 }
 
 -(void) logout:(void (^)())success
@@ -152,22 +141,18 @@
 
     // stash the token to the header:
     [_authTokens enumerateKeysAndObjectsUsingBlock:^(id header, id value, BOOL *stop) {
-        [_restClient setDefaultHeader:header value:value];
+        [_restClient.requestSerializer setValue:value forHTTPHeaderField:header];
     }];
-    
-    // logoff:
-    [_restClient postPath:_logoutEndpoint parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        // hrm, really needed....:
+
+    [_restClient POST:_logoutEndpoint parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+
         [self deauthorize];
-        
+
         if (success) {
-            //TODO: NSLog(@"Invoking successblock....");
             success();
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         if (failure) {
-            //TODO: NSLog(@"Invoking failure block....");
             failure(error);
         }
     }];
@@ -179,7 +164,7 @@
 }
 
 // private method
--(void) readAndStashToken:(AFHTTPRequestOperation*) operation {
+-(void) readAndStashToken:(NSURLSessionDataTask *)task response:(id) responseObject {
     _authTokens = [[NSMutableDictionary alloc] init];
 }
 
@@ -192,7 +177,6 @@
 }
 
 - (void)deauthorize {
-    // TODO ?
     _authTokens = nil;
 }
 

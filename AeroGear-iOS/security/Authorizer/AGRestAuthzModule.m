@@ -71,8 +71,13 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
         _clientSecret = config.clientSecret;
         _scopes = config.scopes;
 
-        _restClient = [AGHttpClient clientFor:config.baseURL timeout:config.timeout];
-        _restClient.parameterEncoding = AFJSONParameterEncoding;
+        _restClient = [AGHttpClient clientFor:config.baseURL];
+
+        // apply timeout config
+        _restClient.requestSerializer.timeoutInterval = config.timeout;
+
+        // default to url serialization
+        _restClient.requestSerializer = [AFHTTPRequestSerializer serializer];
     }
 
     return self;
@@ -89,13 +94,13 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
               failure:(void (^)(NSError *error))failure {
 
     // Form the URL string.
-    NSString *targetURLString = [NSString stringWithFormat:@"%@%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
-                                                           self.baseURL,
-                                                           self.authzEndpoint,
-                                                           [self scope],
-                                                           [self urlEncodeString:_redirectURL],
-                                                           _clientId];
-    NSURLRequest *request = [_restClient requestWithMethod:@"POST" path:targetURLString parameters:nil];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@?scope=%@&redirect_uri=%@&client_id=%@&response_type=code",
+                                                                 self.baseURL,
+                                                                 self.authzEndpoint,
+                                                                 [self scope],
+                                                                 [self urlEncodeString:_redirectURL],
+                                                                 _clientId]];
+
     // register with the notification system in order to be notified when the 'authorisation' process completes in the
     // external browser, and the oauth code is available so that we can then proceed to request the 'access_token'
     // from the server.
@@ -105,8 +110,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
         [self exchangeAuthorizationCodeForAccessToken:code success:success failure:failure];
     }];
 
-
-    [[UIApplication sharedApplication] openURL:[request URL]];
+    [[UIApplication sharedApplication] openURL:url];
 }
 
 
@@ -121,19 +125,20 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
     if (_clientSecret) {
         [paramDict setObject:_clientSecret forKey:@"client_secret"];
     }
-    _restClient.parameterEncoding = AFFormURLParameterEncoding;
-    [_restClient postPath:[NSString stringWithFormat:@"%@/%@", self.baseURL, self.accessTokenEndpoint] parameters:paramDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+    [_restClient POST:self.accessTokenEndpoint parameters:paramDict success:^(NSURLSessionDataTask *task, id responseObject) {
+
         _accessTokens = @{@"Authorization":[NSString stringWithFormat:@"Bearer %@", [responseObject objectForKey:@"access_token"]]};
+
         if (success) {
             success([responseObject objectForKey:@"access_token"]);
         }
-        //TODO deal with refresh case
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if(failure) {
-            failure(nil);
+
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        if (failure) {
+            failure(error);
         }
     }];
-
 }
 
 
