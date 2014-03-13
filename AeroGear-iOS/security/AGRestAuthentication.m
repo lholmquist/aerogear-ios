@@ -75,10 +75,7 @@
         _enrollEndpoint = config.enrollEndpoint;
         _baseURL = config.baseURL.absoluteString;
 
-        _restClient = [AGHttpClient clientFor:config.baseURL];
-
-        // apply timeout config
-        _restClient.requestSerializer.timeoutInterval = config.timeout;
+        _restClient = [AGHttpClient clientFor:config.baseURL timeout:config.timeout];
     }
 
     return self;
