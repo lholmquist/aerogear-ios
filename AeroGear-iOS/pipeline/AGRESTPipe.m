@@ -67,8 +67,12 @@
             NSURLCredential *credential = _config.credential;
             // set it
             [_restClient setTaskDidReceiveAuthenticationChallengeBlock:^NSURLSessionAuthChallengeDisposition(NSURLSession *session, NSURLSessionTask *task, NSURLAuthenticationChallenge *challenge, __autoreleasing NSURLCredential **cred) {
-                *cred = credential;
-                return NSURLSessionAuthChallengePerformDefaultHandling;
+                if ([challenge previousFailureCount] == 0) {
+                    *cred = credential;
+                    return NSURLSessionAuthChallengeUseCredential;
+                } else { // if there was a previous error, no need to continue
+                    return NSURLSessionAuthChallengeCancelAuthenticationChallenge;
+                }
             }];
         }
 
