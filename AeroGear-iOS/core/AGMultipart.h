@@ -86,7 +86,7 @@
 @interface AGStreamPart :  NSObject <AGMultipart>
 
 @property (nonatomic, readonly) NSInputStream *inputStream;
-@property (nonatomic, assign) unsigned long long length;
+@property (nonatomic, assign) NSUInteger length;
 
 /**
  * Initialize a multipart object from an input stream.
@@ -100,6 +100,6 @@
 - (id)initWithInputStream:(NSInputStream *)inputStream
                      name:(NSString *)name
                  fileName:(NSString *)fileName
-                   length:(unsigned long long)length
+                   length:(NSUInteger)length
                  mimeType:(NSString *)mimeType;
 @end

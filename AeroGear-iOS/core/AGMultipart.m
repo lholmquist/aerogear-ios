@@ -95,7 +95,7 @@
 - (id)initWithInputStream:(NSInputStream *)inputStream
                      name:(NSString *)name
                  fileName:(NSString *)fileName
-                   length:(unsigned long long)length
+                   length:(NSUInteger)length
                  mimeType:(NSString *)mimeType {
     
     self = [super init];
