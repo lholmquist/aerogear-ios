@@ -318,11 +318,11 @@ Of course the _collection_ behind the responseObject can be stored to a variable
 /**
  * Sets a progress status callback that is invoked during uploading of a file(s).
  *
- * @param block The block accepts three arguments: the number of bytes written in the latest write,
+ * @param block The block accepts five arguments: the session, the task, the number of bytes written in the latest write,
  * the total bytes written for this connection, and the total bytes expected to be written during
  * the request determined by the length of the HTTP body.
  *
- * NOTE. The block can be called several times and is always executed on the main thread.
+ * NOTE. The block can be called several times and is NOT executed on the main thread.
  */
 - (void)setUploadProgressBlock:(void (^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend))block;
 
