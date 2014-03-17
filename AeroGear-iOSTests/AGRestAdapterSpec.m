@@ -297,8 +297,6 @@ describe(@"AGRestAdapter", ^{
 
     context(@"timout should be honoured", ^{
         
-        NSInteger const TIMEOUT_ERROR_CODE = -1001;
-        
         __block AGRESTPipe* restPipe = nil;
         
         beforeEach(^{
@@ -331,7 +329,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe read:^(id responseObject) {
                 // nope
             } failure:^(NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                [[theValue(error.code) should] equal:theValue(NSURLErrorTimedOut)];
                 finishedFlag = YES;
             }];
 
@@ -350,7 +348,7 @@ describe(@"AGRestAdapter", ^{
                 // nope
                 
             } failure:^(NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                [[theValue(error.code) should] equal:theValue(NSURLErrorTimedOut)];
                 finishedFlag = YES;
             }];
             
@@ -369,7 +367,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:project success:^(id responseObject) {
                 // nope
             } failure:^(NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                [[theValue(error.code) should] equal:theValue(NSURLErrorTimedOut)];
                 finishedFlag = YES;
             }];
             
@@ -389,7 +387,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe remove:project success:^(id responseObject) {
                 // nope
             } failure:^(NSError *error) {
-                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                [[theValue(error.code) should] equal:theValue(NSURLErrorTimedOut)];
                 finishedFlag = YES;
             }];
 
