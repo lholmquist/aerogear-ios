@@ -29,7 +29,7 @@
 @synthesize name = _name;
 @synthesize type = _type;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // default values:

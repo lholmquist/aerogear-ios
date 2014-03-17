@@ -31,7 +31,7 @@
 @synthesize previousIdentifier = _previousIdentifier;
 @synthesize pageExtractor = _pageExtractor;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // default values:

@@ -31,7 +31,7 @@
 @synthesize credential = _credential;
 @synthesize pageConfig = _pageConfig;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // default values:

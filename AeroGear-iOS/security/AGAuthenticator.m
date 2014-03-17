@@ -23,7 +23,7 @@
     NSMutableDictionary* _modules;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         _modules = [NSMutableDictionary dictionary];
@@ -31,7 +31,7 @@
     return self;
 }
 
-+(id) authenticator {
++(instancetype) authenticator {
     return [[self alloc] init];
 }
 

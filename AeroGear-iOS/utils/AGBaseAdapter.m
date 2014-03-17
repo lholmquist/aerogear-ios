@@ -21,7 +21,7 @@
 
 
 // abstract:
-- (id)init {
+- (instancetype)init {
     if ([self class] == [AGBaseAdapter class]) {
         @throw [NSException exceptionWithName:NSInternalInconsistencyException
                             reason:@"Error, attempting to instantiate AGBaseAdapter directly."

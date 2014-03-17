@@ -31,6 +31,6 @@
  *
  * @return the newly created AGPasswordEncryptionServices object.
  */
-- (id)initWithConfig:(AGKeyStoreCryptoConfig *)config;
+- (instancetype)initWithConfig:(AGKeyStoreCryptoConfig *)config;
 
 @end

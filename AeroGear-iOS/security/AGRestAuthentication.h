@@ -29,8 +29,8 @@
  */
 @interface AGRestAuthentication : NSObject <AGAuthenticationModuleAdapter>
 
--(id) initWithConfig:(id<AGAuthConfig>) authConfig;
-+(id) moduleWithConfig:(id<AGAuthConfig>) authConfig;
+-(instancetype) initWithConfig:(id<AGAuthConfig>) authConfig;
++(instancetype) moduleWithConfig:(id<AGAuthConfig>) authConfig;
 
 
 @end

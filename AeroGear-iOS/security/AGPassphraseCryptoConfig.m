@@ -25,7 +25,7 @@
 @synthesize passphrase = _passphrase;
 @synthesize salt = _salt;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         _type = @"AGPassphraseCryptoConfig";

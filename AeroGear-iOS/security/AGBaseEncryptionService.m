@@ -23,7 +23,7 @@ static NSString *const kApplicationIV = @"applicationIV";
 
 @implementation AGBaseEncryptionService
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

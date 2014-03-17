@@ -50,21 +50,21 @@
  *
  * @return the AGPipeline object.
  */
--(id) initWithBaseURL:(NSURL*) baseURL;
+-(instancetype) initWithBaseURL:(NSURL*) baseURL;
 
 /**
  * An initializer method to instantiate an empty AGPipeline.
  *
  * @return the AGPipeline object.
  */
--(id) init;
+-(instancetype) init;
 
 /**
  * A factory method to instantiate an empty AGPipeline.
  *
  * @return the AGPipeline object.
  */
-+(id) pipeline;
++(instancetype) pipeline;
 
 /**
  * A factory method to instantiate an empty AGPipeline.
@@ -73,7 +73,7 @@
  *
  * @return the AGPipeline object.
  */
-+(id) pipelineWithBaseURL:(NSURL*) baseURL;
++(instancetype) pipelineWithBaseURL:(NSURL*) baseURL;
 
 /**
  * A factory method to instantiate an empty AGPipeline.
@@ -83,7 +83,7 @@
  *
  * @return the AGPipeline object.
  */
-+(id) pipelineWithBaseURL:(NSURL*) baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration;
++(instancetype) pipelineWithBaseURL:(NSURL*) baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration;
 
 /**
  * Adds a new AGPipe object, based on the given configuration object.

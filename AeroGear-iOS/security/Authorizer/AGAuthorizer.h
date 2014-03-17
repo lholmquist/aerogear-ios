@@ -47,7 +47,7 @@ Below is an example that creates an Authorizer for OAuth2 implementation.
  *
  * @return the AGAuthenticator object
  */
-+(id) authorizer;
++(instancetype) authorizer;
 
 /**
  * Adds a new AGAuthzModule object, based on the given configuration object.

@@ -31,15 +31,15 @@
 }
 @synthesize pipes = _pipes;
 
-- (id)init {
+- (instancetype)init {
    return [self initWithBaseURL:nil];
 }
 
-- (id)initWithBaseURL:(NSURL *)baseURL {
+- (instancetype)initWithBaseURL:(NSURL *)baseURL {
     return [self initWithBaseURL:baseURL sessionConfiguration:nil];
 }
 
-- (id)initWithBaseURL:(NSURL *)baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration {
+- (instancetype)initWithBaseURL:(NSURL *)baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration {
     if (self = [super init]) {
         // to hold our Pipes
         _pipes = [NSMutableDictionary dictionary];
@@ -55,15 +55,15 @@
     return self;
 }
 
-+(id)pipeline {
++(instancetype)pipeline {
     return [[[self class] alloc] init];
 }
 
-+(id)pipelineWithBaseURL:(NSURL*) baseURL; {
++(instancetype)pipelineWithBaseURL:(NSURL*) baseURL; {
     return [[[self class] alloc] initWithBaseURL:baseURL];
 }
 
-+(id)pipelineWithBaseURL:(NSURL*) baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration {
++(instancetype)pipelineWithBaseURL:(NSURL*) baseURL sessionConfiguration:(NSURLSessionConfiguration *)configuration {
     return [[[self class] alloc] initWithBaseURL:baseURL sessionConfiguration:configuration];
 }
 

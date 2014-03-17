@@ -24,7 +24,7 @@
     NSMutableDictionary *_keyServices;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         _keyServices = [[NSMutableDictionary alloc] init];
@@ -32,7 +32,7 @@
     return self;
 }
 
-+ (id)manager {
++ (instancetype)manager {
     return [[self alloc] init];
 }
 

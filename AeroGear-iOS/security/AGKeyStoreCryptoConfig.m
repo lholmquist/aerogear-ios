@@ -25,7 +25,7 @@
 @synthesize alias = _alias;
 @synthesize password = _password;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         _type = @"AGKeyStoreCryptoConfig";

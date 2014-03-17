@@ -20,7 +20,7 @@
 @implementation AGPageBaseExtractor
 
 // abstract:
-- (id)init {
+- (instancetype)init {
     if ([self class] == [AGPageBaseExtractor class]) {
         @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                        reason:@"Error, attempting to instantiate AGPageBaseExtractor directly."

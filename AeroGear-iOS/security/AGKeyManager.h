@@ -78,7 +78,7 @@
  *
  * @return the AGKeyManager object
  */
-+ (id)manager;
++ (instancetype)manager;
 
 /**
  * Return an implementation of an AGEncryptionService based on the AGCryptoConfig configuration object passed in.

@@ -53,11 +53,11 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
 // ======== 'factory' and 'init' section ========
 // ==============================================
 
-+(id) moduleWithConfig:(id<AGAuthzConfig>) authzConfig {
++(instancetype) moduleWithConfig:(id<AGAuthzConfig>) authzConfig {
     return [[self alloc] initWithConfig:authzConfig];
 }
 
--(id) initWithConfig:(id<AGAuthzConfig>) authzConfig {
+-(instancetype) initWithConfig:(id<AGAuthzConfig>) authzConfig {
     self = [super init];
     if (self) {
         // set all the things:

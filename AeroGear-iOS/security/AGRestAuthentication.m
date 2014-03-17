@@ -60,11 +60,11 @@
 // ======== 'factory' and 'init' section ========
 // ==============================================
 
-+(id) moduleWithConfig:(id<AGAuthConfig>) authConfig {
++(instancetype) moduleWithConfig:(id<AGAuthConfig>) authConfig {
     return [[self alloc] initWithConfig:authConfig];
 }
 
--(id) initWithConfig:(id<AGAuthConfig>) authConfig {
+-(instancetype) initWithConfig:(id<AGAuthConfig>) authConfig {
     self = [super init];
     if (self) {
         // set all the things:

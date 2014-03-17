@@ -22,7 +22,7 @@
 
 @implementation AGPassphraseEncryptionServices
 
-- (id)initWithConfig:(AGPassphraseCryptoConfig *)config {
+- (instancetype)initWithConfig:(AGPassphraseCryptoConfig *)config {
     self = [super init];
     
     if (self) {

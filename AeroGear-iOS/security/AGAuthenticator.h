@@ -47,7 +47,7 @@ Below is an example that creates an Authenticator that points to the remote Aero
  *
  * @return the AGAuthenticator object
  */
-+(id) authenticator;
++(instancetype) authenticator;
 
 /**
  * Adds a new AGAuthenticationModule object, based on the given configuration object.

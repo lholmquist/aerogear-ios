@@ -30,6 +30,6 @@
  *
  * @return the newly created AGPassphraseEncryptionServices object.
  */
-- (id)initWithConfig:(AGPassphraseCryptoConfig *)config;
+- (instancetype)initWithConfig:(AGPassphraseCryptoConfig *)config;
 
 @end
