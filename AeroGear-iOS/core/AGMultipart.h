@@ -53,8 +53,8 @@
  * @param fileURL The URL of the file whose contents will be added on the request.
  * @param name    The name to be associated with the specified data.
  */
-- (id)initWithFileURL:(NSURL *)fileURL
-                 name:(NSString *)name;
+- (instancetype)initWithFileURL:(NSURL *)fileURL
+                           name:(NSString *)name;
 @end
 
 /**
@@ -73,10 +73,10 @@
  * @param fileName The filename to be associated with the specified data.
  * @param mimeType The MIME type to be associated with the specified data.
  */
-- (id)initWithFileData:(NSData *)data
-                  name:(NSString *)name
-              fileName:(NSString *)fileName
-              mimeType:(NSString *)mimeType;
+- (instancetype)initWithFileData:(NSData *)data
+                            name:(NSString *)name
+                        fileName:(NSString *)fileName
+                        mimeType:(NSString *)mimeType;
 @end
 
 /**
@@ -97,9 +97,9 @@
  * @param length      The total length of bytes of this input stream
  * @param mimeType    The MIME type to be associated with the specified data.
  */
-- (id)initWithInputStream:(NSInputStream *)inputStream
-                     name:(NSString *)name
-                 fileName:(NSString *)fileName
-                   length:(NSUInteger)length
-                 mimeType:(NSString *)mimeType;
+- (instancetype)initWithInputStream:(NSInputStream *)inputStream
+                               name:(NSString *)name
+                           fileName:(NSString *)fileName
+                             length:(NSUInteger)length
+                           mimeType:(NSString *)mimeType;
 @end

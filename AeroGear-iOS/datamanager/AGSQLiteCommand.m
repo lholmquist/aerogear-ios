@@ -23,7 +23,7 @@
 
 @implementation AGSQLiteCommand
 
-- (id)initWithDatabase:(FMDatabase *)database name:(NSString*)name recordId:(NSString*)recordId encoder:(id<AGEncoder>) encoder{
+- (instancetype)initWithDatabase:(FMDatabase *)database name:(NSString*)name recordId:(NSString*)recordId encoder:(id<AGEncoder>) encoder{
     if(self = [super init]) {
         _database = database;
         _tableName = name;

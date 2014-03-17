@@ -25,7 +25,7 @@
 // ======== 'factory' and 'init' section ========
 // ==============================================
 
--(id) initWithConfig:(id<AGStoreConfig>) storeConfig {
+-(instancetype) initWithConfig:(id<AGStoreConfig>) storeConfig {
     self = [super init];
     if (self) {
         _type = @"ENCRYPTED_SQLITE";

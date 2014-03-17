@@ -27,7 +27,7 @@
     NSMutableDictionary* _stores;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         _stores = [NSMutableDictionary dictionary];
@@ -35,8 +35,8 @@
     return self;
 }
 
-+(id)manager {
-    return [[self alloc] init];
++(instancetype)manager {
+    return [[[self class] alloc] init];
 }
 
 

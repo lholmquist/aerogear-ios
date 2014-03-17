@@ -22,11 +22,11 @@
     NSPropertyListFormat _format;
 }
 
-- (id) init {
+- (instancetype) init {
     return [self initWithFormat:NSPropertyListXMLFormat_v1_0];
 }
 
-- (id) initWithFormat:(NSPropertyListFormat)format {
+- (instancetype) initWithFormat:(NSPropertyListFormat)format {
     if(self = [super init]) {
         _format = format;
     }
@@ -56,7 +56,7 @@
     AGPListEncoder *_encoder;
 }
 
-- (id) initWithEncryptionService:(id<AGEncryptionService>)encryptionService {
+- (instancetype) initWithEncryptionService:(id<AGEncryptionService>)encryptionService {
     if (self = [super init]) {
         _encryptionService = encryptionService;
         _encoder = [[AGPListEncoder alloc] initWithFormat:NSPropertyListBinaryFormat_v1_0];

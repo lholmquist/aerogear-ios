@@ -23,8 +23,8 @@
 @synthesize fileName = _fileName;
 @synthesize mimeType = _mimeType;
 
-- (id)initWithFileURL:(NSURL *)fileURL
-                 name:(NSString *)name {
+- (instancetype)initWithFileURL:(NSURL *)fileURL
+                           name:(NSString *)name {
     
     self = [super init];
     
@@ -67,10 +67,10 @@
 @synthesize fileName = _fileName;
 @synthesize mimeType = _mimeType;
 
-- (id)initWithFileData:(NSData *)data
-                  name:(NSString *)name
-              fileName:(NSString *)fileName
-              mimeType:(NSString *)mimeType {
+- (instancetype)initWithFileData:(NSData *)data
+                            name:(NSString *)name
+                        fileName:(NSString *)fileName
+                        mimeType:(NSString *)mimeType {
     
     self = [super init];
     
@@ -92,11 +92,11 @@
 @synthesize fileName = _fileName;
 @synthesize mimeType = _mimeType;
 
-- (id)initWithInputStream:(NSInputStream *)inputStream
-                     name:(NSString *)name
-                 fileName:(NSString *)fileName
-                   length:(NSUInteger)length
-                 mimeType:(NSString *)mimeType {
+- (instancetype)initWithInputStream:(NSInputStream *)inputStream
+                               name:(NSString *)name
+                           fileName:(NSString *)fileName
+                             length:(NSUInteger)length
+                           mimeType:(NSString *)mimeType {
     
     self = [super init];
     

@@ -27,7 +27,7 @@
     NSString* _recordId;
     id<AGEncoder> _encoder;
 }
-- (id)initWithDatabase:(FMDatabase *)database name:(NSString*)name recordId:(NSString*)recordId encoder:(id<AGEncoder>) encoder;
+- (instancetype)initWithDatabase:(FMDatabase *)database name:(NSString*)name recordId:(NSString*)recordId encoder:(id<AGEncoder>) encoder;
 - (BOOL)createTableWith:(NSDictionary*)value error:(NSError**)error;
 - (BOOL)save:(NSMutableDictionary *)value error:(NSError **)error;
 - (id)read:(NSString*) recordId;

@@ -34,11 +34,11 @@
 // ======== 'factory' and 'init' section ========
 // ==============================================
 
-+ (id)storeWithConfig:(id<AGStoreConfig>) storeConfig {
-    return [[self alloc] initWithConfig:storeConfig];
++ (instancetype)storeWithConfig:(id<AGStoreConfig>) storeConfig {
+    return [[[self class] alloc] initWithConfig:storeConfig];
 }
 
-- (id)initWithConfig:(id<AGStoreConfig>) storeConfig {
+- (instancetype)initWithConfig:(id<AGStoreConfig>) storeConfig {
     self = [super init];
     if (self) {
         // base init:

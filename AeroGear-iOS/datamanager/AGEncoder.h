@@ -62,8 +62,7 @@
  An encoder backed by a NSPropertyListSerialization
  */
 @interface AGPListEncoder : NSObject <AGEncoder>
-- (id) init;
-- (id) initWithFormat:(NSPropertyListFormat)format;
+- (instancetype) initWithFormat:(NSPropertyListFormat)format;
 @end
 
 /**
@@ -76,5 +75,5 @@
  Encode in PList with binary format and encrypt data.
  */
 @interface AGEncryptedPListEncoder : NSObject <AGEncoder>
-- (id) initWithEncryptionService:(id<AGEncryptionService>)encryptionService;
+- (instancetype) initWithEncryptionService:(id<AGEncryptionService>)encryptionService;
 @end

@@ -24,7 +24,7 @@
 @synthesize type = _type;
 @synthesize encryptionService = _encryptionService;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (self) {
         // default values:

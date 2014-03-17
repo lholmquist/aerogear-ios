@@ -70,6 +70,6 @@
     AGSQLiteCommand * _command;
 }
 
-+(id) storeWithConfig:(id<AGStoreConfig>) storeConfig;
--(id) initWithConfig:(id<AGStoreConfig>) storeConfig;
++(instancetype) storeWithConfig:(id<AGStoreConfig>) storeConfig;
+-(instancetype) initWithConfig:(id<AGStoreConfig>) storeConfig;
 @end

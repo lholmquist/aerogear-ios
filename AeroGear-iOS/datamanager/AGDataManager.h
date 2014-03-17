@@ -152,7 +152,7 @@ The reset function allows you the erase all data available in the used AGStore o
  *
  * @return the AGDataManager object
  */
-+(id) manager;
++(instancetype) manager;
 
 /**
  * Adds a new AGStore object, based on the given configuration object.
