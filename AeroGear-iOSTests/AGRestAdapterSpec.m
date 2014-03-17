@@ -185,7 +185,116 @@ describe(@"AGRestAdapter", ^{
             [[theValue([AGRESTPipe accepts:@"rest"]) should] equal:theValue(NO)];
         });
     });
-    
+
+    context(@"cancel should be honoured", ^{
+
+        __block AGRESTPipe* restPipe = nil;
+
+        beforeEach(^{
+            AGPipeConfiguration* config = [[AGPipeConfiguration alloc] init];
+            [config setBaseURL:[NSURL URLWithString:@"http://server.com"]];
+            [config setName:@"projects"];
+
+            restPipe = [AGRESTPipe pipeWithConfig:config];
+        });
+
+        afterEach(^{
+            // remove all handlers installed by test methods
+            // to avoid any interference
+            [AGHTTPMockHelper clearAllMockedRequests];
+
+            finishedFlag = NO;
+        });
+
+        it(@"on read (GET)", ^{
+            // install the mock:
+            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+
+
+            [restPipe read:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(NSURLErrorCancelled)];
+                finishedFlag = YES;
+            }];
+
+            [restPipe cancel];
+
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+
+        it(@"on save (POST)", ^{
+            // here we simulate POST
+            // for iOS 5 and iOS 6 the timeout should be honoured correctly
+            // regardless of the iOS 5 bug
+
+            // install the mock:
+            [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+            NSMutableDictionary* project = [NSMutableDictionary
+                    dictionaryWithObjectsAndKeys:@"First Project", @"title",
+                                                 @"project-161-58-58", @"style", nil];
+
+            [restPipe save:project success:^(id responseObject) {
+                // nope
+
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(NSURLErrorCancelled)];
+                finishedFlag = YES;
+            }];
+
+            [restPipe cancel];
+
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+
+        it(@"on save (PUT)", ^{
+            [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+            NSMutableDictionary* project = [NSMutableDictionary
+                    dictionaryWithObjectsAndKeys:@"1", @"id", @"First Project", @"title",
+                                                 @"project-161-58-58", @"style", nil];
+
+
+            [restPipe save:project success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(NSURLErrorCancelled)];
+                finishedFlag = YES;
+            }];
+
+            [restPipe cancel];
+
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+
+        it(@"on remove (DELETE)", ^{
+            [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+
+            NSMutableDictionary* project = [NSMutableDictionary
+                    dictionaryWithObjectsAndKeys:@"1", @"id", @"First Project", @"title",
+                                                 @"project-161-58-58", @"style", nil];
+
+
+            [restPipe remove:project success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(NSURLErrorCancelled)];
+                finishedFlag = YES;
+            }];
+
+            [restPipe cancel];
+
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+    });
+
     context(@"timout should be honoured", ^{
         
         NSInteger const TIMEOUT_ERROR_CODE = -1001;
@@ -211,13 +320,25 @@ describe(@"AGRestAdapter", ^{
             
             finishedFlag = NO;
         });
-        
-        it(@"on save (POST)", ^{
-            // here we simulate POST
-            // for iOS 5 and iOS 6 the timeout should be honoured correctly
-            // regardless of the iOS 5 bug
-            
+
+        it(@"on read (GET)", ^{
             // install the mock:
+            [AGHTTPMockHelper mockResponse:[PROJECTS dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+
+
+            [restPipe read:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                finishedFlag = YES;
+            }];
+
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
+
+        it(@"on save (POST)", ^{
             [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
                                     status:200
                                requestTime:2]; // two secs delay
@@ -254,8 +375,28 @@ describe(@"AGRestAdapter", ^{
             
             [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         });
+
+        it(@"on remove (DELETE)", ^{
+            [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]
+                                    status:200
+                               requestTime:2]; // two secs delay
+
+            NSMutableDictionary* project = [NSMutableDictionary
+                    dictionaryWithObjectsAndKeys:@"1", @"id", @"First Project", @"title",
+                                                 @"project-161-58-58", @"style", nil];
+
+
+            [restPipe remove:project success:^(id responseObject) {
+                // nope
+            } failure:^(NSError *error) {
+                [[theValue(error.code) should] equal:theValue(TIMEOUT_ERROR_CODE)];
+                finishedFlag = YES;
+            }];
+
+            [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        });
     });
-    
+
     context(@"should handle multipart requests", ^{
         
         __block AGRESTPipe* restPipe = nil;
