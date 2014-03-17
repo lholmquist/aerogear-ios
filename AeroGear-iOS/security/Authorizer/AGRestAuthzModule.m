@@ -54,7 +54,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
 // ==============================================
 
 +(instancetype) moduleWithConfig:(id<AGAuthzConfig>) authzConfig {
-    return [[self alloc] initWithConfig:authzConfig];
+    return [[[self class] alloc] initWithConfig:authzConfig];
 }
 
 -(instancetype) initWithConfig:(id<AGAuthzConfig>) authzConfig {
