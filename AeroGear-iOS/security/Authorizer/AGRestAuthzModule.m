@@ -120,15 +120,15 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
                                        failure:(void (^)(NSError *error))failure {
     NSMutableDictionary* paramDict = [[NSMutableDictionary alloc] initWithDictionary:@{@"code":code, @"client_id":_clientId, @"redirect_uri": _redirectURL, @"grant_type":@"authorization_code"}];
     if (_clientSecret) {
-        [paramDict setObject:_clientSecret forKey:@"client_secret"];
+        paramDict[@"client_secret"] = _clientSecret;
     }
 
     [_restClient POST:self.accessTokenEndpoint parameters:paramDict success:^(NSURLSessionDataTask *task, id responseObject) {
 
-        _accessTokens = @{@"Authorization":[NSString stringWithFormat:@"Bearer %@", [responseObject objectForKey:@"access_token"]]};
+        _accessTokens = @{@"Authorization":[NSString stringWithFormat:@"Bearer %@", responseObject[@"access_token"]]};
 
         if (success) {
-            success([responseObject objectForKey:@"access_token"]);
+            success(responseObject[@"access_token"]);
         }
 
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -168,7 +168,7 @@ NSString * const AGAppLaunchedWithURLNotification = @"AGAppLaunchedWithURLNotifi
     // Create a string to concatenate all scopes existing in the _scopes array.
     NSString *scope = @"";
     for (int i=0; i<[_scopes count]; i++) {
-        scope = [scope stringByAppendingString:[self urlEncodeString:[_scopes objectAtIndex:i]]];
+        scope = [scope stringByAppendingString:[self urlEncodeString:_scopes[i]]];
 
         // If the current scope is other than the last one, then add the "+" sign to the string to separate the scopes.
         if (i < [_scopes count] - 1) {

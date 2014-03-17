@@ -41,7 +41,7 @@
         _nextIdentifier = @"next";
         _previousIdentifier = @"previous";
         _offset = @"0"; // string to work with 'strange' APIs, that are treating offset as string...
-        _limit = [NSNumber numberWithInteger:10];
+        _limit = @10;
         
     }
     return self;
@@ -54,7 +54,7 @@
     if (_parameterProvider) {
         return _parameterProvider;
     } else {
-        return [NSDictionary dictionaryWithObjectsAndKeys:_offset, @"offset", _limit, @"limit", nil];
+        return @{@"offset": _offset, @"limit": _limit};
     }
 }
 

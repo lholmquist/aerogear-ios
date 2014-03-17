@@ -79,7 +79,7 @@
                     if (error) {
                         *error = [NSError errorWithDomain:AGStoreErrorDomain
                                                      code:0
-                                                 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"array contains non-dictionary objects!", NSLocalizedDescriptionKey, nil]];
+                                                 userInfo:@{NSLocalizedDescriptionKey: @"array contains non-dictionary objects!"}];
                     }
                     return NO;
                 }
@@ -102,7 +102,7 @@
             if (error) {
                 *error = [NSError errorWithDomain:AGStoreErrorDomain
                                              code:0
-                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"dictionary objects are supported only", NSLocalizedDescriptionKey, nil]];
+                                         userInfo:@{NSLocalizedDescriptionKey: @"dictionary objects are supported only"}];
             }
             return NO;
 
@@ -111,7 +111,7 @@
         if (error) {
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"supported values should be either NSString, NSNumber, NSArray, NSDictionary, or NSNull", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"supported values should be either NSString, NSNumber, NSArray, NSDictionary, or NSNull"}];
         }
         return NO;
     }

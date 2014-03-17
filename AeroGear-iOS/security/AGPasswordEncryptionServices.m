@@ -44,9 +44,9 @@
         // setup query for password
         query = [self keyChainDictionaryForPasswordClass];
         
-        [query setObject:config.alias forKey:(__bridge id)kSecAttrService];
-        [query setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
-        [query setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
+        query[(__bridge id)kSecAttrService] = config.alias;
+        query[(__bridge id)kSecReturnData] = (__bridge id)kCFBooleanTrue;
+        query[(__bridge id)kSecMatchLimit] = (__bridge id)kSecMatchLimitOne;
         
         status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &data);
         
@@ -64,8 +64,8 @@
             // setup query for key
             query = [self keyChainDictionaryForKeyClass];
             
-            [query setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
-            [query setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
+            query[(__bridge id)kSecReturnData] = (__bridge id)kCFBooleanTrue;
+            query[(__bridge id)kSecMatchLimit] = (__bridge id)kSecMatchLimitOne;
 
             // Get the key bits.
           	status = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef *)&data);
@@ -81,10 +81,10 @@
             // step 1: add password to keychain
             query = [self keyChainDictionaryForPasswordClass];
             
-            [query setObject:config.alias forKey:(__bridge id)kSecAttrService];
+            query[(__bridge id)kSecAttrService] = config.alias;
 
             NSData *data = [config.password dataUsingEncoding:NSUTF8StringEncoding];
-            [query setObject:data forKey:(__bridge id)kSecValueData];
+            query[(__bridge id)kSecValueData] = data;
             
             // add it
             status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
@@ -92,21 +92,19 @@
             // step 2: generate and add symmetric key
             query = [self keyChainDictionaryForKeyClass];
 
-            [query setObject:[NSNumber numberWithUnsignedInt:16]
-                      forKey:(__bridge id)kSecAttrKeySizeInBits];
-            [query setObject:[NSNumber numberWithUnsignedInt:16]
-                      forKey:(__bridge id)kSecAttrEffectiveKeySize];
-            [query setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecAttrCanEncrypt];
-            [query setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecAttrCanDecrypt];
-            [query setObject:(__bridge id)kCFBooleanFalse forKey:(__bridge id)kSecAttrCanDerive];
-            [query setObject:(__bridge id)kCFBooleanFalse forKey:(__bridge id)kSecAttrCanSign];
-            [query setObject:(__bridge id)kCFBooleanFalse forKey:(__bridge id)kSecAttrCanVerify];
-            [query setObject:(__bridge id)kCFBooleanFalse forKey:(__bridge id)kSecAttrCanWrap];
-            [query setObject:(__bridge id)kCFBooleanFalse forKey:(__bridge id)kSecAttrCanUnwrap];
+            query[(__bridge id)kSecAttrKeySizeInBits] = @16U;
+            query[(__bridge id)kSecAttrEffectiveKeySize] = @16U;
+            query[(__bridge id)kSecAttrCanEncrypt] = (__bridge id)kCFBooleanTrue;
+            query[(__bridge id)kSecAttrCanDecrypt] = (__bridge id)kCFBooleanTrue;
+            query[(__bridge id)kSecAttrCanDerive] = (__bridge id)kCFBooleanFalse;
+            query[(__bridge id)kSecAttrCanSign] = (__bridge id)kCFBooleanFalse;
+            query[(__bridge id)kSecAttrCanVerify] = (__bridge id)kCFBooleanFalse;
+            query[(__bridge id)kSecAttrCanWrap] = (__bridge id)kCFBooleanFalse;
+            query[(__bridge id)kSecAttrCanUnwrap] = (__bridge id)kCFBooleanFalse;
             
             // generate key
             key = [AGRandomGenerator randomBytes:16];
-            [query setObject:key forKey:(__bridge id)kSecValueData];
+            query[(__bridge id)kSecValueData] = key;
             
             // add it
             status = SecItemAdd((__bridge CFDictionaryRef) query, NULL);
@@ -124,11 +122,9 @@
 - (NSMutableDictionary *)keyChainDictionaryForPasswordClass {
     NSMutableDictionary *query = [[NSMutableDictionary alloc] init];
     
-    [query setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
-    [query setObject:[_passKeyTag dataUsingEncoding:NSUTF8StringEncoding]
-              forKey:(__bridge id)kSecAttrGeneric];
-    [query setObject:[_passKeyTag dataUsingEncoding:NSUTF8StringEncoding]
-              forKey:(__bridge id)kSecAttrAccount];
+    query[(__bridge id)kSecClass] = (__bridge id)kSecClassGenericPassword;
+    query[(__bridge id)kSecAttrGeneric] = [_passKeyTag dataUsingEncoding:NSUTF8StringEncoding];
+    query[(__bridge id)kSecAttrAccount] = [_passKeyTag dataUsingEncoding:NSUTF8StringEncoding];
 
     return query;
 }
@@ -136,8 +132,8 @@
 - (NSMutableDictionary *)keyChainDictionaryForKeyClass {
     NSMutableDictionary *query = [[NSMutableDictionary alloc] init];
     
-    [query setObject:(__bridge id)kSecClassKey forKey:(__bridge id)kSecClass];
-    [query setObject:_symmetricKeyTag forKey:(__bridge id)kSecAttrApplicationTag];
+    query[(__bridge id)kSecClass] = (__bridge id)kSecClassKey;
+    query[(__bridge id)kSecAttrApplicationTag] = _symmetricKeyTag;
     
     return query;
 }

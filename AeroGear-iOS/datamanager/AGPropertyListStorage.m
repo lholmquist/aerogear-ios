@@ -89,7 +89,7 @@
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"not a valid format for the type specified", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"not a valid format for the type specified"}];
         return NO;
     }
     
@@ -136,8 +136,7 @@
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"an error occurred during save!",
-                                               NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"an error occurred during save!"}];
         return NO;
     }
     

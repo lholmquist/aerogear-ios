@@ -195,7 +195,7 @@
         }
     };
 
-    id objectKey = [object objectForKey:_recordId];
+    id objectKey = object[_recordId];
 
     // we need to check if the map representation contains the "recordID" and its value is actually set,
     // to determine whether POST or PUT should be attempted
@@ -220,7 +220,7 @@
         return;
     }
 
-    id objectKey = [object objectForKey:_recordId];
+    id objectKey = object[_recordId];
     // we need to check if the map representation contains the "recordID" and its value is actually set:
     if (objectKey == nil || [objectKey isKindOfClass:[NSNull class]]) {
         [self raiseError:@"remove" msg:@"recordId not set" failure:failure];
@@ -283,8 +283,7 @@
 
     NSError* error = [NSError errorWithDomain:[NSString stringWithFormat:@"org.aerogear.pipes.%@", domain]
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:msg,
-                                                                                         NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: msg}];
 
     failure(error);
 }

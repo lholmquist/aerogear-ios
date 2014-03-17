@@ -55,7 +55,7 @@
     NSArray *components = [value componentsSeparatedByString:@"&"];
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     for (NSString *component in components) {
-        [parameters setObject:[[component componentsSeparatedByString:@"="] objectAtIndex:1] forKey:[[component componentsSeparatedByString:@"="] objectAtIndex:0]];
+        parameters[[component componentsSeparatedByString:@"="][0]] = [component componentsSeparatedByString:@"="][1];
     }
     return parameters;
 }

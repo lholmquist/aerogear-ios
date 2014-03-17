@@ -145,10 +145,10 @@
     [parameters enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if ([obj conformsToProtocol:@protocol(AGMultipart)]) {
             // add it
-            [parts setObject:obj forKey:key];
+            parts[key] = obj;
         }  else if ([obj isKindOfClass:[NSURL class]]) { // TODO: deprecated
             obj = [[AGFilePart alloc] initWithFileURL:obj name:key];
-            [parts setObject:obj forKey:key];
+            parts[key] = obj;
         }
     }];
 

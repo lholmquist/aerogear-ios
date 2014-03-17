@@ -141,7 +141,7 @@
         if (error) {
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"create table failed", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"create table failed"}];
         }
     }
     
@@ -167,7 +167,7 @@
         if (error) {
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"reset table failed", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"reset table failed"}];
         }
     }
     
@@ -200,7 +200,7 @@
             if (error) {
                 *error = [NSError errorWithDomain:AGStoreErrorDomain
                                              code:0
-                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"delete id failed", NSLocalizedDescriptionKey, nil]];
+                                         userInfo:@{NSLocalizedDescriptionKey: @"delete id failed"}];
             }
         }
         
@@ -211,7 +211,7 @@
         if (error) {
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"remove a nil id not possible", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"remove a nil id not possible"}];
         }
     }
     

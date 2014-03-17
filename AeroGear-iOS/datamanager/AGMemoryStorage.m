@@ -52,7 +52,7 @@
 }
 
 - (id)read:(id)recordId {
-    return [_data objectForKey:recordId];
+    return _data[recordId];
 }
 
 - (NSArray *)filter:(NSPredicate *)predicate {
@@ -68,7 +68,7 @@
                 if (error)
                     *error = [NSError errorWithDomain:AGStoreErrorDomain
                                                  code:0
-                                             userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"array contains non-dictionary objects!", NSLocalizedDescriptionKey, nil]];
+                                             userInfo:@{NSLocalizedDescriptionKey: @"array contains non-dictionary objects!"}];
                 // do nothing
                 return NO;
             }
@@ -86,7 +86,7 @@
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"dictionary objects are supported only", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"dictionary objects are supported only"}];
         return  NO;
     }
     
@@ -108,24 +108,24 @@
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"object was nil", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"object was nil"}];
         // do nothing
         return NO;
     }
     
-    id key = [record objectForKey:_recordId];
+    id key = record[_recordId];
 
     if (!key || [key isKindOfClass:[NSNull class]]) {
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"recordId not set", NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"recordId not set"}];
         // do nothing
         return NO;
     }
 
     // if the object exists
-    if ([_data objectForKey:key]) {
+    if (_data[key]) {
         // remove it
         [_data removeObjectForKey:key];
         
@@ -146,7 +146,7 @@
 - (void)saveOne:(NSMutableDictionary *)data {
     id recordId = [AGBaseStorage getOrSetIdForData:data withIdentifier:_recordId];
     
-    [_data setObject:data forKey:recordId];
+    _data[recordId] = data;
 }
 
 @end

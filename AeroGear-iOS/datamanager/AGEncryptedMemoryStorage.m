@@ -71,7 +71,7 @@
 - (id)read:(id)recordId {
     id retval;
     
-    NSData *encryptedData = [_data objectForKey:recordId];
+    NSData *encryptedData = _data[recordId];
  
     if (encryptedData) {
         NSData *decryptedData = [_encryptionService decrypt:encryptedData];
@@ -92,8 +92,7 @@
         if (error)
             *error = [NSError errorWithDomain:AGStoreErrorDomain
                                          code:0
-                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"can't encode object for encryption!",
-                                               NSLocalizedDescriptionKey, nil]];
+                                     userInfo:@{NSLocalizedDescriptionKey: @"can't encode object for encryption!"}];
         // do nothing
         return NO;
     }
@@ -118,7 +117,7 @@
 // ================= utility methods  ==================
 // =====================================================
 - (void)save:(NSData *)encryptedData forKey:(NSString *)key {
-    [_data setObject:encryptedData forKey:key];
+    _data[key] = encryptedData;
 }
 
 - (NSData *)dump {
@@ -138,7 +137,7 @@
     // encrypt it
     NSData *encryptedData = [_encryptionService encrypt:plist];
     // set it
-    [_data setObject:encryptedData forKey:recordId];
+    _data[recordId] = encryptedData;
 }
 
 @end

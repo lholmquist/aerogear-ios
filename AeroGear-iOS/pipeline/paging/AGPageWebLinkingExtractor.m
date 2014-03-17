@@ -24,7 +24,7 @@
                    next:(NSString*)nextIdentifier
                    prev:(NSString*)prevIdentifier {
     
-    NSString* headerValue = [headers objectForKey:@"Link"];
+    NSString* headerValue = headers[@"Link"];
     
     NSMutableDictionary *pagingLinks = [NSMutableDictionary dictionary];
     NSArray *links = [headerValue componentsSeparatedByString:@","];

@@ -35,7 +35,7 @@ NSString * const AGStoreErrorDomain = @"AGStoreErrorDomain";
 }
 
 + (NSString *)getOrSetIdForData:(NSMutableDictionary *)data withIdentifier:(NSString *)identifier {
-    id recordId = [data objectForKey:identifier];
+    id recordId = data[identifier];
     
     // if the object hasn't set a recordId property
     if (!recordId) {

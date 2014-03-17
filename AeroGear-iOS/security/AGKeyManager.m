@@ -48,7 +48,7 @@
     }
     
     if (keyService)
-        [_keyServices setObject:keyService forKey:config.name];
+        _keyServices[config.name] = keyService;
     
     return keyService;
 }
@@ -61,7 +61,7 @@
 }
 
 - (id<AGEncryptionService>)keyServiceWithName:(NSString *)name {
-    return [_keyServices objectForKey:name];
+    return _keyServices[name];
 }
 
 @end
