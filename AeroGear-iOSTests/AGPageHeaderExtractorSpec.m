@@ -69,7 +69,7 @@ describe(@"AGPageHeaderExtractor", ^{
 
         it(@"the parsed object should be empty when the headers arg is an empty dictionary", ^{
             NSDictionary *parsedInfo = [extractor parse:response
-                                                headers:[NSDictionary dictionary]
+                                                headers:@{}
                                                    next:NEXT_PAGE_IDENTIFIER
                                                    prev:PREVIOUS_PAGE_IDENTIFIER];
 

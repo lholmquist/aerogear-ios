@@ -47,8 +47,8 @@ describe(@"AGPageConfigSpec", ^{
             
             // If no "parameter provider" has been provided, the values for
             // limit/offset are used
-            [[config.parameterProvider objectForKey:@"limit"] shouldNotBeNil];
-            [[config.parameterProvider objectForKey:@"offset"] shouldNotBeNil];
+            [(config.parameterProvider)[@"limit"] shouldNotBeNil];
+            [(config.parameterProvider)[@"offset"] shouldNotBeNil];
         });
         
         it(@"should allow overriding defaults", ^{
@@ -57,7 +57,7 @@ describe(@"AGPageConfigSpec", ^{
             config.metadataLocation = @"body";
             config.nextIdentifier = @"tw-next";
             config.previousIdentifier = @"tw-prev";
-            config.parameterProvider = [NSDictionary dictionaryWithObjectsAndKeys:@"foo", @"key1", @"bar", @"key2", nil];
+            config.parameterProvider = @{@"key1": @"foo", @"key2": @"bar"};
             
             [[config.metadataLocation should] equal:@"body"];
             [[config.nextIdentifier should] equal:@"tw-next"];
@@ -66,10 +66,10 @@ describe(@"AGPageConfigSpec", ^{
             
             // If no "parameter provider" has been provided, the values for
             // limit/offset are used
-            [[config.parameterProvider objectForKey:@"key1"] shouldNotBeNil];
-            [[config.parameterProvider objectForKey:@"key1"] shouldNotBeNil];
-            [[config.parameterProvider objectForKey:@"limit"] shouldBeNil];
-            [[config.parameterProvider objectForKey:@"offset"] shouldBeNil];
+            [(config.parameterProvider)[@"key1"] shouldNotBeNil];
+            [(config.parameterProvider)[@"key1"] shouldNotBeNil];
+            [(config.parameterProvider)[@"limit"] shouldBeNil];
+            [(config.parameterProvider)[@"offset"] shouldBeNil];
         });
         
         it(@"should ignore bogus values", ^{

@@ -66,13 +66,13 @@ describe(@"AGPagination", ^{
 
             __block NSMutableArray *pagedResultSet;
 
-            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : [NSNumber numberWithInt:1]} success:^(id responseObject) {
+            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : @1} success:^(id responseObject) {
                 pagedResultSet = responseObject;  // page 1
 
                 // hold the "id" from the first page, so that
                 // we can match with the result when we move
                 // to the next page down in the test.
-                NSString *car_id = [[[responseObject objectAtIndex:0] objectForKey:@"id"] stringValue];
+                NSString *car_id = [responseObject[0][@"id"] stringValue];
 
                 // set the mocked response for the second page
                 [AGHTTPMockHelper mockResponse:[RESPONSE_SECOND dataUsingEncoding:NSUTF8StringEncoding]];
@@ -80,7 +80,7 @@ describe(@"AGPagination", ^{
                 // move to the next page
                 [pagedResultSet next:^(id responseObject) {
 
-                    NSString *id = [[[responseObject objectAtIndex:0] objectForKey:@"id"] stringValue];
+                    NSString *id = [responseObject[0][@"id"] stringValue];
 
                     [[car_id shouldNot] equal:id];
                     finishedFlag = YES;
@@ -103,7 +103,7 @@ describe(@"AGPagination", ^{
             __block NSMutableArray *pagedResultSet;
 
             // fetch the first page
-            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : [NSNumber numberWithInt:1]} success:^(id responseObject) {
+            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : @1} success:^(id responseObject) {
                 pagedResultSet = responseObject;  // page 1
 
                 // simulate "Bad Request" as in the case of AGController
@@ -142,14 +142,14 @@ describe(@"AGPagination", ^{
             __block NSMutableArray *pagedResultSet;
 
             // fetch the first page
-            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : [NSNumber numberWithInt:1]}
+            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : @1}
                     success:^(id responseObject) {
                         pagedResultSet = responseObject;  // page 1
 
                         // hold the "car id" from the first page, so that
                         // we can match with the result when we move
                         // to the next page down in the test.
-                        NSString *car_id = [[[responseObject objectAtIndex:0] objectForKey:@"id"] stringValue];
+                        NSString *car_id = [responseObject[0][@"id"] stringValue];
 
                         [AGHTTPMockHelper mockResponse:[RESPONSE_SECOND dataUsingEncoding:NSUTF8StringEncoding]
                                                headers:
@@ -166,7 +166,7 @@ describe(@"AGPagination", ^{
                             // move backwards (aka. page 1)
                             [pagedResultSet previous:^(id responseObject) {
 
-                                NSString *id = [[[responseObject objectAtIndex:0] objectForKey:@"id"] stringValue];
+                                NSString *id = [responseObject[0][@"id"] stringValue];
 
                                 [[car_id should] equal:id];
                                 finishedFlag = YES;
@@ -192,7 +192,7 @@ describe(@"AGPagination", ^{
             [config setPageConfig:^(id<AGPageConfig> pageConfig) {
                 [pageConfig setNextIdentifier:@"AG-Links-Next"];
                 [pageConfig setPreviousIdentifier:@"AG-Links-Previous"];
-                [pageConfig setParameterProvider:@{@"color" : @"black", @"offset" : @"0", @"limit" : [NSNumber numberWithInt:1]}];
+                [pageConfig setParameterProvider:@{@"color" : @"black", @"offset" : @"0", @"limit" : @1}];
                 [pageConfig setMetadataLocation:@"header"];
             }];
 
@@ -209,7 +209,7 @@ describe(@"AGPagination", ^{
                 [AGHTTPMockHelper mockResponse:[RESPONSE_TWO_ITEMS dataUsingEncoding:NSUTF8StringEncoding]];
 
                 // override the results per page from parameter provider
-                [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : [NSNumber numberWithInt:2]} success:^(id responseObject) {
+                [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : @2} success:^(id responseObject) {
 
                     [[responseObject should] haveCountOf:2];
 
@@ -246,7 +246,7 @@ describe(@"AGPagination", ^{
 
             __block NSMutableArray *pagedResultSet;
 
-            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : [NSNumber numberWithInt:1]} success:^(id responseObject) {
+            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"0", @"limit" : @1} success:^(id responseObject) {
 
                 pagedResultSet = responseObject;
 
@@ -289,7 +289,7 @@ describe(@"AGPagination", ^{
 
             __block NSMutableArray *pagedResultSet;
 
-            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"2", @"limit" : [NSNumber numberWithInt:1]} success:^(id responseObject) {
+            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"2", @"limit" : @1} success:^(id responseObject) {
 
                 pagedResultSet = responseObject;
 
@@ -331,7 +331,7 @@ describe(@"AGPagination", ^{
                                            @{@"AG-Links-Next" : @"http://server.com/context?color=black&offset=3&limit=1",
                                                    @"AG-Links-Previous" : @"http://server.com/context?color=black&offset=1&limit=1"}];
 
-            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"2", @"limit" : [NSNumber numberWithInt:1]} success:^(id responseObject) {
+            [pipe readWithParams:@{@"color" : @"black", @"offset" : @"2", @"limit" : @1} success:^(id responseObject) {
 
                 pagedResultSet = responseObject;
 

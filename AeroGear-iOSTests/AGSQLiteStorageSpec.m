@@ -150,7 +150,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary *user = [@{@"id" : @"0",
                                             @"name" : @"Robert",
                                             @"city" : @"Boston",
-                                            @"salary" : [NSNumber numberWithInt:2100],
+                                            @"salary" : @2100,
                                             @"department" : @{@"name" : @"Software", @"address" : @"Cornwell"},
                                             @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                                                               @{@"language" : @"C", @"level" : @"advanced"}]
@@ -184,7 +184,7 @@ describe(@"AGSQLiteStorage", ^{
 
             // read it
             NSMutableDictionary* object = [sqliteStorage read:@"1"];
-            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            [[object[@"name"] should] equal:@"Matthias"];
             
             [sqliteStorage save:object error:nil];
             [[theValue(success) should] equal:theValue(YES)];
@@ -212,7 +212,7 @@ describe(@"AGSQLiteStorage", ^{
             
             // read it
             NSMutableDictionary* object = [sqliteStorage read:@"1"];
-            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            [[object[@"name"] should] equal:@"Matthias"];
             
             [sqliteStorage save:object error:nil];
             [[theValue(success) should] equal:theValue(YES)];
@@ -235,7 +235,7 @@ describe(@"AGSQLiteStorage", ^{
 
             [[objects should] haveCountOf:1];
 
-            [[[[objects objectAtIndex:(NSUInteger)0] objectForKey:@"name"] should] equal:@"Bruno"];
+            [[objects[(NSUInteger)0][@"name"] should] equal:@"Bruno"];
         });
 
 
@@ -266,7 +266,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx", @"name", nil];
 
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
 
             // store it
             BOOL success = [sqliteStorage save:users error:nil];
@@ -289,7 +289,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx", @"name", nil];
 
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
 
             // store it
             [sqliteStorage save:users error:nil];
@@ -309,7 +309,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"5",@"id", nil];
 
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
 
             NSArray* objects;
             BOOL success;
@@ -341,7 +341,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"25",@"age", nil];
 
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
 
             NSArray* objects;
 
@@ -384,7 +384,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"25",@"age", nil];
             
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
             
             NSArray* objects;
             
@@ -430,7 +430,7 @@ describe(@"AGSQLiteStorage", ^{
             
             // read all
             NSArray *object = [sqliteStorage readAll];
-            [[[object[0] objectForKey:@"name"] should] equal:@"Christos"];
+            [[(object[0])[@"name"] should] equal:@"Christos"];
             
             // update newly created element
             success = [sqliteStorage save:object[0] error:nil];
@@ -467,7 +467,7 @@ describe(@"AGSQLiteStorage", ^{
             
             // read it
             NSMutableDictionary *object = [sqliteStorage read:@"1"];
-            [[[object objectForKey:@"name"] should] equal:@"Sebi"];
+            [[object[@"name"] should] equal:@"Sebi"];
             
             // remove the above user:
             success = [sqliteStorage remove:user1 error:nil];
@@ -492,7 +492,7 @@ describe(@"AGSQLiteStorage", ^{
 
             // read it
             NSMutableDictionary *object = [sqliteStorage read:@"1"];
-            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            [[object[@"name"] should] equal:@"Matthias"];
 
             NSMutableDictionary* user2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"Matthias", @"name" ,@"2", @"oid", nil];
 
@@ -537,7 +537,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary *user1 = [@{@"id" : @"0",
                     @"name" : @"Robert",
                     @"city" : @"Boston",
-                    @"salary" : [NSNumber numberWithInt:2100],
+                    @"salary" : @2100,
                     @"department" : @{@"name" : @"Software", @"address" : @"Cornwell"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"C", @"level" : @"advanced"}]
@@ -546,7 +546,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary *user2 = [@{@"id" : @"1",
                     @"name" : @"David",
                     @"city" : @"New York",
-                    @"salary" : [NSNumber numberWithInt:1400],
+                    @"salary" : @1400,
                     @"department" : @{@"name" : @"Hardware", @"address" : @"Cornwell"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"Python", @"level" : @"intermediate"}]
@@ -555,7 +555,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary *user3 = [@{@"id" : @"2",
                     @"name" : @"Peter",
                     @"city" : @"New York",
-                    @"salary" : [NSNumber numberWithInt:1800],
+                    @"salary" : @1800,
                     @"department" : @{@"name" : @"Software", @"address" : @"Branton"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"C", @"level" : @"intermediate"}]
@@ -564,7 +564,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary *user4 = [@{@"id" : @"3",
                     @"name" : @"John",
                     @"city" : @"Boston",
-                    @"salary" : [NSNumber numberWithInt:1700],
+                    @"salary" : @1700,
                     @"department" : @{@"name" : @"Software", @"address" : @"Norwell"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"intermediate"},
                             @{@"language" : @"JavaScript", @"level" : @"advanced"}]
@@ -573,7 +573,7 @@ describe(@"AGSQLiteStorage", ^{
             NSMutableDictionary *user5 = [@{@"id" : @"4",
                     @"name" : @"Graham",
                     @"city" : @"Boston",
-                    @"salary" : [NSNumber numberWithInt:2400],
+                    @"salary" : @2400,
                     @"department" : @{@"name" : @"Software", @"address" : @"Underwood"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"Python", @"level" : @"advanced"}]

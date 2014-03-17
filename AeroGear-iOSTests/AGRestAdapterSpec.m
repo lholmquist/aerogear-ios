@@ -136,7 +136,7 @@ describe(@"AGRestAdapter", ^{
         it(@"should read an object with integer argument", ^{
             [AGHTTPMockHelper mockResponse:[PROJECT dataUsingEncoding:NSUTF8StringEncoding]];
 
-            [restPipe read:[NSNumber numberWithInt:1]
+            [restPipe read:@1
                     success:^(id responseObject) {
                         [responseObject shouldNotBeNil];
                         finishedFlag = YES;
@@ -435,7 +435,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
 
                 finishedFlag = YES;
@@ -468,7 +468,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;
@@ -538,7 +538,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;
@@ -573,7 +573,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;
@@ -601,7 +601,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;
@@ -627,7 +627,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;
@@ -655,7 +655,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"POST"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;
@@ -683,7 +683,7 @@ describe(@"AGRestAdapter", ^{
             [restPipe save:dict success:^(id responseObject) {
                 [[[AGHTTPMockHelper lastHTTPMethodCalled] should] equal:@"PUT"];
                 
-                [[theValue([[[AGHTTPMockHelper lastHTTPRequestHeaders] objectForKey:@"Content-Type"]
+                [[theValue([[AGHTTPMockHelper lastHTTPRequestHeaders][@"Content-Type"]
                             hasPrefix:@"multipart/form-data"]) should] equal:theValue(YES)];
                 
                 finishedFlag = YES;

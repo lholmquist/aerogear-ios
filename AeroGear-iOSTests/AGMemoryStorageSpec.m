@@ -86,7 +86,7 @@ describe(@"AGMemoryStorage", ^{
 
             // read it
             NSMutableDictionary* object = [memStore read:@"0"];
-            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            [[object[@"name"] should] equal:@"Matthias"];
         });
 
         it(@"should read an object _after_ storing it (using readAll)", ^{
@@ -102,8 +102,8 @@ describe(@"AGMemoryStorage", ^{
             [[objects should] haveCountOf:1];
             [[objects should] containObjects:user1, nil];
             
-            [[[[objects objectAtIndex:(NSUInteger)0] objectForKey:@"name"] should] equal:@"Matthias"];
-            [[[[objects objectAtIndex:(NSUInteger)0] objectForKey:@"id"] should] equal:@"0815"];
+            [[objects[(NSUInteger)0][@"name"] should] equal:@"Matthias"];
+            [[objects[(NSUInteger)0][@"id"] should] equal:@"0815"];
         });
         
         it(@"should read nothing out of an empty store", ^{
@@ -133,7 +133,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"5",@"id", nil];
             
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
             
             // store it
             BOOL success = [memStore save:users error:nil];
@@ -156,7 +156,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"5",@"id", nil];
             
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
             
             // store it
             [memStore save:users error:nil];
@@ -173,7 +173,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"5",@"id", nil];
             
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
 
             NSArray* objects;
             BOOL success;
@@ -207,7 +207,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary* user3 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"qmx",@"name",@"5",@"id", nil];
             
-            NSArray* users = [NSArray arrayWithObjects:user1, user2, user3, nil];
+            NSArray* users = @[user1, user2, user3];
             
             NSArray* objects;
 
@@ -278,7 +278,7 @@ describe(@"AGMemoryStorage", ^{
 
             // read it
             NSMutableDictionary *object = [memStore read:@"0"];
-            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            [[object[@"name"] should] equal:@"Matthias"];
 
             // remove the above user:
             success = [memStore remove:user1 error:nil];
@@ -300,7 +300,7 @@ describe(@"AGMemoryStorage", ^{
 
             // read it
             NSMutableDictionary *object = [memStore read:@"0"];
-            [[[object objectForKey:@"name"] should] equal:@"Matthias"];
+            [[object[@"name"] should] equal:@"Matthias"];
 
             NSMutableDictionary* user2 = [NSMutableDictionary
                                           dictionaryWithObjectsAndKeys:@"Matthias",@"name",@"1",@"id", nil];
@@ -347,7 +347,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary *user1 = [@{@"id" : @"0",
                     @"name" : @"Robert",
                     @"city" : @"Boston",
-                    @"salary" : [NSNumber numberWithInt:2100],
+                    @"salary" : @2100,
                     @"department" : @{@"name" : @"Software", @"address" : @"Cornwell"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"C", @"level" : @"advanced"}]
@@ -356,7 +356,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary *user2 = [@{@"id" : @"1",
                     @"name" : @"David",
                     @"city" : @"New York",
-                    @"salary" : [NSNumber numberWithInt:1400],
+                    @"salary" : @1400,
                     @"department" : @{@"name" : @"Hardware", @"address" : @"Cornwell"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"Python", @"level" : @"intermediate"}]
@@ -365,7 +365,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary *user3 = [@{@"id" : @"2",
                     @"name" : @"Peter",
                     @"city" : @"New York",
-                    @"salary" : [NSNumber numberWithInt:1800],
+                    @"salary" : @1800,
                     @"department" : @{@"name" : @"Software", @"address" : @"Branton"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"C", @"level" : @"intermediate"}]
@@ -374,7 +374,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary *user4 = [@{@"id" : @"3",
                     @"name" : @"John",
                     @"city" : @"Boston",
-                    @"salary" : [NSNumber numberWithInt:1700],
+                    @"salary" : @1700,
                     @"department" : @{@"name" : @"Software", @"address" : @"Norwell"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"intermediate"},
                             @{@"language" : @"JavaScript", @"level" : @"advanced"}]
@@ -383,7 +383,7 @@ describe(@"AGMemoryStorage", ^{
             NSMutableDictionary *user5 = [@{@"id" : @"4",
                     @"name" : @"Graham",
                     @"city" : @"Boston",
-                    @"salary" : [NSNumber numberWithInt:2400],
+                    @"salary" : @2400,
                     @"department" : @{@"name" : @"Software", @"address" : @"Underwood"},
                     @"experience" : @[@{@"language" : @"Java", @"level" : @"advanced"},
                             @{@"language" : @"Python", @"level" : @"advanced"}]

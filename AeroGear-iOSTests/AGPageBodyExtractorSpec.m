@@ -68,7 +68,7 @@ describe(@"AGPageBodyExtractor", ^{
         });
 
         it(@"the parsed object should be nil when the body arg is an Array", ^{
-            NSDictionary *parsedInfo = [extractor parse:[NSArray array]
+            NSDictionary *parsedInfo = [extractor parse:@[]
                                                  headers:headers
                                                     next:NEXT_PAGE_IDENTIFIER
                                                     prev:PREVIOUS_PAGE_IDENTIFIER];
@@ -86,7 +86,7 @@ describe(@"AGPageBodyExtractor", ^{
         });
 
         it(@"the parsed object should be empty when the body arg is an empty dictionary", ^{
-            NSDictionary *parsedInfo = [extractor parse:[NSDictionary dictionary]
+            NSDictionary *parsedInfo = [extractor parse:@{}
                                                 headers:headers
                                                    next:NEXT_PAGE_IDENTIFIER
                                                    prev:PREVIOUS_PAGE_IDENTIFIER];
