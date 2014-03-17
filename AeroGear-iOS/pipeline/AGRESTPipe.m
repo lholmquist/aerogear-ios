@@ -57,7 +57,11 @@
         _URL = finalURL;
         _recordId = _config.recordId;
 
-        _restClient = [AGHttpClient clientFor:finalURL timeout:_config.timeout sessionConfiguration:_config.sessionConfiguration];
+        _restClient = [AGHttpClient clientFor:finalURL timeout:_config.timeout
+                         sessionConfiguration:_config.sessionConfiguration
+                                   authModule:(id <AGAuthenticationModuleAdapter>) _config.authModule
+                                  authzModule:(id <AGAuthzModuleAdapter>) _config.authzModule];
+
 
         // if NSURLCredential object is set on the config
         if (_config.credential) {
@@ -91,10 +95,6 @@
                 [_pageConfig setPageExtractor:[[AGPageBodyExtractor alloc] init]];
             }
         }
-
-        // set up auth/authz config if configured
-        _restClient.authModule = (id<AGAuthenticationModuleAdapter>) _config.authModule;
-        _restClient.authzModule = (id<AGAuthzModuleAdapter>) _config.authzModule;
     }
     
     return self;

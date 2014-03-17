@@ -22,20 +22,12 @@
 
 @interface AGHttpClient : AFHTTPSessionManager
 
-@property (nonatomic, strong) id<AGAuthenticationModuleAdapter> authModule;
-@property (nonatomic, strong) id<AGAuthzModuleAdapter> authzModule;
-
 + (instancetype)clientFor:(NSURL *)url;
 + (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval;
 + (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval sessionConfiguration:(NSURLSessionConfiguration *)configuration;
 
-- (NSURLSessionDataTask *)POST:(NSString *)URLString
-                    parameters:(NSDictionary *)parameters
-                       success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
-                       failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
++ (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval sessionConfiguration:(NSURLSessionConfiguration *)configuration
+                                    authModule:(id<AGAuthenticationModuleAdapter>) authModule
+                                   authzModule:(id<AGAuthzModuleAdapter>)authzModule;
 
-- (NSURLSessionDataTask *)PUT:(NSString *)URLString
-                   parameters:(NSDictionary *)parameters
-                      success:(void (^)(NSURLSessionDataTask *task, id responseObject))success
-                      failure:(void (^)(NSURLSessionDataTask *task, NSError *error))failure;
 @end

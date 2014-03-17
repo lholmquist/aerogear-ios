@@ -18,31 +18,90 @@
 #import "AGHttpClient.h"
 #import "AGMultipart.h"
 
+@interface AGRequestSerializer : AFJSONRequestSerializer
+
+    // auth/autz configuration
+    @property (nonatomic, strong) id<AGAuthenticationModuleAdapter> authModule;
+    @property (nonatomic, strong) id<AGAuthzModuleAdapter> authzModule;
+
+@end
+
+@implementation AGRequestSerializer
+
++ (instancetype)serializer {
+    AGRequestSerializer *serializer = [[self alloc] init];
+
+    return serializer;
+}
+
+#pragma mark - AGRequestSerializer
+
+- (NSURLRequest *)requestBySerializingRequest:(NSURLRequest *)request
+                               withParameters:(id)parameters
+                                        error:(NSError *__autoreleasing *)error {
+
+    // call base json serialization
+    NSMutableURLRequest *mutableRequest = (NSMutableURLRequest *)[super requestBySerializingRequest:request
+                                                                                     withParameters:parameters error:error];
+    // finally apply auth/autz (if any) on request
+    NSDictionary *headers;
+
+    if (self.authModule && [self.authModule isAuthenticated]) {
+        headers = [self.authModule authTokens];
+    } else if (self.authzModule && [self.authzModule isAuthorized]) {
+        headers = [self.authzModule accessTokens];
+    }
+
+    // apply them
+    if (headers) {
+        [headers enumerateKeysAndObjectsUsingBlock:^(id name, id value, BOOL *stop) {
+            [mutableRequest setValue:value forHTTPHeaderField:name];
+        }];
+    }
+
+    return mutableRequest;
+}
+
+@end
+
+
 @implementation AGHttpClient
 
 + (instancetype)clientFor:(NSURL *)url {
-    return [[[self class] alloc] initWithBaseURL:url timeout:60 sessionConfiguration:nil];
+    return [[[self class] alloc] initWithBaseURL:url timeout:60 sessionConfiguration:nil authModule:nil authzModule:nil];
 }
 
 + (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval {
-    return [[[self class] alloc] initWithBaseURL:url timeout:interval sessionConfiguration:nil];
+    return [[[self class] alloc] initWithBaseURL:url timeout:interval sessionConfiguration:nil authModule:nil authzModule:nil];
 }
 
 + (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval sessionConfiguration:(NSURLSessionConfiguration *)configuration {
-    return [[[self class] alloc] initWithBaseURL:url timeout:interval sessionConfiguration:configuration];
+    return [[[self class] alloc] initWithBaseURL:url timeout:interval sessionConfiguration:configuration authModule:nil authzModule:nil];
 }
 
-- (instancetype)initWithBaseURL:(NSURL *)url timeout:(NSTimeInterval)interval
-        sessionConfiguration:(NSURLSessionConfiguration *)configuration
-{
++ (instancetype)clientFor:(NSURL *)url timeout:(NSTimeInterval)interval sessionConfiguration:(NSURLSessionConfiguration *)configuration
+               authModule:(id<AGAuthenticationModuleAdapter>) authModule
+              authzModule:(id<AGAuthzModuleAdapter>)authzModule {
+    return [[[self class] alloc] initWithBaseURL:url timeout:interval sessionConfiguration:configuration authModule:authModule authzModule:authzModule];
+}
+
+- (instancetype)initWithBaseURL:(NSURL *)url timeout:(NSTimeInterval)interval sessionConfiguration:(NSURLSessionConfiguration *)configuration
+                     authModule:(id<AGAuthenticationModuleAdapter>) authModule
+                    authzModule:(id<AGAuthzModuleAdapter>)authzModule {
+
     self = [super initWithBaseURL:url sessionConfiguration:configuration];
 
     if (!self) {
         return nil;
     }
 
-    // initialize with JSON request/response serializers
-    self.requestSerializer = [AFJSONRequestSerializer serializer];
+    // apply AG request serializer
+    AGRequestSerializer *serializer = [AGRequestSerializer serializer];
+    serializer.authModule = authModule;
+    serializer.authzModule = authzModule;
+
+    self.requestSerializer = serializer;
+    // apply json response serializer
     self.responseSerializer = [AFJSONResponseSerializer serializer];
 
     // set the timeout interval
@@ -85,7 +144,7 @@
     __block NSURLSessionDataTask *task;
 
     // let's define up-front the completion callback since it's common
-    id completionCallback = ^(NSURLSessionDataTask *task, id responseObject, NSError *error) {
+    id completionCallback = ^(NSURLResponse * __unused response, id responseObject, NSError *error) {
         if (error) {
             if (failure) {
                 failure(task, error);
@@ -111,8 +170,6 @@
             return nil;
         }
 
-        [self applyAuthTokensOnRequest:request];
-
         task = [self uploadTaskWithStreamedRequest:request progress:nil completionHandler:completionCallback];
 
     } else {
@@ -120,8 +177,6 @@
         NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:method
                                                                        URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString]
                                                                       parameters:parameters error:nil];
-
-        [self applyAuthTokensOnRequest:request];
 
         task = [self dataTaskWithRequest:request completionHandler:completionCallback];
     }
@@ -216,24 +271,6 @@
     }];
 
     return hasMultipart;
-}
-
-// apply auth/authz headers (if any) on request
-- (void)applyAuthTokensOnRequest:(NSMutableURLRequest *)request {
-    NSDictionary *headers;
-
-    if (_authModule && [_authModule isAuthenticated]) {
-        headers = [_authModule authTokens];
-    } else if (_authzModule && [_authzModule isAuthorized]) {
-        headers = [_authzModule accessTokens];
-    }
-
-    // apply them
-    if (headers) {
-        [headers enumerateKeysAndObjectsUsingBlock:^(id name, id value, BOOL *stop) {
-            [request setValue:value forHTTPHeaderField:name];
-        }];
-    }
 }
 
 @end
