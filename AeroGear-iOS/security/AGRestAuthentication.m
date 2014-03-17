@@ -61,7 +61,7 @@
 // ==============================================
 
 +(instancetype) moduleWithConfig:(id<AGAuthConfig>) authConfig {
-    return [[self alloc] initWithConfig:authConfig];
+    return [[[self class] alloc] initWithConfig:authConfig];
 }
 
 -(instancetype) initWithConfig:(id<AGAuthConfig>) authConfig {

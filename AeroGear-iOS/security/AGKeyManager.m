@@ -33,7 +33,7 @@
 }
 
 + (instancetype)manager {
-    return [[self alloc] init];
+    return [[[self class] alloc] init];
 }
 
 - (id<AGEncryptionService>)keyService:(id<AGCryptoConfig>)config {

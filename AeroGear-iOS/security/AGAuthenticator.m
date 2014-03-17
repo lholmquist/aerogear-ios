@@ -32,7 +32,7 @@
 }
 
 +(instancetype) authenticator {
-    return [[self alloc] init];
+    return [[[self class] alloc] init];
 }
 
 -(id<AGAuthenticationModule>) auth:(void (^)(id<AGAuthConfig> config)) config {

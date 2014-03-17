@@ -32,7 +32,7 @@
 }
 
 +(instancetype) authorizer {
-    return [[self alloc] init];
+    return [[[self class] alloc] init];
 }
 
 -(id<AGAuthzModule>) authz:(void (^)(id<AGAuthzConfig> config)) config {
