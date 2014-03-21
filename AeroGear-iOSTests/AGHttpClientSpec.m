@@ -16,10 +16,21 @@
  */
 
 #import <Kiwi/Kiwi.h>
+#import <objc/message.h>
 #import "AGHttpClient.h"
+#import "AGMultipart.h"
 #import "AGHTTPMockHelper.h"
 #import "AGRestAuthentication.h"
 #import "AGRestAuthzModule.h"
+
+// expose private methods of AGHttpClient for the purpose of testing
+@interface AGHttpClient (Testing)
+
+- (NSMutableURLRequest *)multipartFormRequestWithMethod:(NSString *)method
+                                                   path:(NSString *)path
+                                             parameters:(NSDictionary *)parameters
+                                                  error:(NSError **) error;
+@end
 
 SPEC_BEGIN(AGHttpClientSpec)
 
@@ -68,6 +79,35 @@ SPEC_BEGIN(AGHttpClientSpec)
                 [[expectFutureValue(theValue(finishedFlag)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
             });
 
+            it(@"should successfully create multipart request with a combined multipart and params", ^{
+                // create dummy NSData to send
+                NSData *data = [@"Lorem ipsum dolor sit amet," dataUsingEncoding:NSUTF8StringEncoding];
+
+                AGFileDataPart *part = [[AGFileDataPart alloc] initWithFileData:data name:@"file" fileName:@"file.txt" mimeType:@"text/plain"];
+
+                // construct the payload with the file added
+                NSDictionary *dict = @{@"key": @"value",@"secondkey": @"secondvalue",  @"file":part};
+
+                NSError *error;
+                NSURLRequest *request = [_restClient multipartFormRequestWithMethod:@"POST" path:@"foo" parameters:dict error:&error];
+
+                // an error shouldn't not have occurred
+                [error shouldBeNil];
+
+                // access body stream
+                NSInputStream *stream = request.HTTPBodyStream;
+
+                // access body parts
+                NSArray *parts = [stream valueForKeyPath:@"HTTPBodyParts"];
+
+                // should match the number of params set
+                [[theValue(parts.count) should] equal:theValue(3)];
+
+                // should contain the params set
+                [[[parts[0] valueForKeyPath:@"body"] should] equal:[@"value" dataUsingEncoding:NSUTF8StringEncoding]];
+                [[[parts[1] valueForKeyPath:@"body"] should] equal:[@"secondvalue" dataUsingEncoding:NSUTF8StringEncoding]];
+                [[[parts[2] valueForKeyPath:@"body"] should] equal:part.data];
+            });
         });
 
         context(@"timeout should be honoured", ^{

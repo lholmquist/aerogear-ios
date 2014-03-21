@@ -210,13 +210,13 @@
     // cater for AFNetworking default behaviour to call [object description]
     // for parameters other than NSData and NSNull. We need to filter
     // AGMultipart objects from the request and apply them in the block later on
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:parameters];
-    [params removeObjectsForKeys:[parts allKeys]];
-
+    NSMutableDictionary *filteredParameters = [NSMutableDictionary dictionaryWithDictionary:parameters];
+    [filteredParameters removeObjectsForKeys:[parts allKeys]];
+    
     // will hold any error that occurs during multipart add
     __block NSError *err;
 
-    req = [self.requestSerializer multipartFormRequestWithMethod:method URLString:path parameters:parameters constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
+    req = [self.requestSerializer multipartFormRequestWithMethod:method URLString:path parameters:filteredParameters constructingBodyWithBlock:^(id <AFMultipartFormData> formData) {
 
         [parts enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
             if ([obj isKindOfClass:[AGFilePart class]]) {
